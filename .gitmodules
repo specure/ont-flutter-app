@@ -1,0 +1,3 @@
+[submodule "plugins/rmbt-ios-client"]
+	path = plugins/rmbt-ios-client
+	url = https://github.com/specure/ont-ios-client.git

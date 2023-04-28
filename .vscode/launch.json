@@ -1,0 +1,33 @@
+{
+    // Use IntelliSense to learn ***REMOVED*** possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Open Nettest",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": [
+                "--dart-define", "DEFINE_APP_NAME=Speedtest by Open Nettest",
+                "--dart-define", "DEFINE_APP_SUFFIX=.nt",
+                "--dart-define", "DEFINE_CONTROL_SERVER_URL=example.com",
+                "--dart-define", "DEFINE_CMS_SERVER_URL=example.com",
+                "--dart-define", "DEFINE_FULL_APP_ID=com.example.nettest",
+                "--dart-define", "DEFINE_WEBPAGE_URL=example.com"
+            ],
+        },
+        {
+            "name": "flutter-standalone",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "flutter-standalone (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        }
+    ]
+}
