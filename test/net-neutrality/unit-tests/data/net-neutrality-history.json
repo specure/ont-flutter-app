@@ -1,0 +1,68 @@
+{
+    "content": [
+        {
+            "type": "WEB",
+            "url": "http://localhost",
+            "timeout": 10,
+            "actualStatusCode": 200,
+            "expectedStatusCode": 200,
+            "timeoutExceeded": false,
+            "clientUuid": "clientUuid",
+            "durationNs": 6000,
+            "measurementDate": "measurementDate",
+            "openTestUuid": "openTestUuid",
+            "testStatus": "SUCCEED",
+            "uuid": "uuid"
+        },
+        {
+            "type": "WEB",
+            "url": "http://c",
+            "timeout": 10,
+            "actualStatusCode": null,
+            "expectedStatusCode": 200,
+            "timeoutExceeded": false,
+            "clientUuid": "clientUuid",
+            "durationNs": 6000,
+            "measurementDate": "measurementDate",
+            "openTestUuid": "openTestUuid",
+            "testStatus": "FAIL",
+            "uuid": "uuid"
+        },
+        {
+            "type": "DNS",
+            "timeout": 10,
+            "actualDnsStatus": "NOERROR",
+            "expectedDnsStatus": "NOERROR",
+            "timeoutExceeded": false,
+            "clientUuid": "clientUuid",
+            "durationNs": 41116046,
+            "measurementDate": "2022-09-13T11:08:31.910347Z",
+            "openTestUuid": "openTestUuid",
+            "testStatus": "FAIL",
+            "target": "https://yahoo.com",
+            "resolver": "8.8.8.8",
+            "entryType": "A",
+            "actualDnsResultEntriesFound": "98.137.11.163;74.6.143.26;74.6.231.20;74.6.143.25;74.6.231.21;98.137.11.164",
+            "expectedDnsResultEntriesFound": "98.137.11.163;74.6.143.26;74.6.231.20;74.6.143.25;74.6.231.21;98.137.11.164",
+            "uuid": "uuid"
+        },
+        {
+            "type": "DNS",
+            "timeout": 10,
+            "actualDnsStatus": "NXDOMAIN",
+            "expectedDnsStatus": "NOERROR",
+            "timeoutExceeded": false,
+            "clientUuid": "clientUuid",
+            "durationNs": 41116046,
+            "measurementDate": "2022-09-13T11:08:31.910347Z",
+            "openTestUuid": "openTestUuid",
+            "testStatus": "FAIL",
+            "target": "https://yahoo.com",
+            "resolver": "8.8.8.8",
+            "entryType": "A",
+            "actualDnsResultEntriesFound": "",
+            "expectedDnsResultEntriesFound": "98.137.11.163;74.6.143.26;74.6.231.20;74.6.143.25;74.6.231.21;98.137.11.164",
+            "uuid": "uuid"
+        }
+    ]
+}

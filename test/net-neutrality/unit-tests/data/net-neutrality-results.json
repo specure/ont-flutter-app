@@ -1,0 +1,37 @@
+{
+    "WEB": [
+        {
+            "id": 1,
+            "openTestUuid": "openTestUuid",
+            "durationNs": 9000,
+            "timeoutExceeded": false,
+            "statusCode": 200,
+            "clientUuid": "clientUuid",
+            "type": "WEB"
+        }
+    ],
+    "DNS": [
+        {
+            "id": 440,
+            "openTestUuid": "openTestUuid",
+            "durationNs": 8000,
+            "timeoutExceeded": false,
+            "dnsStatus": "NOERROR",
+            "clientUuid": "clientUuid",
+            "type": "DNS",
+            "dnsEntries": ["123.15.85.56"],
+            "resolver": "8.8.8.8"
+        },
+        {
+            "id": 441,
+            "openTestUuid": "openTestUuid",
+            "durationNs": 8000,
+            "timeoutExceeded": false,
+            "dnsStatus": "NOERROR",
+            "clientUuid": "clientUuid",
+            "type": "DNS",
+            "dnsEntries": ["123.15.85.56"],
+            "resolver": "8.8.8.8"
+        }
+    ]
+}

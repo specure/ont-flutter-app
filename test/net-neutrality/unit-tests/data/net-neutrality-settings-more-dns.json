@@ -1,0 +1,22 @@
+{
+  "DNS": [
+    {
+      "id": 440,
+      "type": "DNS",
+      "target": "https://www.yahoo.com",
+      "timeout": 10,
+      "resolver": "8.8.8.8",
+      "entryType": "A",
+      "expectedDnsStatus": "NOERROR"
+    },
+    {
+      "id": 441,
+      "type": "DNS",
+      "target": "https://www.lolo.flv",
+      "timeout": 10,
+      "resolver": "",
+      "entryType": "A",
+      "expectedDnsStatus": "NXDOMAIN"
+    }
+  ]
+}

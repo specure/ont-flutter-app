@@ -1,0 +1,29 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+
+    compileSdkVersion config.targetSdkVersion
+
+    defaultConfig {
+        minSdkVersion config.minSdkVersion
+        targetSdkVersion config.targetSdkVersion
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+    implementation "net.sf.jopt-simple:jopt-simple:$versions.jopt_simple"
+    implementation "dnsjava:dnsjava:$versions.dnsjava"
+    implementation "com.google.code.gson:gson:$versions.gson"
+    implementation "com.google.guava:guava:$versions.guava"
+    implementation "com.jakewharton.timber:timber:$versions.timber"
+    implementation 'androidx.annotation:annotation:1.2.0'
+}
