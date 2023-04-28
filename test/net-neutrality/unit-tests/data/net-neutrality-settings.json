@@ -1,0 +1,22 @@
+{
+  "WEB": [
+    {
+      "target": "https://www.google.com",
+      "expectedStatusCode": 200,
+      "type": "WEB",
+      "id": 1,
+      "timeout": 10
+    }
+  ],
+  "DNS": [
+    {
+      "id": 440,
+      "type": "DNS",
+      "target": "https://www.yahoo.com",
+      "timeout": 10,
+      "resolver": "8.8.8.8",
+      "entryType": "A",
+      "expectedDnsStatus": "NOERROR"
+    }
+  ]
+}

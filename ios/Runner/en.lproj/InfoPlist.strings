@@ -1,0 +1,8 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by Polina Gurina on 16.11.22.
+  
+*/
+NSLocalNetworkUsageDescription = "This app will not connect to devices on your network, it only detects the connectivity with your local gateway for the DNS test.";

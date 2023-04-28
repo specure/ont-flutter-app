@@ -1,0 +1,32 @@
+{
+  "content": [
+    {
+      "clientUuid": "424d87c2-eac1-48f1-9b14-f68729577f7c",
+      "durationNs": 504000000,
+      "measurementDate": "2022-10-18T07:27:36.759654Z",
+      "openTestUuid": "69452bb7-9a97-47c8-b013-22e283c329ea",
+      "testStatus": "SUCCEED",
+      "type": "WEB",
+      "uuid": "c97842d1-52b6-40e8-9844-e8fa2f793a55",
+      "timeout": 10,
+      "actualStatusCode": 200,
+      "expectedStatusCode": 200,
+      "url": "http://www.yahoo.com",
+      "timeoutExceeded": false
+    },
+    {
+      "clientUuid": "424d87c2-eac1-48f1-9b14-f68729577f7c",
+      "durationNs": 11000000000,
+      "measurementDate": "2022-10-18T07:27:36.759654Z",
+      "openTestUuid": "69452bb7-9a97-47c8-b013-22e283c329ea",
+      "testStatus": "ERROR",
+      "type": "WEB",
+      "uuid": "c97842d1-52b6-40e8-9844-e8fa2f793a55",
+      "timeout": 10,
+      "actualStatusCode": null,
+      "expectedStatusCode": 301,
+      "url": "http://www.lolo.com",
+      "timeoutExceeded": true
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new FileNotFoundException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+def dartEnvironmentVariables = [
+        DEFINE_APP_NAME: 'Open Nettest',
+        DEFINE_APP_SUFFIX: '.nt',
+        DEFINE_CONTROL_SERVER_URL: 'api-dev.nettest.org',
+        DEFINE_FULL_APP_ID: ''
+];
+if (project.hasProperty('dart-defines')) {
+    dartEnvironmentVariables = dartEnvironmentVariables + project.property('dart-defines')
+            .split(',')
+            .collectEntries { entry ->
+                def pair = new String(entry.decodeBase64(), 'UTF-8').split('=')
+                [(pair.first()): pair.last()]
+            }
+}
+def appId = dartEnvironmentVariables.DEFINE_FULL_APP_ID.isEmpty()
+    ? 'com.specure.nettest'
+    : dartEnvironmentVariables.DEFINE_FULL_APP_ID
+def appSuffix = dartEnvironmentVariables.DEFINE_FULL_APP_ID.isEmpty()
+    ? dartEnvironmentVariables.DEFINE_APP_SUFFIX
+    : ''
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'kotlin-kapt'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: "io.github.jmatsu.license-list"
+
+android {
+    compileSdkVersion 33
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId appId
+        applicationIdSuffix appSuffix
+        minSdkVersion 23
+        targetSdkVersion 31
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        resValue "string", "app_name", dartEnvironmentVariables.DEFINE_APP_NAME
+        resValue "string", "control_server_url", dartEnvironmentVariables.DEFINE_CONTROL_SERVER_URL
+    }
+
+    signingConfigs {
+        debug {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+    buildTypes {
+        debug{
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.release
+            ndk {
+                abiFilters 'armeabi-v7a','arm64-v8a','x86_64', 'x86'
+            }
+            firebaseCrashlytics {
+                // Enable processing and uploading of native symbols to Firebase servers.
+                // By default, this is disabled to improve build speeds.
+                // This flag must be enabled to see properly-symbolicated native
+                // stack traces in the Crashlytics dashboard.
+                nativeSymbolUploadEnabled true
+                unstrippedNativeLibsDir '../../build/app/intermediates/merged_native_libs/release/out/lib'
+            }
+
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    api project(path: ':rmbt-client')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+    implementation "net.danlew:android.joda:$versions.joda_time"
+
+    implementation "androidx.appcompat:appcompat:$versions.appcompat"
+    implementation "androidx.work:work-runtime-ktx:$versions.work_manager"
+    implementation "androidx.lifecycle:lifecycle-service:$versions.lifecycle_service"
+
+    implementation "com.jakewharton.timber:timber:$versions.timber"
+
+    implementation "com.google.code.gson:gson:$versions.gson"
+    implementation "dnsjava:dnsjava:$versions.dnsjava"
+
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ndk'
+    implementation 'androidx.test:runner:1.4.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+}
