@@ -1,1 +1,19 @@
-{}
+{
+    "primary": "0xFF0379C1",
+    "secondary": "0xFF014975",
+    "tertiary": "0xFFFFCC00",
+    "ipV4Color": "0xFFFFCC00",
+    "ipV6Color": "0xFF6DD400",
+    "startTestButtonGradient1": "0xFF0379C1",
+    "startTestButtonGradient2": "0xFF0379C1",
+    "measurementBoxGradient1": "0xFF0379C1",
+    "measurementBoxGradient2": "0xFF014975",
+    "measurementBoxText": "0xFF0379C1",
+    "measurementCircularProgress": "0xFF0379C1",
+    "measurementProgressBar": "0xFF0379C1",
+    "lightBackground": "0xFFEFEFEF",
+    "network2g": "0xFFF9D649",
+    "network3g": "0xFFF15B0A",
+    "network4g": "0xFFDB2481",
+    "network5g": "0xFF3028AA"
+}
