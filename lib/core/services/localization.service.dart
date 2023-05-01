@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/environment.dart';
 import 'package:nt_flutter_standalone/core/constants/locales.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
@@ -20,8 +21,9 @@ class LocalizationService extends DioService {
   final appLocaleSeparator = "-";
   Locale? selectedLocale;
   Locale get currentLocale {
-     return selectedLocale != null ? selectedLocale! : _locale;
+    return selectedLocale != null ? selectedLocale! : _locale;
   }
+
   List<Locale> get supportedLocales => _toSupportedLocales();
   final defaultLanguage = Language(
       name: 'Default',
@@ -58,7 +60,8 @@ class LocalizationService extends DioService {
         localeTable.itsLocales.containsKey(languageCode)
             ? languageCodeWithScriptCode
             : localeTable.itsLocales.keys.first;
-    if (currentSupportedLanguageWithScript != localeTable.itsLocales.keys.first) {
+    if (currentSupportedLanguageWithScript !=
+        localeTable.itsLocales.keys.first) {
       _locale = _localeFromSupportedLanguages(
           currentSupportedLanguageWithScript, countryCode);
     } else {
@@ -79,17 +82,23 @@ class LocalizationService extends DioService {
 
   List<Locale> _toSupportedLocales() {
     var supportedLocales = _supportedLanguages.values.map((value) {
-      return Locale.fromSubtags(languageCode: value.languageCode, scriptCode: value.scriptCode, countryCode: value.countryCode);
+      return Locale.fromSubtags(
+          languageCode: value.languageCode,
+          scriptCode: value.scriptCode,
+          countryCode: value.countryCode);
     });
     return supportedLocales.toList();
   }
 
   Language? get loadSelectedLanguage {
-    final selectedLocaleTag = GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag);
+    final selectedLocaleTag = GetIt.I
+        .get<SharedPreferencesWrapper>()
+        .getString(StorageKeys.selectedLocaleTag);
     final splittedLocaleTag = selectedLocaleTag?.split(appLocaleSeparator);
     if (splittedLocaleTag != null) {
       if (splittedLocaleTag.length > 2) {
-        return _supportedLanguages[splittedLocaleTag[0] + appLocaleSeparator + splittedLocaleTag[1]];
+        return _supportedLanguages[
+            splittedLocaleTag[0] + appLocaleSeparator + splittedLocaleTag[1]];
       } else {
         return _supportedLanguages[splittedLocaleTag[0]];
       }
@@ -113,7 +122,9 @@ class LocalizationService extends DioService {
   String languageCodeAndScriptFromLanguageTag(String languageTag) {
     var languageCodeSplitted = languageTag.split(appLocaleSeparator);
     if (languageCodeSplitted.length > 2) {
-      return languageCodeSplitted[0] + appLocaleSeparator + languageCodeSplitted[1];
+      return languageCodeSplitted[0] +
+          appLocaleSeparator +
+          languageCodeSplitted[1];
     } else {
       return languageCodeSplitted[0];
     }
@@ -128,7 +139,7 @@ class LocalizationService extends DioService {
                   ? appLocaleSeparator + currentLocale.scriptCode!
                   : ""));
       final response = await dio.get(
-        '***REMOVED***',
+        NTUrls.cmsTranslationsRoute,
         queryParameters: {
           'locale.iso': locale,
           '_limit': -1,

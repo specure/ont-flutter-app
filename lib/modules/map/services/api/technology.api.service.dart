@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 
 class TechnologyApiService extends DioService {
@@ -6,7 +7,7 @@ class TechnologyApiService extends DioService {
 
   Future<List<String>> getMobileOperators() async {
     try {
-      var response = await dio.get('***REMOVED***');
+      var response = await dio.get(NTUrls.csProvidersRoute);
       List<dynamic> list = response.data['statsByProvider'];
       return list.map((item) => item['providerName'] as String).toList();
     } on DioError catch (e) {

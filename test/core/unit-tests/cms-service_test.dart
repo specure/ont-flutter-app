@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/environment.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/models/project.dart';
 import 'package:nt_flutter_standalone/core/services/cms.service.dart';
@@ -86,7 +87,7 @@ void main() {
     });
     test('returns null when there is an error getting the project', () async {
       when(GetIt.I.get<Dio>().get(
-        '***REMOVED***',
+        NTUrls.cmsProjectsRoute,
         queryParameters: {
           'slug': Environment.appSuffix.replaceAll('.', ''),
           '_limit': 1,
@@ -104,44 +105,48 @@ void main() {
 }
 
 _setUpStubs() {
-  when(GetIt.I.get<LocalizationService>().loadSelectedLanguage)
-      .thenReturn(Language(name: "Norway", nativeName: "Norks", languageCode: "nb", countryCode: "NO"));
+  when(GetIt.I.get<LocalizationService>().loadSelectedLanguage).thenReturn(
+      Language(
+          name: "Norway",
+          nativeName: "Norks",
+          languageCode: "nb",
+          countryCode: "NO"));
   when(GetIt.I.get<LocalizationService>().currentLocale)
       .thenReturn(Locale.fromSubtags(languageCode: 'nb'));
-  when(GetIt.I.get<Dio>().get('***REMOVED***',
+  when(GetIt.I.get<Dio>().get(NTUrls.cmsPagesRoute,
           queryParameters: {'menu_item.route': '***REMOVED***', '_limit': 1}))
       .thenAnswer((realInvocation) async => Response(
-            requestOptions: RequestOptions(path: '***REMOVED***'),
+            requestOptions: RequestOptions(path: NTUrls.cmsPagesRoute),
             statusCode: 200,
             data: _***REMOVED***Page,
           ));
-  when(GetIt.I.get<Dio>().get('***REMOVED***',
+  when(GetIt.I.get<Dio>().get(NTUrls.cmsPagesRoute,
           queryParameters: {'menu_item.route': 'privacy', '_limit': 1}))
       .thenAnswer((realInvocation) async => Response(
-            requestOptions: RequestOptions(path: '***REMOVED***'),
+            requestOptions: RequestOptions(path: NTUrls.cmsPagesRoute),
             statusCode: 200,
             data: _privacyPage,
           ));
-  when(GetIt.I.get<Dio>().get('***REMOVED***',
+  when(GetIt.I.get<Dio>().get(NTUrls.cmsPagesRoute,
           queryParameters: {'menu_item.route': 'error', '_limit': 1}))
       .thenAnswer((realInvocation) async => throw _dioError);
   when(GetIt.I.get<Dio>().get(
-    '***REMOVED***',
+    NTUrls.cmsProjectsRoute,
     queryParameters: {
       'slug': Environment.appSuffix.replaceAll('.', ''),
       '_limit': 1,
     },
   )).thenAnswer((realInvocation) async => Response(
-        requestOptions: RequestOptions(path: '***REMOVED***'),
+        requestOptions: RequestOptions(path: NTUrls.cmsProjectsRoute),
         statusCode: 200,
         data: _projects,
       ));
   when(_errorHandler.process(_dioError)).thenReturn(null);
-  when(GetIt.I.get<Dio>().get('***REMOVED***',
-      queryParameters: {'menu_item.route': '***REMOVED***', '_limit': 1}))
+  when(GetIt.I.get<Dio>().get(NTUrls.cmsPagesRoute,
+          queryParameters: {'menu_item.route': '***REMOVED***', '_limit': 1}))
       .thenAnswer((realInvocation) async => Response(
-    requestOptions: RequestOptions(path: '***REMOVED***'),
-    statusCode: 200,
-    data: _***REMOVED***,
-  ));
+            requestOptions: RequestOptions(path: NTUrls.cmsPagesRoute),
+            statusCode: 200,
+            data: _***REMOVED***,
+          ));
 }

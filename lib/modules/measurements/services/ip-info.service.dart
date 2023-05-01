@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:nt_flutter_standalone/core/constants/environment.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
@@ -13,8 +14,8 @@ class IPInfoService extends DioService {
       final Dio localDio = Dio(dio.options);
       localDio.options.baseUrl = 'https://' +
           Environment.controlServerUrl
-              .replaceFirst('.nettest.org', 'v${version.toInt()}.nettest.org');
-      final response = await localDio.post('***REMOVED***');
+              .replaceFirst('.net', 'v${version.toInt()}.net');
+      final response = await localDio.post(NTUrls.csIpRoute);
       return response.data['ip'];
     } on DioError catch (_) {
       return addressIsNotAvailable;

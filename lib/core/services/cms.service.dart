@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/environment.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/models/project.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
@@ -19,7 +20,7 @@ class CMSService extends DioService {
   Future<NTProject?> getProject({ErrorHandler? errorHandler}) async {
     NTProject? project;
     try {
-      final response = await dio.get('***REMOVED***', queryParameters: {
+      final response = await dio.get(NTUrls.cmsProjectsRoute, queryParameters: {
         'slug': Environment.appSuffix.replaceAll('.', ''),
         '_limit': 1,
       });
@@ -35,7 +36,7 @@ class CMSService extends DioService {
     String? content;
     try {
       final response = await dio.get(
-        '***REMOVED***',
+        NTUrls.cmsPagesRoute,
         queryParameters: {
           'menu_item.route': route,
           '_limit': 1,
@@ -67,7 +68,7 @@ class CMSService extends DioService {
     String? content;
     try {
       final response = await dio.get(
-        '***REMOVED***',
+        NTUrls.cmsPagesRoute,
         queryParameters: {
           'menu_item.route': route,
           '_limit': 1,

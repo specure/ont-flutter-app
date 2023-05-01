@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/locale.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
@@ -34,8 +35,8 @@ void main() {
     expect(ls.supportedLocales.map((e) => e.toLanguageTag()).toList(),
         [expectedEn, expectedDe]);
     await ls.getTranslations();
-    expect('Einstellungen' , ls.translate('Settings'));
-    expect('Geschwindigkeit' , ls.translate('Speed'));
+    expect('Einstellungen', ls.translate('Settings'));
+    expect('Geschwindigkeit', ls.translate('Speed'));
   });
 
   test(
@@ -50,18 +51,21 @@ void main() {
 
 _setUpStubs() {
   final dio = GetIt.I.get<Dio>();
-  when(GetIt.I.get<SharedPreferencesWrapper>().init()).thenAnswer((_) async => null);
-  when(GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag)).thenReturn(_selectedLocaleTag);
-  when(dio.get('***REMOVED***', queryParameters: {
+  when(GetIt.I.get<SharedPreferencesWrapper>().init())
+      .thenAnswer((_) async => null);
+  when(GetIt.I
+          .get<SharedPreferencesWrapper>()
+          .getString(StorageKeys.selectedLocaleTag))
+      .thenReturn(_selectedLocaleTag);
+  when(dio.get(NTUrls.cmsTranslationsRoute, queryParameters: {
     'locale.iso': "de",
     '_limit': -1,
     'app_type': 'mobile'
   })).thenAnswer((_) async => Response(
-    requestOptions: RequestOptions(path: '***REMOVED***'),
-    statusCode: 200,
-    data: {
-      'Speed' : 'Geschwindigkeit',
-      'Settings' : 'Einstellungen',
-    }
-  ));
+          requestOptions: RequestOptions(path: NTUrls.cmsTranslationsRoute),
+          statusCode: 200,
+          data: {
+            'Speed': 'Geschwindigkeit',
+            'Settings': 'Einstellungen',
+          }));
 }

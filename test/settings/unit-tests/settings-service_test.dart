@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/models/settings.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
@@ -15,7 +16,7 @@ final _service = SettingsService(testing: true);
 final DioError _dioError = MockDioError();
 final ErrorHandler _errorHandler = MockErrorHandler();
 final _uuid = 'uuid';
-final _path = '***REMOVED***';
+final _path = NTUrls.csSettingsRoute;
 
 void main() {
   setUpAll(() {
@@ -115,8 +116,8 @@ _getSettings(String? uuid) =>
 
 _setUpStubs() {
   when(GetIt.I
-      .get<SharedPreferencesWrapper>()
-      .getBool(StorageKeys.analyticsEnabled))
+          .get<SharedPreferencesWrapper>()
+          .getBool(StorageKeys.analyticsEnabled))
       .thenReturn(true);
   when(GetIt.I.get<SharedPreferencesWrapper>().clientUuid)
       .thenAnswer((_) async => _uuid);

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
@@ -12,7 +13,7 @@ class MeasurementsApiService extends DioService {
       {ErrorHandler? errorHandler}) async {
     try {
       return await dio.post(
-        '***REMOVED***',
+        NTUrls.csResultRoute,
         data: result.toJson(),
       );
     } on DioError catch (e) {
@@ -33,7 +34,7 @@ class MeasurementsApiService extends DioService {
             }
           : null;
       final response = await dio.get(
-        '***REMOVED***',
+        NTUrls.csMeasurementServerRoute,
         queryParameters: queryParameters,
       );
       return MeasurementServer.fromJsonToList(response.data);

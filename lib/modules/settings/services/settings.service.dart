@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/models/settings.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
@@ -33,7 +34,7 @@ class SettingsService extends DioService {
     var data = settings.toJson();
     data.removeWhere((key, value) => value == null);
     try {
-      var response = await dio.post('***REMOVED***', data: data);
+      var response = await dio.post(NTUrls.csSettingsRoute, data: data);
       return response.data['settings'][0]['uuid'];
     } on DioError catch (e) {
       print(e);

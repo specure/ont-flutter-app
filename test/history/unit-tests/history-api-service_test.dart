@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/history/services/api/history.api.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/measurement-history-result.dart';
@@ -96,16 +97,16 @@ _setUpStubs() {
   final dio = GetIt.I.get<Dio>();
   when(sharedPreferences.clientUuid).thenAnswer((_) async => 'uuid');
   when(dio.post(
-    '***REMOVED***?page=1&size=100&sort=measurementDate,desc',
+    '${NTUrls.csSpeedHistoryRoute}?page=1&size=100&sort=measurementDate,desc',
     data: {'uuid': 'uuid', 'devices': null, 'network_types': null},
   )).thenAnswer((_) async => Response(
-        requestOptions: RequestOptions(path: '***REMOVED***'),
+        requestOptions: RequestOptions(path: NTUrls.csSpeedHistoryRoute),
         statusCode: 200,
         data: _historyJson,
       ));
   when(_errorHandler.process(_dioError)).thenReturn(null);
   when(dio.post(
-    '***REMOVED***?page=2&size=100&sort=measurementDate,desc',
+    '${NTUrls.csSpeedHistoryRoute}?page=2&size=100&sort=measurementDate,desc',
     data: {'uuid': 'uuid', 'devices': null, 'network_types': null},
   )).thenThrow(_dioError);
   when(GetIt.I.get<SharedPreferencesWrapper>().init())

@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
 import 'package:nt_flutter_standalone/core/widgets/app-bar.widget.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
@@ -66,12 +67,12 @@ void main() {
         Stream.fromIterable(
             [_initialState, _initialState.copyWith(clientUuid: _uuid)]),
         initialState: _initialState);
-    when(dio.get('***REMOVED***', queryParameters: {
+    when(dio.get(NTUrls.cmsTranslationsRoute, queryParameters: {
       'locale.iso': "sr-Latn",
       '_limit': -1,
       'app_type': 'mobile'
     })).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: '***REMOVED***'),
+            requestOptions: RequestOptions(path: NTUrls.cmsTranslationsRoute),
             statusCode: 200,
             data: {
               'Speed': 'Test',

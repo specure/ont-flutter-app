@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
@@ -16,7 +17,7 @@ class NetNeutralityApiService extends DioService {
   Future<NetNeutralitySettingsResponse?> getSettings(
       {ErrorHandler? errorHandler}) async {
     try {
-      final response = await dio.get('***REMOVED***');
+      final response = await dio.get(NTUrls.csNNRequestRoute);
       return NetNeutralitySettingsResponse.fromJson(response.data);
     } on DioError catch (e) {
       print(e);
@@ -28,7 +29,7 @@ class NetNeutralityApiService extends DioService {
   Future<void> postResults(
       {NetNeutralityResult? results, ErrorHandler? errorHandler}) async {
     try {
-      await dio.post('***REMOVED***', data: results);
+      await dio.post(NTUrls.csNNResultRoute, data: results);
     } on DioError catch (e) {
       print(e);
       errorHandler?.process(e);
@@ -43,7 +44,7 @@ class NetNeutralityApiService extends DioService {
           .get<SharedPreferencesWrapper>()
           .getString(StorageKeys.clientUuid);
       final Response<Map<String, dynamic>> response = await dio.get(
-          '/reports***REMOVED***/history?sort=measurementDate,desc&uuid=$uuid&openTestUuid=$openTestUuid');
+          '${NTUrls.csNNHistoryRoute}?sort=measurementDate,desc&uuid=$uuid&openTestUuid=$openTestUuid');
       return NetNeutralityHistoryListFactory.parseHistoryResponse(
         response.data,
       );
@@ -61,7 +62,7 @@ class NetNeutralityApiService extends DioService {
           .get<SharedPreferencesWrapper>()
           .getString(StorageKeys.clientUuid);
       final Response<Map<String, dynamic>> response = await dio.get(
-          '/reports***REMOVED***/history?page=$page&size=100&sort=measurementDate,desc&uuid=$uuid');
+          '${NTUrls.csNNHistoryRoute}?page=$page&size=100&sort=measurementDate,desc&uuid=$uuid');
       final data = NetNeutralityHistoryListFactory.parseWholeHistoryResponse(
           response.data);
       return NetNeutralityHistory(

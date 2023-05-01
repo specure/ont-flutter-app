@@ -5,11 +5,25 @@ import 'package:nt_flutter_standalone/core/constants/environment.dart';
 
 class NTUrls {
   static final Map<String, String> _map = {
-    'cms_***REMOVED***_route': '***REMOVED***',
-    'cms_privacy_policy_route': '***REMOVED***',
-    'cms_terms_of_use_route': '***REMOVED***',
-    'cms_***REMOVED***_qos_route': '***REMOVED***',
-    'cms_***REMOVED***_qoe_route': '***REMOVED***',
+    'cms_***REMOVED***_route': 'cms_***REMOVED***_route',
+    'cms_privacy_policy_route': 'cms_privacy_policy_route',
+    'cms_terms_of_use_route': 'cms_terms_of_use_route',
+    'cms_***REMOVED***_qos_route': 'cms_***REMOVED***_qos_route',
+    'cms_***REMOVED***_qoe_route': 'cms_***REMOVED***_qoe_route',
+    'cms_projects_route': '/cms_projects_route',
+    'cms_pages_route': '/cms_pages_route',
+    'cms_translations_route': '/cms_translations_route',
+    'cs_speed_history_route': '/cs_speed_history_route',
+    'cs_providers_route': '/cs_providers_route',
+    'cs_results_route': '/cs_results_route',
+    'cs_graphs_route': '/cs_graphs_route',
+    'cs_ip_route': '/cs_ip_route',
+    'cs_result_route': '/cs_result_route',
+    'cs_measurement_server_route': '/cs_measurement_server_route',
+    'cs_nn_request_route': '/cs_nn_request_route',
+    'cs_nn_result_route': '/cs_nn_result_route',
+    'cs_nn_history_route': '/cs_nn_history_route',
+    'cs_settings_route': '/cs_settings_route'
   };
 
   static String get cmsAboutRoute => _map['cms_***REMOVED***_route']!;
@@ -19,6 +33,22 @@ class NTUrls {
       _map['cms_***REMOVED***_qos_route']!;
   static String get cmsMethodologyQoeRoute =>
       _map['cms_***REMOVED***_qoe_route']!;
+  static String get cmsProjectsRoute => _map['cms_projects_route']!;
+  static String get cmsPagesRoute => _map['cms_pages_route']!;
+  static String get cmsTranslationsRoute => _map['cms_translations_route']!;
+
+  static String get csSpeedHistoryRoute => _map['cs_speed_history_route']!;
+  static String get csProvidersRoute => _map['cs_providers_route']!;
+  static String get csResultsRoute => _map['cs_results_route']!;
+  static String get csGraphsRoute => _map['cs_graphs_route']!;
+  static String get csIpRoute => _map['cs_ip_route']!;
+  static String get csResultRoute => _map['cs_result_route']!;
+  static String get csMeasurementServerRoute =>
+      _map['cs_measurement_server_route']!;
+  static String get csNNRequestRoute => _map['cs_nn_request_route']!;
+  static String get csNNResultRoute => _map['cs_nn_result_route']!;
+  static String get csNNHistoryRoute => _map['cs_nn_history_route']!;
+  static String get csSettingsRoute => _map['cs_settings_route']!;
 
   NTUrls._();
 
