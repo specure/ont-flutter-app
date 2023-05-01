@@ -1,7 +1,21 @@
 {
-    "cms_***REMOVED***_route": "***REMOVED***",
-    "cms_privacy_policy_route": "***REMOVED***",
-    "cms_terms_of_use_route": "***REMOVED***",
-    "cms_***REMOVED***_qos_route": "***REMOVED***",
-    "cms_***REMOVED***_qoe_route": "***REMOVED***"
+    "cms_***REMOVED***_route": "cms_***REMOVED***_route",
+    "cms_privacy_policy_route": "cms_privacy_policy_route",
+    "cms_terms_of_use_route": "cms_terms_of_use_route",
+    "cms_***REMOVED***_qos_route": "cms_***REMOVED***_qos_route",
+    "cms_***REMOVED***_qoe_route": "cms_***REMOVED***_qoe_route",
+    "cms_projects_route": "/cms_projects_route",
+    "cms_pages_route": "/cms_pages_route",
+    "cms_translations_route": "/cms_translations_route",
+    "cs_speed_history_route": "/cs_speed_history_route",
+    "cs_providers_route": "/cs_providers_route",
+    "cs_results_route": "/cs_results_route",
+    "cs_graphs_route": "/cs_graphs_route",
+    "cs_ip_route": "/cs_ip_route",
+    "cs_result_route": "/cs_result_route",
+    "cs_measurement_server_route": "/cs_measurement_server_route",
+    "cs_nn_request_route": "/cs_nn_request_route",
+    "cs_nn_result_route": "/cs_nn_result_route",
+    "cs_nn_history_route": "/cs_nn_history_route",
+    "cs_settings_route": "/cs_settings_route"
 }
