@@ -1,7 +1,21 @@
 {
-    "cms_about_route": "about",
-    "cms_privacy_policy_route": "privacy-policy",
-    "cms_terms_of_use_route": "terms-of-use",
-    "cms_methodology_qos_route": "methodology",
-    "cms_methodology_qoe_route": "methodology"
+    "cms_about_route": "cms_about_route",
+    "cms_privacy_policy_route": "cms_privacy_policy_route",
+    "cms_terms_of_use_route": "cms_terms_of_use_route",
+    "cms_methodology_qos_route": "cms_methodology_qos_route",
+    "cms_methodology_qoe_route": "cms_methodology_qoe_route",
+    "cms_projects_route": "/cms_projects_route",
+    "cms_pages_route": "/cms_pages_route",
+    "cms_translations_route": "/cms_translations_route",
+    "cs_speed_history_route": "/cs_speed_history_route",
+    "cs_providers_route": "/cs_providers_route",
+    "cs_results_route": "/cs_results_route",
+    "cs_graphs_route": "/cs_graphs_route",
+    "cs_ip_route": "/cs_ip_route",
+    "cs_result_route": "/cs_result_route",
+    "cs_measurement_server_route": "/cs_measurement_server_route",
+    "cs_nn_request_route": "/cs_nn_request_route",
+    "cs_nn_result_route": "/cs_nn_result_route",
+    "cs_nn_history_route": "/cs_nn_history_route",
+    "cs_settings_route": "/cs_settings_route"
 }
