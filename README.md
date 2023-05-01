@@ -3,22 +3,28 @@
 ## Setup
 
 1. Create `.env` file from `example.env` with your unique values.
+
 2. Get a secret token from https://account.mapbox.com/access-tokens/, then set it as `MAPBOX_DOWNLOADS_TOKEN` in your `gradle.properties` file (https://docs.mapbox.com/android/maps/guides/install/) and add it to a `~/.netrc` file (https://docs.mapbox.com/ios/maps/guides/install/).
+
 3. Add your Google Services' configs to the `android` and `ios` folders
 ```
     /ios/Runner/GoogleService-Info.plist
     /android/app/google-services.json
 ```
 Those folders contain `.example` files, provided by https://github.com/firebase/quickstart-android and https://github.com/firebase/quickstart-ios, which can help you get the project quickly up and running.
+
 4. Configure your flavor's images and settings in the config folder. See `config/.nt` for examples.
+
 5. Init submodules in the `plugins` folder
 ```
     git submodule update --init
 ```
+
 6. Run
 ```
     flutter pub get
 ```
+
 9. To be able to build for Android, create a signing key in Android Studio (https://developer.android.com/studio/publish/app-signing#generate-key), then add a `key.properties` file to the `android` folder with contents like this:
 ```
     storePassword=<password_from_your_key_file>
@@ -27,6 +33,7 @@ Those folders contain `.example` files, provided by https://github.com/firebase/
     storeFile=<full_path_to_you_key_file>
 ```
 The folder contains `keystore.example` and `key.properties.example` for quick start already. Don't forget to change the `storeFile` path inside `key.properties.example` to the absolute one.
+
 10. To be able to create release builds for iOS, make sure, after configuing the flavor and its package name in XCode, to let it download your provisioning profiles from the AppStore.
 
 ## Running
@@ -44,9 +51,9 @@ If you use VSCode, those can be set in advance in `tasks.json`.
 If you use VSCode, those can be set in advance in `tasks.json`.
 
 3. To run the app use
-
+```
     flutter run
-
+```
 with the following parameters:
 
 * `--dart-define=DEFINE_APP_SUFFIX=<YOUR_FLAVOR_SUFFIX>`, e.g. `.nt`. The suffix will be used to differentiate the flavor you build, e.g. in the package name, server communication, flavor configuration.
