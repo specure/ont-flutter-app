@@ -1,0 +1,4 @@
+storePassword=password
+keyPassword=password
+keyAlias=example
+storeFile=<full/path/to/repo>/android/keystore.example
