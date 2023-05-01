@@ -89,7 +89,7 @@ class RMBTConfigurationProtocol {
         return "\(RMBT_IPV6_URL_HOST)\(RMBT_CONTROL_SERVER_PATH)"
     }
     var RMBT_CHECK_IPV4_URL: String {
-        return "\(RMBT_IPV4_URL_HOST)\(RMBT_CONTROL_SERVER_PATH)***REMOVED***"
+        return "\(RMBT_IPV4_URL_HOST)\(RMBT_CONTROL_SERVER_PATH)/ip"
     }
     
     // MARK: - Other URLs used in the app
@@ -133,7 +133,7 @@ class RMBTConfigurationProtocol {
     }
     
     var RMBT_ABOUT_WEB_URL: String {
-        return "\(RMBT_URL_HOST)/$lang/***REMOVED***?menu=false"
+        return "\(RMBT_URL_HOST)/$lang/about?menu=false"
     }
     
     var RMBT_TERMS_TOS_URL: String {

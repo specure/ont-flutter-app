@@ -48,7 +48,7 @@ import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-
     as _i13;
 import 'package:nt_flutter_standalone/modules/measurements/services/app.review.service.dart'
     as _i34;
-import 'package:nt_flutter_standalone/modules/measurements/services***REMOVED***-info.service.dart'
+import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart'
     as _i12;
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart'
     as _i30;

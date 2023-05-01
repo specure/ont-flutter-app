@@ -62,16 +62,16 @@ void main() {
       ],
     );
     blocTest<MeasurementResultCubit, MeasurementResultState>(
-      'get ***REMOVED*** page',
+      'get methodology page',
       build: () => _cubit,
       act: (bloc) async {
         when(GetIt.I
                 .get<CMSService>()
-                .getDescription('***REMOVED***', errorHandler: _cubit))
+                .getDescription('methodology', errorHandler: _cubit))
             .thenAnswer((_) async => 'test');
-        when(GetIt.I.get<CMSService>().getPageUrl('***REMOVED***'))
+        when(GetIt.I.get<CMSService>().getPageUrl('methodology'))
             .thenAnswer((_) => 'test.com');
-        return await bloc.getPage('***REMOVED***');
+        return await bloc.getPage('methodology');
       },
       expect: () => [
         MeasurementResultState().copyWith(
@@ -84,18 +84,18 @@ void main() {
       ],
     );
     blocTest<MeasurementResultCubit, MeasurementResultState>(
-      'get ***REMOVED*** url',
+      'get methodology url',
       build: () => _cubit,
       act: (bloc) async {
-        when(GetIt.I.get<CMSService>().getPageUrl('***REMOVED***#qoe'))
-            .thenAnswer((_) => 'test.com/***REMOVED***#qoe');
-        return await bloc.getPage('***REMOVED***#qoe',
+        when(GetIt.I.get<CMSService>().getPageUrl('methodology#qoe'))
+            .thenAnswer((_) => 'test.com/methodology#qoe');
+        return await bloc.getPage('methodology#qoe',
             pageContent: 'qoe estimation');
       },
       expect: () => [
         MeasurementResultState().copyWith(
           loading: false,
-          staticPageUrl: 'test.com/***REMOVED***#qoe',
+          staticPageUrl: 'test.com/methodology#qoe',
           staticPageContent: 'qoe estimation',
         ),
       ],

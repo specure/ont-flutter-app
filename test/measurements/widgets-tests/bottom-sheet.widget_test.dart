@@ -17,7 +17,7 @@ import 'package:nt_flutter_standalone/modules/measurements/models/server-network
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/widgets/bottom-sheet/bottom-sheet.widget.dart';
-import 'package:nt_flutter_standalone/modules/measurements/widgets***REMOVED***-info.widget.dart';
+import 'package:nt_flutter_standalone/modules/measurements/widgets/ip-info.widget.dart';
 
 import '../../core/widget/bottom-navigation-widget_test.dart';
 import '../../di/service-locator.dart';

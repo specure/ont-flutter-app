@@ -65,7 +65,7 @@ void main() {
         .thenAnswer((_) async => true);
     var qosExplanationIcon = find.byIcon(Icons.info_outline);
     expect(qosExplanationIcon, findsOneWidget);
-    var qosExplanationFinder = find.text("Learn more ***REMOVED*** Quality of Service");
+    var qosExplanationFinder = find.text("Learn more about Quality of Service");
     expect(qosExplanationFinder, findsOneWidget);
     await tester.tap(qosExplanationFinder);
     await tester.pumpAndSettle();

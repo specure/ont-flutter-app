@@ -6,7 +6,7 @@ import 'package:nt_flutter_standalone/core/widgets/permission-dialog.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/widgets/bottom-sheet/bottom-sheet-config.dart';
-import 'package:nt_flutter_standalone/modules/measurements/widgets***REMOVED***-info.widget.dart';
+import 'package:nt_flutter_standalone/modules/measurements/widgets/ip-info.widget.dart';
 
 class BottomSheetLandscapeConfig extends BottomSheetConfig {
   BottomSheetLandscapeConfig(MeasurementsState state, BuildContext context)

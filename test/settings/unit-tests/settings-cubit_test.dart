@@ -29,7 +29,7 @@ late SettingsCubit _cubit;
 late SharedPreferencesWrapper _prefs;
 late FirebaseAnalyticsWrapper _analytics;
 final DioError _dioError = MockDioError();
-final _route = '***REMOVED***';
+final _route = 'about';
 final _uuid = 'uuid';
 final _newUuid = 'newUuid';
 final _version = '4.0.0';

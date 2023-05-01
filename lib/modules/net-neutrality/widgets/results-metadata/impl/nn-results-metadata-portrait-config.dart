@@ -23,7 +23,7 @@ class NetNeutralityResultsMetadataPortraitConfig
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // LearnMoreButton(title: "Want to learn more ***REMOVED*** Metadata?"),
+                    // LearnMoreButton(title: "Want to learn more about Metadata?"),
                     SizedBox(height: 40),
                     _buildRowSection([
                       TextSection(title: 'Date & Time', value: getDateTime()),

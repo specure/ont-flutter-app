@@ -3,7 +3,7 @@
 	<name>app</name>
 	<comment>Project app created by Buildship.</comment>
 	<projects>
-	<***REMOVED***>
+	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>

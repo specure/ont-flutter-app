@@ -155,7 +155,7 @@ class ResultsQosView extends StatelessWidget {
                           children: [
                             Expanded(
                                 child: Text(
-                              "Learn more ***REMOVED*** Quality of Service".translated,
+                              "Learn more about Quality of Service".translated,
                               style: TextStyle(color: NTColors.primary),
                             )),
                             Icon(

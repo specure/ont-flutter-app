@@ -149,7 +149,7 @@ class _WizardAccuracyState extends State<WizardAccuracy> {
                               .translated
                               .replaceAll('#appName', Environment.appName),
                           lead:
-                              "#appName may use third party services to collect data ***REMOVED*** your device and your usage of #appName and use it to improve the application experience and stability."
+                              "#appName may use third party services to collect data about your device and your usage of #appName and use it to improve the application experience and stability."
                                   .translated
                                   .replaceAll('#appName', Environment.appName),
                           hasSwitch: true,

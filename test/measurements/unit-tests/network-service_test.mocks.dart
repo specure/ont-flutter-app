@@ -29,7 +29,7 @@ import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-
     as _i3;
 import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-for-iot-plugin.wrapper.dart'
     as _i8;
-import 'package:nt_flutter_standalone/modules/measurements/services***REMOVED***-info.service.dart'
+import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart'
     as _i16;
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart'
     as _i10;
