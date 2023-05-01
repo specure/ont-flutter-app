@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-history-list-factory.dart';
@@ -46,9 +47,9 @@ void main() {
 
   group('Net neutrality API service', () {
     test('getSettings', () async {
-      when(GetIt.I.get<Dio>().get('/netNeutralityTestRequest')).thenAnswer(
+      when(GetIt.I.get<Dio>().get(NTUrls.csNNRequestRoute)).thenAnswer(
         (realInvocation) async => Response(
-          requestOptions: RequestOptions(path: '/netNeutralityTestRequest'),
+          requestOptions: RequestOptions(path: NTUrls.csNNRequestRoute),
           statusCode: 200,
           data: _settingsJson,
         ),
@@ -58,7 +59,7 @@ void main() {
     });
 
     test('getSettings with error', () async {
-      when(GetIt.I.get<Dio>().get('/netNeutralityTestRequest')).thenAnswer(
+      when(GetIt.I.get<Dio>().get(NTUrls.csNNRequestRoute)).thenAnswer(
         (realInvocation) async => throw _dioError,
       );
       final settings = await _service.getSettings(errorHandler: _errorHandler);
@@ -66,13 +67,13 @@ void main() {
       expect(settings, null);
     });
 
-     test('postResults', () async {
+    test('postResults', () async {
       when(GetIt.I
               .get<Dio>()
-              .post('/netNeutralityResult', data: anyNamed('data')))
+              .post(NTUrls.csNNResultRoute, data: anyNamed('data')))
           .thenAnswer(
         (realInvocation) async => Response(
-          requestOptions: RequestOptions(path: '/netNeutralityResult'),
+          requestOptions: RequestOptions(path: NTUrls.csNNResultRoute),
           statusCode: 200,
           data: _settingsJson,
         ),
@@ -80,27 +81,27 @@ void main() {
       await _service.postResults(results: _results);
       verify(GetIt.I
           .get<Dio>()
-          .post('/netNeutralityResult', data: anyNamed('data')));
+          .post(NTUrls.csNNResultRoute, data: anyNamed('data')));
     });
 
     test('postResults with error', () async {
       when(GetIt.I
               .get<Dio>()
-              .post('/netNeutralityResult', data: anyNamed('data')))
+              .post(NTUrls.csNNResultRoute, data: anyNamed('data')))
           .thenAnswer(
         (realInvocation) async => throw _dioError,
       );
-      await _service.postResults(results: _results, errorHandler: _errorHandler);
+      await _service.postResults(
+          results: _results, errorHandler: _errorHandler);
       verify(_errorHandler.process(_dioError));
     });
 
     test('getHistory', () async {
       when(GetIt.I.get<Dio>().get(
-              '/reports/netNeutralityResult/history?sort=measurementDate,desc&uuid=$_clientUuid&openTestUuid=$_openTestUuid'))
+              '${NTUrls.csNNHistoryRoute}?sort=measurementDate,desc&uuid=$_clientUuid&openTestUuid=$_openTestUuid'))
           .thenAnswer(
         (realInvocation) async => Response<Map<String, dynamic>>(
-          requestOptions:
-              RequestOptions(path: '/reports/netNeutralityResult/history'),
+          requestOptions: RequestOptions(path: NTUrls.csNNHistoryRoute),
           statusCode: 200,
           data: _historyJson,
         ),
@@ -111,7 +112,7 @@ void main() {
 
     test('getHistory with error', () async {
       when(GetIt.I.get<Dio>().get(
-              '/reports/netNeutralityResult/history?sort=measurementDate,desc&uuid=$_clientUuid&openTestUuid=$_openTestUuid'))
+              '${NTUrls.csNNHistoryRoute}?sort=measurementDate,desc&uuid=$_clientUuid&openTestUuid=$_openTestUuid'))
           .thenAnswer(
         (realInvocation) async => throw _dioError,
       );

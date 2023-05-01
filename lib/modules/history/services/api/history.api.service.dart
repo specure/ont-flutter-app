@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
@@ -16,7 +17,7 @@ class HistoryApiService extends DioService {
     History? history;
     try {
       var response = await dio.post(
-        '/v2/mobile/history?page=$page&size=100&sort=measurementDate,desc',
+        '${NTUrls.csSpeedHistoryRoute}?page=$page&size=100&sort=measurementDate,desc',
         data: {
           'uuid': clientUUID,
           'devices': devices,

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/measurement-history-result.dart';
@@ -102,27 +103,31 @@ void main() {
 
 void _setUpStubs() {
   final dio = GetIt.I.get<Dio>();
-  when(dio.get('/mobile/history/$_incorrectUuid'))
+  when(dio.get('${NTUrls.csResultsRoute}/$_incorrectUuid'))
       .thenAnswer((_) async => throw _dioError);
-  when(dio.get('/mobile/history/$_correctUuid'))
+  when(dio.get('${NTUrls.csResultsRoute}/$_correctUuid'))
       .thenAnswer((_) async => Response(
             requestOptions:
-                RequestOptions(path: '/mobile/history/$_correctUuid'),
+                RequestOptions(path: '${NTUrls.csResultsRoute}/$_correctUuid'),
             statusCode: 200,
             data: _historyResultJSON,
           ));
 
-  when(dio.get('/mobile/graphs/$_incorrectUuid'))
+  when(dio.get('${NTUrls.csGraphsRoute}/$_incorrectUuid'))
       .thenAnswer((_) async => throw _dioError);
-  when(dio.get('/mobile/graphs/$_correctUuid'))
+  when(dio.get('${NTUrls.csGraphsRoute}/$_correctUuid'))
       .thenAnswer((_) async => Response(
             requestOptions:
-                RequestOptions(path: '/mobile/graphs/$_correctUuid'),
+                RequestOptions(path: '${NTUrls.csGraphsRoute}/$_correctUuid'),
             statusCode: 200,
             data: _graphsResultJSON,
           ));
 
   when(_errorHandler.process(_dioError)).thenReturn(null);
-  when(GetIt.I.get<SharedPreferencesWrapper>().init()).thenAnswer((_) async => null);
-  when(GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag)).thenReturn(_selectedLocaleTag);
+  when(GetIt.I.get<SharedPreferencesWrapper>().init())
+      .thenAnswer((_) async => null);
+  when(GetIt.I
+          .get<SharedPreferencesWrapper>()
+          .getString(StorageKeys.selectedLocaleTag))
+      .thenReturn(_selectedLocaleTag);
 }

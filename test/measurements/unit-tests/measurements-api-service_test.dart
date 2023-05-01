@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-result.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart';
@@ -64,7 +65,7 @@ void main() {
       expect(result.first.id, 3);
     });
     test('returns an empty list if the request was not successful', () async {
-      when(_dio.get('/measurementServer'))
+      when(_dio.get(NTUrls.csMeasurementServerRoute))
           .thenAnswer((_) async => throw _dioError);
       final result = await MeasurementsApiService(testing: true)
           .getMeasurementServersForCurrentFlavor(errorHandler: _errorHandler);
@@ -78,56 +79,58 @@ void main() {
 _setUpStubs() {
   _dio = GetIt.I.get<Dio>();
   when(_dio.post(
-    '/mobile/result',
+    NTUrls.csResultRoute,
     data: _measurementResult.toJson(),
   )).thenAnswer((_) async => Response(
-        requestOptions: RequestOptions(path: '/mobile/result'),
+        requestOptions: RequestOptions(path: NTUrls.csResultRoute),
         statusCode: 200,
       ));
   when(_dio.post(
-    '/mobile/result',
+    NTUrls.csResultRoute,
     data: _emptyMeasurementResult.toJson(),
   )).thenAnswer((_) async => throw _dioError);
   when(_dio.options).thenReturn(BaseOptions());
-  when(_dio.get('/measurementServer')).thenAnswer((_) async => Response(
-        requestOptions: RequestOptions(path: '/measurementServer'),
-        statusCode: 200,
-        data: [
-          {
-            'id': 1,
-            'uuid': 'uuid',
-            'name': 'SERV',
-            'webAddress': 'server1.example.net',
-            'distance': 456789,
-            'serverTypeDetails': [
-              {'serverType': 'RMBTws'}
-            ]
-          },
-          {
-            'id': 2,
-            'uuid': 'uuid',
-            'name': 'SERV2',
-            'webAddress': 'server2.example.net',
-            'distance': 123456,
-            'serverTypeDetails': [
-              {'serverType': 'RMBT'}
-            ]
-          },
-          {
-            'id': 3,
-            'uuid': 'uuid',
-            'name': 'SERV3',
-            'webAddress': 'server3.example.net',
-            'distance': 1000,
-            'serverTypeDetails': [
-              {'serverType': 'RMBT'}
-            ]
-          },
-        ],
-      ));
+  when(_dio.get(NTUrls.csMeasurementServerRoute))
+      .thenAnswer((_) async => Response(
+            requestOptions:
+                RequestOptions(path: NTUrls.csMeasurementServerRoute),
+            statusCode: 200,
+            data: [
+              {
+                'id': 1,
+                'uuid': 'uuid',
+                'name': 'SERV',
+                'webAddress': 'server1.example.net',
+                'distance': 456789,
+                'serverTypeDetails': [
+                  {'serverType': 'RMBTws'}
+                ]
+              },
+              {
+                'id': 2,
+                'uuid': 'uuid',
+                'name': 'SERV2',
+                'webAddress': 'server2.example.net',
+                'distance': 123456,
+                'serverTypeDetails': [
+                  {'serverType': 'RMBT'}
+                ]
+              },
+              {
+                'id': 3,
+                'uuid': 'uuid',
+                'name': 'SERV3',
+                'webAddress': 'server3.example.net',
+                'distance': 1000,
+                'serverTypeDetails': [
+                  {'serverType': 'RMBT'}
+                ]
+              },
+            ],
+          ));
 
-  when(_dio.post('/ip')).thenAnswer((_) async => Response(
-        requestOptions: RequestOptions(path: '/ip'),
+  when(_dio.post(NTUrls.csIpRoute)).thenAnswer((_) async => Response(
+        requestOptions: RequestOptions(path: NTUrls.csIpRoute),
         statusCode: 200,
         data: {'ip': '192.168.0.0'},
       ));

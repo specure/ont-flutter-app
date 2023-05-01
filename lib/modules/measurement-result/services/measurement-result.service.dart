@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/measurement-history-result.dart';
@@ -10,7 +11,7 @@ class MeasurementResultService extends DioService {
   Future<MeasurementHistoryResult?> getMeasurementHistoryResult(String uuid,
       {ErrorHandler? errorHandler}) async {
     try {
-      var response = await dio.get('/mobile/history/$uuid');
+      var response = await dio.get('${NTUrls.csResultsRoute}/$uuid');
       return MeasurementHistoryResult.fromJson(response.data);
     } on DioError catch (e) {
       print(e);
@@ -23,7 +24,7 @@ class MeasurementResultService extends DioService {
       String uuid,
       {ErrorHandler? errorHandler}) async {
     try {
-      var response = await dio.get('/mobile/graphs/$uuid');
+      var response = await dio.get('${NTUrls.csGraphsRoute}/$uuid');
       return {
         'download': SpeedCurveItem.fromJsonToList(
             response.data['speed_curve']['download']),
