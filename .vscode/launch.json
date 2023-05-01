@@ -14,9 +14,10 @@
                 "--dart-define", "DEFINE_APP_SUFFIX=.nt",
                 "--dart-define", "DEFINE_CONTROL_SERVER_URL=example.com",
                 "--dart-define", "DEFINE_CMS_SERVER_URL=example.com",
-                "--dart-define", "DEFINE_FULL_APP_ID=com.example.nettest",
-                "--dart-define", "DEFINE_WEBPAGE_URL=example.com"
+                "--dart-define", "DEFINE_FULL_APP_ID=com.google.samples.quickstart.appindexing",
+                "--dart-define", "DEFINE_WEBPAGE_URL=example.com",
             ],
+            "preLaunchTask": "configure.splashes"
         },
         {
             "name": "flutter-standalone",

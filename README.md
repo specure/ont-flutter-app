@@ -9,7 +9,8 @@
     /ios/Runner/GoogleService-Info.plist
     /android/app/google-services.json
 ```
-4. Configure the flavor's images and settings in the config folder. See `config/.nt` for example.
+Those folders contain `.example` files, provided by https://github.com/firebase/quickstart-android and https://github.com/firebase/quickstart-ios, which can help you get the project quickly up and running.
+4. Configure your flavor's images and settings in the config folder. See `config/.nt` for examples.
 5. Init submodules in the `plugins` folder
 ```
     git submodule update --init
@@ -18,32 +19,41 @@
 ```
     flutter pub get
 ```
-7. To setup app icons, run
-```
-    flutter pub run flutter_launcher_icons:main -f config/<YOUR_FLAVOR_SUFFIX>/flutter_launcher_icons.yaml
-```
-8. To be able to create release builds for Android, create a signing key in Android Studio, then add a `key.properties` file to the `android` folder with contents like this:
+9. To be able to build for Android, create a signing key in Android Studio (https://developer.android.com/studio/publish/app-signing#generate-key), then add a `key.properties` file to the `android` folder with contents like this:
 ```
     storePassword=<password_from_your_key_file>
     keyPassword=<password_from_your_key_file>
     keyAlias=<alias_from_your_key_file>
     storeFile=<full_path_to_you_key_file>
 ```
-9. To be able to create release builds for iOS, make sure, after configuing the flavor and its package name, to open XCode and let it download your provisioning profiles from the AppStore.
+The folder contains `keystore.example` and `key.properties.example` for quick start already. Don't forget to change the `storeFile` path inside `key.properties.example` to the absolute one.
+10. To be able to create release builds for iOS, make sure, after configuing the flavor and its package name in XCode, to let it download your provisioning profiles from the AppStore.
 
 ## Running
 
-To run the app use
+1. To set up app icons, run
+```
+    flutter pub run flutter_launcher_icons:main -f config/<YOUR_FLAVOR_SUFFIX>/flutter_launcher_icons.yaml
+```
+If you use VSCode, those can be set in advance in `tasks.json`.
+
+2. To set up splash screens, run
+```
+    flutter pub run flutter_native_splash:create --path config/<YOUR_FLAVOR_SUFFIX>/flutter_native_splash.yaml
+```
+If you use VSCode, those can be set in advance in `tasks.json`.
+
+3. To run the app use
 
     flutter run
 
 with the following parameters:
 
-1. `--dart-define=DEFINE_APP_SUFFIX=<YOUR_FLAVOR_SUFFIX>`, e.g. `.nt`. The suffix will be used to differentiate the flavor you build, e.g. in the package name, server communication, flavor configuration.
-2. `--dart-define="DEFINE_APP_NAME=<YOU_APP_NAME>`.
-3. `--dart-define=DEFINE_CONTROL_SERVER_URL=<YOUR_CONTROL_SERVER_URL>`, including protocol, host, and port. The control server provides a list of measurement servers, registers measurements and stores their results.
-4. `--dart-define=DEFINE_CMS_SERVER_URL=<YOUR_CMS_SERVER_URL>`, including protocol, host, and port. The CMS contains texts and their translations, decides which features enable or disable for certain flavors.
-5. `--dart-define=DEFINE_WEBPAGE_URL=<YOUR_WEBPAGE_URL>`, including protocol, host, and port. This URL will be used as default for all the paths that require opening the web view.
+* `--dart-define=DEFINE_APP_SUFFIX=<YOUR_FLAVOR_SUFFIX>`, e.g. `.nt`. The suffix will be used to differentiate the flavor you build, e.g. in the package name, server communication, flavor configuration.
+* `--dart-define="DEFINE_APP_NAME=<YOU_APP_NAME>`.
+* `--dart-define=DEFINE_CONTROL_SERVER_URL=<YOUR_CONTROL_SERVER_URL>`, including protocol, host, and port. The control server provides a list of measurement servers, registers measurements and stores their results.
+* `--dart-define=DEFINE_CMS_SERVER_URL=<YOUR_CMS_SERVER_URL>`, including protocol, host, and port. The CMS contains texts and their translations, decides which features enable or disable for certain flavors.
+* `--dart-define=DEFINE_WEBPAGE_URL=<YOUR_WEBPAGE_URL>`, including protocol, host, and port. This URL will be used as default for all the paths that require opening the web view.
 
 If you use VSCode, those can be set in advance in `launch.json`.
 
