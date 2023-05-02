@@ -30,12 +30,12 @@ class _PermissionDialogState extends State<PermissionDialog> {
           if (widget.locationServicesEnabled == false) {
             _showProblemResolvingDialog(
                 'Location services disabled',
-                "We need enabled location services in order to provide more accurate information ***REMOVED*** your network connection.",
+                "We need enabled location services in order to provide more accurate information about your network connection.",
                 AppSettings.openLocationSettings);
           } else if (widget.preciseLocationPermissionsGranted == false) {
             _showProblemResolvingDialog(
                 'Missing permissions',
-                "We need permission to access the precise location in order to provide more accurate information ***REMOVED*** your network connection.",
+                "We need permission to access the precise location in order to provide more accurate information about your network connection.",
                 openAppSettings);
           }
         },

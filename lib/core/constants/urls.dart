@@ -5,11 +5,11 @@ import 'package:nt_flutter_standalone/core/constants/environment.dart';
 
 class NTUrls {
   static final Map<String, String> _map = {
-    'cms_***REMOVED***_route': 'cms_***REMOVED***_route',
+    'cms_about_route': 'cms_about_route',
     'cms_privacy_policy_route': 'cms_privacy_policy_route',
     'cms_terms_of_use_route': 'cms_terms_of_use_route',
-    'cms_***REMOVED***_qos_route': 'cms_***REMOVED***_qos_route',
-    'cms_***REMOVED***_qoe_route': 'cms_***REMOVED***_qoe_route',
+    'cms_methodology_qos_route': 'cms_methodology_qos_route',
+    'cms_methodology_qoe_route': 'cms_methodology_qoe_route',
     'cms_projects_route': '/cms_projects_route',
     'cms_pages_route': '/cms_pages_route',
     'cms_translations_route': '/cms_translations_route',
@@ -26,13 +26,13 @@ class NTUrls {
     'cs_settings_route': '/cs_settings_route'
   };
 
-  static String get cmsAboutRoute => _map['cms_***REMOVED***_route']!;
+  static String get cmsAboutRoute => _map['cms_about_route']!;
   static String get cmsPrivacyPolicyRoute => _map['cms_privacy_policy_route']!;
   static String get cmsTermsOfUseRoute => _map['cms_terms_of_use_route']!;
   static String get cmsMethodologyQosRoute =>
-      _map['cms_***REMOVED***_qos_route']!;
+      _map['cms_methodology_qos_route']!;
   static String get cmsMethodologyQoeRoute =>
-      _map['cms_***REMOVED***_qoe_route']!;
+      _map['cms_methodology_qoe_route']!;
   static String get cmsProjectsRoute => _map['cms_projects_route']!;
   static String get cmsPagesRoute => _map['cms_pages_route']!;
   static String get cmsTranslationsRoute => _map['cms_translations_route']!;

@@ -121,7 +121,7 @@ Future _testMissingPreciseLocationPermissionsAreShown(WidgetTester tester) async
   await tester.tap(warningIconFinder);
   await tester.pumpAndSettle();
   expect(find.text('Missing permissions', skipOffstage: false), findsOneWidget);
-  expect(find.text("We need permission to access the precise location in order to provide more accurate information ***REMOVED*** your network connection."), findsOneWidget);
+  expect(find.text("We need permission to access the precise location in order to provide more accurate information about your network connection."), findsOneWidget);
   var cancel = find.text('Cancel');
   expect(cancel, findsOneWidget);
   var openSettings = find.text('Change settings');
@@ -153,7 +153,7 @@ Future _testDisabledLocationServices(WidgetTester tester) async {
   await tester.pumpAndSettle();
   expect(find.text('Location services disabled'), findsOneWidget);
   expect(find.text(
-      "We need enabled location services in order to provide more accurate information ***REMOVED*** your network connection."),
+      "We need enabled location services in order to provide more accurate information about your network connection."),
       findsOneWidget);
   var cancel = find.text('Cancel');
   expect(cancel, findsOneWidget);

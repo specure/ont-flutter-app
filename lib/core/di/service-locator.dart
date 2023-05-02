@@ -27,7 +27,7 @@ import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-
 import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/geocoding-wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-for-iot-plugin.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/services/dns-test.service.dart';
-import 'package:nt_flutter_standalone/modules/measurements/services***REMOVED***-info.service.dart';
+import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/loop.mode.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart';

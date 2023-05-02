@@ -54,7 +54,7 @@ public final class RevisionHelper
                 }
             }
             catch (final Exception e)
-            { // there isn't much we can do here ***REMOVED*** it..
+            { // there isn't much we can do here about it..
             }
         describe = _describe == null ? "?" : _describe;
         revision = _revision == null ? "?" : _revision;

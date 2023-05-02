@@ -173,7 +173,7 @@ class DnsServersDetector(context: Context) {
      * The system properties net.dns1, net.dns2, net.dns3, and net.dns4 are no longer available,
      * a change that improves privacy on the platform.
      *
-     * https://developer.android.com/***REMOVED***/versions/oreo/android-8.0-changes.html#o-pri
+     * https://developer.android.com/about/versions/oreo/android-8.0-changes.html#o-pri
      * @return Dns servers array
      */
     private val serversMethodSystemProperties: Array<String?>?

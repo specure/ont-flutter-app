@@ -3,7 +3,7 @@
 	<name>rmbt-client</name>
 	<comment>Project rmbt-client created by Buildship.</comment>
 	<projects>
-	<***REMOVED***>
+	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>

@@ -127,7 +127,7 @@ final public class Carrier {
     }
     
     
-    /// Returns all available info ***REMOVED*** the carrier.
+    /// Returns all available info about the carrier.
     public var carrierInfo: [String: Any?] {
         
         var dataList =  [[String: Any?]]()

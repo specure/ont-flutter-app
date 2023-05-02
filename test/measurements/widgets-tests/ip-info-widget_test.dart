@@ -8,7 +8,7 @@ import 'package:nt_flutter_standalone/core/models/project.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
-import 'package:nt_flutter_standalone/modules/measurements/widgets***REMOVED***-info.widget.dart';
+import 'package:nt_flutter_standalone/modules/measurements/widgets/ip-info.widget.dart';
 
 import '../../di/service-locator.dart';
 

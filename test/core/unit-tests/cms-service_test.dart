@@ -15,14 +15,14 @@ import 'package:nt_flutter_standalone/modules/settings/models/language.dart';
 import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';
 
-final Map<String, dynamic> _***REMOVED***Page = {
+final Map<String, dynamic> _aboutPage = {
   'content': 'About',
   'translations': [
     {'content': 'Om', 'language': 'nb'}
   ]
 };
 
-final Map<String, dynamic> _***REMOVED*** = {
+final Map<String, dynamic> _methodology = {
   'description': 'Description',
   'translations': [
     {'content': 'Om', 'language': 'nb'}
@@ -64,8 +64,8 @@ void main() {
 
   group('CMS service', () {
     test('returns translated content for a translated page', () async {
-      final content = await _service.getPage('***REMOVED***');
-      expect(content, _***REMOVED***Page['translations'][0]['content']);
+      final content = await _service.getPage('about');
+      expect(content, _aboutPage['translations'][0]['content']);
     });
     test('returns untranslated content for a not translated page', () async {
       final content = await _service.getPage('privacy');
@@ -98,8 +98,8 @@ void main() {
       verify(_errorHandler.process(_dioError));
     });
     test('returns translated description for a qos explanation', () async {
-      final content = await _service.getDescription('***REMOVED***');
-      expect(content, _***REMOVED***['translations'][0]['description']);
+      final content = await _service.getDescription('methodology');
+      expect(content, _methodology['translations'][0]['description']);
     });
   });
 }
@@ -114,11 +114,11 @@ _setUpStubs() {
   when(GetIt.I.get<LocalizationService>().currentLocale)
       .thenReturn(Locale.fromSubtags(languageCode: 'nb'));
   when(GetIt.I.get<Dio>().get(NTUrls.cmsPagesRoute,
-          queryParameters: {'menu_item.route': '***REMOVED***', '_limit': 1}))
+          queryParameters: {'menu_item.route': 'about', '_limit': 1}))
       .thenAnswer((realInvocation) async => Response(
             requestOptions: RequestOptions(path: NTUrls.cmsPagesRoute),
             statusCode: 200,
-            data: _***REMOVED***Page,
+            data: _aboutPage,
           ));
   when(GetIt.I.get<Dio>().get(NTUrls.cmsPagesRoute,
           queryParameters: {'menu_item.route': 'privacy', '_limit': 1}))
@@ -143,10 +143,10 @@ _setUpStubs() {
       ));
   when(_errorHandler.process(_dioError)).thenReturn(null);
   when(GetIt.I.get<Dio>().get(NTUrls.cmsPagesRoute,
-          queryParameters: {'menu_item.route': '***REMOVED***', '_limit': 1}))
+          queryParameters: {'menu_item.route': 'methodology', '_limit': 1}))
       .thenAnswer((realInvocation) async => Response(
             requestOptions: RequestOptions(path: NTUrls.cmsPagesRoute),
             statusCode: 200,
-            data: _***REMOVED***,
+            data: _methodology,
           ));
 }

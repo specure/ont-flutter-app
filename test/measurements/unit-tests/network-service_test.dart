@@ -13,7 +13,7 @@ import 'package:nt_flutter_standalone/modules/measurements/models/signal-info.da
 import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/carrier-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-for-iot-plugin.wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurements/services***REMOVED***-info.service.dart';
+import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/network.service.dart';

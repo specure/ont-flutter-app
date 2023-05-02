@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
-import 'package:nt_flutter_standalone/modules/measurements/services***REMOVED***-info.service.dart';
+import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart';
 
 import '../../di/service-locator.dart';
 

@@ -1,9 +1,9 @@
 {
-    "cms_***REMOVED***_route": "cms_***REMOVED***_route",
+    "cms_about_route": "cms_about_route",
     "cms_privacy_policy_route": "cms_privacy_policy_route",
     "cms_terms_of_use_route": "cms_terms_of_use_route",
-    "cms_***REMOVED***_qos_route": "cms_***REMOVED***_qos_route",
-    "cms_***REMOVED***_qoe_route": "cms_***REMOVED***_qoe_route",
+    "cms_methodology_qos_route": "cms_methodology_qos_route",
+    "cms_methodology_qoe_route": "cms_methodology_qoe_route",
     "cms_projects_route": "/cms_projects_route",
     "cms_pages_route": "/cms_pages_route",
     "cms_translations_route": "/cms_translations_route",

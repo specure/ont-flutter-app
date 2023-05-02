@@ -46,7 +46,7 @@ void main() {
     var qoeExplanationTextFinder = find.textContaining("Experience");
     expect(qoeExplanationTextFinder, findsOneWidget);
     var qoeExplanationFinder =
-        find.text("Learn more ***REMOVED*** Quality of Experience");
+        find.text("Learn more about Quality of Experience");
     expect(qoeExplanationFinder, findsOneWidget);
     await tester.tap(qoeExplanationFinder);
     await tester.pumpAndSettle();

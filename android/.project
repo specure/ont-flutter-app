@@ -3,7 +3,7 @@
 	<name>android</name>
 	<comment>Project android created by Buildship.</comment>
 	<projects>
-	<***REMOVED***>
+	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>

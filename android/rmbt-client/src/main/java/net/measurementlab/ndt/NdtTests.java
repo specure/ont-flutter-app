@@ -329,7 +329,7 @@ public class NdtTests implements Runnable {
       try {
         in2Socket = new Socket(host, midport);
       } catch (UnknownHostException e) {
-        uiServices.logError("Don't know ***REMOVED*** host: " + host);
+        uiServices.logError("Don't know about host: " + host);
         errmsg = messages.getString("unknownServer") + "\n" ;
         return true;
       } catch (IOException e) {
@@ -562,7 +562,7 @@ public boolean test_sfw(Protocol ctl) throws IOException
       try {
         outSocket = new Socket(host, c2sport);
       } catch (UnknownHostException e) {
-        uiServices.logError("Don't know ***REMOVED*** host: " + host);
+        uiServices.logError("Don't know about host: " + host);
         errmsg = messages.getString("unknownServer") + "\n" ;
         return true;
       } catch (IOException e) {
@@ -697,7 +697,7 @@ public boolean test_sfw(Protocol ctl) throws IOException
         inSocket = new Socket(host, s2cport);
       } 
       catch (UnknownHostException e) {
-        uiServices.logError("Don't know ***REMOVED*** host: " + host);
+        uiServices.logError("Don't know about host: " + host);
         errmsg = "unknown server\n" ;
         return true;
       } 
@@ -896,7 +896,7 @@ public boolean test_sfw(Protocol ctl) throws IOException
 
           ctlSocket = new Socket(host, ctlport);
       } catch (UnknownHostException e) {
-          uiServices.logError("Don't know ***REMOVED*** host: " + host);
+          uiServices.logError("Don't know about host: " + host);
           errmsg = messages.getString("unknownServer") + "\n" ;
           failed = true;
           return;
