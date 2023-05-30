@@ -14,7 +14,8 @@ class NTUrls {
     'cms_pages_route': '/cms_pages_route',
     'cms_translations_route': '/cms_translations_route',
     'cs_speed_history_route': '/cs_speed_history_route',
-    'cs_providers_route': '/cs_providers_route',
+    'cs_isp_providers_route': '/cs_isp_providers_route',
+    'cs_mno_providers_route': '/cs_mno_providers_route',
     'cs_results_route': '/cs_results_route',
     'cs_graphs_route': '/cs_graphs_route',
     'cs_ip_route': '/cs_ip_route',
@@ -38,7 +39,8 @@ class NTUrls {
   static String get cmsTranslationsRoute => _map['cms_translations_route']!;
 
   static String get csSpeedHistoryRoute => _map['cs_speed_history_route']!;
-  static String get csProvidersRoute => _map['cs_providers_route']!;
+  static String get csMnoProvidersRoute => _map['cs_mno_providers_route']!;
+  static String get csIspProvidersRoute => _map['cs_isp_providers_route']!;
   static String get csResultsRoute => _map['cs_results_route']!;
   static String get csGraphsRoute => _map['cs_graphs_route']!;
   static String get csIpRoute => _map['cs_ip_route']!;

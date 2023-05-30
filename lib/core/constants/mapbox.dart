@@ -7,6 +7,7 @@ import 'environment.dart';
 class MapBoxConsts {
   static final Map<String, dynamic> _map = {
     'styleUrl': 'mapbox://styles/mapbox/light-v10',
+    'ispStyleUrl': 'mapbox://styles/mapbox/light-v10',
     'initialLat': 0.0,
     'initialLng': 0.0,
     'initialZoom': 1.0,
@@ -19,6 +20,7 @@ class MapBoxConsts {
   };
 
   static String get styleUrl => _map['styleUrl']!;
+  static String get ispStyleUrl => _map['ispStyleUrl']!;
   static double get initialLat => _map['initialLat']!;
   static double get initialLng => _map['initialLng']!;
   static double get initialZoom => _map['initialZoom']!;

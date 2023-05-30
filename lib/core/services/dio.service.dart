@@ -29,6 +29,7 @@ abstract class DioService {
           responseBody: true,
         ));
         dio.interceptors.add(ErrorInterceptor());
+        dio.interceptors.add(StopwatchInterceptor());
       }
       dio.options.baseUrl = baseUrl.isNotEmpty
           ? baseUrl
@@ -46,6 +47,27 @@ abstract class DioService {
     final Dio localDio = Dio(dio.options);
     localDio.options.baseUrl = url;
     return localDio;
+  }
+}
+
+class StopwatchInterceptor extends Interceptor {
+  DateTime? requestSentAt;
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    requestSentAt = DateTime.now();
+    super.onRequest(options, handler);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    if (requestSentAt != null) {
+      final networkTime = (DateTime.now().millisecondsSinceEpoch -
+              requestSentAt!.millisecondsSinceEpoch) /
+          1000;
+      print("*** Request to ${response.realUri} took ${networkTime}s ***");
+    }
+    super.onResponse(response, handler);
   }
 }
 

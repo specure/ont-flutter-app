@@ -26,7 +26,7 @@ import 'package:nt_flutter_standalone/modules/map/widgets/providers.bottom-sheet
 
 const int PICKER_YEARS_COUNT = 2;
 
-List<TechnologyItem> technologies = [
+List<TechnologyItem> mnoTechnologies = [
   TechnologyItem(
     color: NTColors.primary,
     title: 'All',
@@ -46,6 +46,13 @@ List<TechnologyItem> technologies = [
   TechnologyItem(
     color: color5G,
     title: '5G',
+  ),
+];
+
+List<TechnologyItem> ispTechnologies = [
+  TechnologyItem(
+    color: NTColors.primary,
+    title: 'WLAN',
   ),
 ];
 
@@ -98,9 +105,9 @@ class MapCubit extends Cubit<MapState> {
       ? DateFormat('yyyyMM').format(state.currentPeriod!)
       : null;
   String get currentTechnology =>
-      technologies[state.currentTechnologyIndex].title.toUpperCase();
+      state.technologies[state.currentTechnologyIndex].title.toUpperCase();
   String get currentMobileOperator =>
-      state.mobileNetworkOperators[state.currentOperatorIndex]
+      state.providers[state.currentProviderIndex]
           .toUpperCase()
           .replaceAll(RegExp(r'\s+'), '-');
   String get currentLayerAffix =>
@@ -126,14 +133,15 @@ class MapCubit extends Cubit<MapState> {
 
   MapCubit()
       : super(MapState(
-          mobileNetworkOperators: ['All'],
+          providers: ['All'],
+          technologies: mnoTechnologies,
           currentPeriod:
               GetIt.I.get<DateTimeWrapper>().defaultCalendarDateTime(),
         ));
 
   init() async {
     await loadDefaultDate();
-    await loadMobileNetworkOperators();
+    await loadProviders(state.isIspActive);
   }
 
   Future loadDefaultDate() async {
@@ -150,10 +158,15 @@ class MapCubit extends Cubit<MapState> {
     }
   }
 
-  Future loadMobileNetworkOperators() async {
-    var operators = await _technologyService.getMobileOperators();
-    operators.insert(0, 'All');
-    emit(state.copyWith(mobileNetworkOperators: operators));
+  Future loadProviders(bool isIspActive) async {
+    List<String> providers = [];
+    if (isIspActive) {
+      providers = await _technologyService.getIspProviders();
+    } else {
+      providers = await _technologyService.getMnoProviders();
+    }
+    providers.insert(0, 'All');
+    emit(state.copyWith(providers: providers));
   }
 
   void onMapCreated(MapboxMapController controller) {
@@ -224,14 +237,14 @@ class MapCubit extends Cubit<MapState> {
   Future onTechnologyTap(TechnologyItem technology) async {
     await _setCurrentMunicipalityVisibility(false);
     emit(state.copyWith(
-        currentTechnologyIndex: technologies.indexOf(technology)));
+        currentTechnologyIndex: state.technologies.indexOf(technology)));
     _setCurrentMunicipalityVisibility(true);
   }
 
   Future onOperatorChange(String operator) async {
     await _setCurrentMunicipalityVisibility(false);
     emit(state.copyWith(
-        currentOperatorIndex: state.mobileNetworkOperators.indexOf(operator)));
+        currentProviderIndex: state.providers.indexOf(operator)));
     _setCurrentMunicipalityVisibility(true);
   }
 
@@ -286,7 +299,7 @@ class MapCubit extends Cubit<MapState> {
   void onProvidersTap() {
     _navigationService.showBottomSheet(
       ProvidersBottomSheet(
-        providers: state.mobileNetworkOperators,
+        providers: state.providers,
         onProviderTap: onOperatorChange,
       ),
       backgroundColor: Colors.transparent,
@@ -334,6 +347,14 @@ class MapCubit extends Cubit<MapState> {
       averageUp: properties['$currentLayerAffix-UPLOAD'] ?? 0,
       averageLatency: properties['$currentLayerAffix-PING'] ?? 0,
     );
+  }
+
+  void onIspMnoSwitch(bool isIspActive) {
+    emit(state.copyWith(
+      isIspActive: isIspActive,
+      technologies: isIspActive ? ispTechnologies : mnoTechnologies,
+    ));
+    loadProviders(isIspActive);
   }
 
   @override

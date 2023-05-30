@@ -45,10 +45,10 @@ class MapScreenPortraitConfig extends MapScreenConfig {
               right: 10,
               top: paddingTop + mapSearchBarHeight + 8,
               child: TechnologyBar(
-                allTechnologies: technologies,
-                operators: state.mobileNetworkOperators,
+                allTechnologies: state.technologies,
+                operators: state.providers,
                 currentTechnologyIndex: state.currentTechnologyIndex,
-                currentOperatorIndex: state.currentOperatorIndex,
+                currentOperatorIndex: state.currentProviderIndex,
                 expanded: state.isTechnologyBarExpanded,
                 onTap: () => context.read<MapCubit>().onTechnologyBarTap(),
                 onTechnologyTap: (tech) =>
