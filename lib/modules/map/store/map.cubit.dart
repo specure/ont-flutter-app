@@ -11,6 +11,7 @@ import 'package:nt_flutter_standalone/core/constants/mapbox.dart';
 import 'package:nt_flutter_standalone/core/models/project.dart';
 import 'package:nt_flutter_standalone/core/services/cms.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/wrappers/date-time.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/map/constants/colors.dart';
 import 'package:nt_flutter_standalone/modules/map/models/map-search.item.dart';
@@ -63,7 +64,6 @@ class MapCubit extends Cubit<MapState> {
   final TechnologyApiService _technologyService =
       GetIt.I.get<TechnologyApiService>();
   final CMSService _cmsService = GetIt.I.get<CMSService>();
-  final FocusNode mapSearchFocusNode = FocusNode();
   final DateTimeWrapper _dateTimeWrapper = GetIt.I.get<DateTimeWrapper>();
   MapboxMapController? _mapController;
 
@@ -141,14 +141,15 @@ class MapCubit extends Cubit<MapState> {
 
   init() async {
     await loadDefaultDate();
-    await loadProviders(state.isIspActive);
+    await loadProviders();
   }
 
   Future loadDefaultDate() async {
     if (state.defaultPeriod != null) {
       return;
     }
-    final NTProject? project = await _cmsService.getProject();
+    final NTProject? project = GetIt.I.get<CoreCubit>().state.project ??
+        await _cmsService.getProject();
     if (project != null && project.mapboxActualDate != null) {
       final DateTime currentPeriod = DateTime.parse(project.mapboxActualDate!);
       emit(state.copyWith(
@@ -158,7 +159,7 @@ class MapCubit extends Cubit<MapState> {
     }
   }
 
-  Future loadProviders(bool isIspActive) async {
+  Future loadProviders({bool isIspActive = false}) async {
     List<String> providers = [];
     if (isIspActive) {
       providers = await _technologyService.getIspProviders();
@@ -195,12 +196,12 @@ class MapCubit extends Cubit<MapState> {
     emit(state.copyWith(isSearchActive: false, searchResults: []));
   }
 
-  void onSearchTap() {
-    mapSearchFocusNode.requestFocus();
+  void onSearchTap(FocusNode focusNode) {
+    focusNode.requestFocus();
     emit(state.copyWith(isSearchActive: true));
   }
 
-  Future onSearchEdit(String query) {
+  Future? onSearchEdit(String query) {
     if ((_debounce?.isActive) ?? false) {
       _debounce?.cancel();
     }
@@ -349,12 +350,17 @@ class MapCubit extends Cubit<MapState> {
     );
   }
 
-  void onIspMnoSwitch(bool isIspActive) {
+  void onIspMnoSwitch(bool? isIspActive) {
+    if (isIspActive == null) {
+      return;
+    }
     emit(state.copyWith(
       isIspActive: isIspActive,
       technologies: isIspActive ? ispTechnologies : mnoTechnologies,
+      currentTechnologyIndex: 0,
+      currentProviderIndex: 0,
     ));
-    loadProviders(isIspActive);
+    loadProviders(isIspActive: isIspActive);
   }
 
   @override

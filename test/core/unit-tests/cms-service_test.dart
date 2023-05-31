@@ -47,6 +47,7 @@ final List<Map<String, dynamic>> _projects = [
     'enable_app_jitter_and_packet_loss': false,
     'enable_app_qos_result_explanation': false,
     'enable_app_qoe_result_explanation': false,
+    'enable_map_mno_isp_switch': false
   }
 ];
 

@@ -1,3 +1,5 @@
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
@@ -6,14 +8,18 @@ import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/mapbox.dart';
 import 'package:nt_flutter_standalone/core/models/project.dart';
 import 'package:nt_flutter_standalone/core/services/cms.service.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/wrappers/date-time.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/map/models/map-search.item.dart';
 import 'package:nt_flutter_standalone/modules/map/models/map-search.request.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/map-search.api.service.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/technology.api.service.dart';
 import 'package:nt_flutter_standalone/modules/map/store/map.cubit.dart';
+import 'package:nt_flutter_standalone/modules/map/store/map.state.dart';
 
 import '../../di/service-locator.dart';
+import '../../measurements/widgets-tests/home-screen.widget_test.dart';
 
 const String _mapSearchQuery = 'Query';
 final NTProject _project =
@@ -24,7 +30,17 @@ final NTProject _projectDecember =
 late final _cmsService;
 late final MapCubit cubit;
 
-@GenerateMocks([TechnologyApiService, MapSearchApiService])
+class MockMapCubit extends MockCubit<MapState> implements MapCubit {}
+
+class MockMapCubitCalls extends Mock implements MapCubit {}
+
+@GenerateMocks([
+  MapSearchApiService
+], customMocks: [
+  MockSpec<TechnologyApiService>(
+    onMissingStub: OnMissingStub.returnDefault,
+  )
+])
 void main() {
   setUpAll(() async {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
@@ -34,21 +50,24 @@ void main() {
 
   group('Test map cubit', () {
     test('loads mobile operators', () async {
-      await cubit.loadMobileNetworkOperators();
+      await cubit.loadProviders();
       expect(
-        cubit.state.mobileNetworkOperators.length,
+        cubit.state.providers.length,
         2,
       );
     });
+
     test('activates search when the field is tapped', () {
-      cubit.onSearchTap();
+      cubit.onSearchTap(FocusNode());
       expect(cubit.state.isSearchActive, true);
     });
+
     test('cancels search', () {
       cubit.onCancelSearchTap();
       expect(cubit.state.isSearchActive, false);
       expect(cubit.state.searchResults, isEmpty);
     });
+
     test('returns results when searching', () async {
       await cubit.onSearchEdit(_mapSearchQuery);
       expect(
@@ -56,6 +75,7 @@ void main() {
         isNotEmpty,
       );
     });
+
     test('retrieves data from map layers', () {
       final List<dynamic> data = [
         {
@@ -70,18 +90,34 @@ void main() {
       final measurementsData = cubit.getMeasurementsDataFromMap(data, 5.0);
       expect(measurementsData, isNotNull);
     });
+
     test('retrieves default date from the CMS', () async {
       await cubit.loadDefaultDate();
+      verify(_cmsService.getProject()).called(1);
+      final match = DateTime.parse(_project.mapboxActualDate!);
+      expect(cubit.state.defaultPeriod, match);
+      expect(cubit.state.currentPeriod, match);
+
+      await cubit.loadDefaultDate();
+      verifyNever(_cmsService.getProject());
+      expect(cubit.state.defaultPeriod, match);
+      expect(cubit.state.currentPeriod, match);
+    });
+
+    test('retrieves default date from the core state', () async {
+      final coreState = CoreState(project: _project);
+      whenListen(
+        GetIt.I.get<CoreCubit>(),
+        Stream.fromIterable([coreState]),
+        initialState: coreState,
+      );
+      await cubit.loadDefaultDate();
+      verifyNever(_cmsService.getProject());
       final match = DateTime.parse(_project.mapboxActualDate!);
       expect(cubit.state.defaultPeriod, match);
       expect(cubit.state.currentPeriod, match);
     });
-    test('requests and sets the default date once', () async {
-      await cubit.loadDefaultDate();
-      verify(_cmsService.getProject()).called(1);
-      await cubit.loadDefaultDate();
-      verifyNever(_cmsService.getProject());
-    });
+
     test('Checking last month of the year', () async {
       when(_cmsService.getProject()).thenAnswer((_) async => _projectDecember);
       var periodPickerMonthsList = cubit.periodPickerMonthsList;
@@ -106,6 +142,13 @@ void main() {
     //   var periodPickerYearsListDec = cubit.periodPickerYearsList;
     //   expect(periodPickerYearsListDec.length, 2);
     // });
+
+    test('Switching between ISPs and MNOs', () {
+      cubit.onIspMnoSwitch(true);
+      expect(cubit.state.technologies, ispTechnologies);
+      cubit.onIspMnoSwitch(false);
+      expect(cubit.state.technologies, mnoTechnologies);
+    });
   });
 }
 
@@ -114,7 +157,7 @@ _setUpStubs(NTProject project) {
   final mapSearchApiService = GetIt.I.get<MapSearchApiService>();
   _cmsService = GetIt.I.get<CMSService>();
   when(_cmsService.getProject()).thenAnswer((_) async => project);
-  when(technologyApiService.getMobileOperators())
+  when(technologyApiService.getMnoProviders())
       .thenAnswer((_) async => ['Operator']);
   when(mapSearchApiService.search(MapSearchRequest(
     _mapSearchQuery,
@@ -138,4 +181,11 @@ _setUpStubs(NTProject project) {
   final now = DateTime(2022, 2, 3);
   when(dateTimeWrapper.now()).thenReturn(now);
   when(dateTimeWrapper.defaultCalendarDateTime()).thenReturn(now);
+  TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+  final coreState = CoreState();
+  whenListen(
+    GetIt.I.get<CoreCubit>(),
+    Stream.fromIterable([coreState]),
+    initialState: coreState,
+  );
 }

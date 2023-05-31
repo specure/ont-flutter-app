@@ -26,17 +26,7 @@ class MapScreenPortraitConfig extends MapScreenConfig {
             left: 10,
             right: 10,
             top: paddingTop,
-            child: MapSearchBar(
-              textFieldFocusNode: context.read<MapCubit>().mapSearchFocusNode,
-              onSearchTap: () => context.read<MapCubit>().onSearchTap(),
-              onCancelSearchTap: () =>
-                  context.read<MapCubit>().onCancelSearchTap(),
-              onSearchEdit: (q) => context.read<MapCubit>().onSearchEdit(q),
-              isSearchActive: state.isSearchActive,
-              searchResults: state.searchResults,
-              onSearchResultTap: (i) =>
-                  context.read<MapCubit>().onSearchResultTap(i),
-            ),
+            child: MapSearchBar(),
           ),
           ConditionalContent(
             conditional: !state.isSearchActive,
@@ -44,26 +34,13 @@ class MapScreenPortraitConfig extends MapScreenConfig {
               left: 10,
               right: 10,
               top: paddingTop + mapSearchBarHeight + 8,
-              child: TechnologyBar(
-                allTechnologies: state.technologies,
-                operators: state.providers,
-                currentTechnologyIndex: state.currentTechnologyIndex,
-                currentOperatorIndex: state.currentProviderIndex,
-                expanded: state.isTechnologyBarExpanded,
-                onTap: () => context.read<MapCubit>().onTechnologyBarTap(),
-                onTechnologyTap: (tech) =>
-                    context.read<MapCubit>().onTechnologyTap(tech),
-                onProvidersTap: () => context.read<MapCubit>().onProvidersTap(),
-              ),
+              child: TechnologyBar(),
             ),
           ),
           Container(
             alignment: Alignment.bottomCenter,
             margin: EdgeInsets.only(bottom: 12),
-            child: PeriodBadge(
-              currentPeriod: state.currentPeriod!,
-              onBadgeTap: () => context.read<MapCubit>().onPeriodBadgeTap(),
-            ),
+            child: PeriodBadge(),
           ),
         ],
       ),

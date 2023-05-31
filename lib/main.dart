@@ -93,8 +93,18 @@ class App extends StatelessWidget {
                   fontSizeFactor: NTDimensions.factor,
                   fontFamily: 'NewAtten',
                 ),
+            visualDensity: VisualDensity.compact,
+            radioTheme: Theme.of(context).radioTheme.copyWith(
+                  fillColor: MaterialStatePropertyAll(NTColors.primary),
+                ),
           )
-        : ThemeData(primaryColor: NTColors.primary);
+        : ThemeData(
+            primaryColor: NTColors.primary,
+            visualDensity: VisualDensity.compact,
+            radioTheme: Theme.of(context).radioTheme.copyWith(
+                  fillColor: MaterialStatePropertyAll(NTColors.primary),
+                ),
+          );
     return MultiBlocProvider(
       providers: [
         BlocProvider<CoreCubit>(

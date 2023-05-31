@@ -25,9 +25,10 @@ void main() {
 
   group('Test mobile operators API', () {
     test('returns a list when the request is successful', () async {
-      when(GetIt.I.get<Dio>().get(NTUrls.csProvidersRoute)).thenAnswer(
+      when(GetIt.I.get<Dio>().get(NTUrls.csMnoProvidersRoute)).thenAnswer(
           (_) async => Response(
-                  requestOptions: RequestOptions(path: NTUrls.csProvidersRoute),
+                  requestOptions:
+                      RequestOptions(path: NTUrls.csMnoProvidersRoute),
                   statusCode: 200,
                   data: {
                     'statsByProvider': [
@@ -35,14 +36,41 @@ void main() {
                     ],
                   }));
       List<String> list =
-          await TechnologyApiService(testing: true).getMobileOperators();
+          await TechnologyApiService(testing: true).getMnoProviders();
       expect(list, ['Name']);
     });
+
     test('returns an empty list when the request fails', () async {
-      when(GetIt.I.get<Dio>().get(NTUrls.csProvidersRoute))
+      when(GetIt.I.get<Dio>().get(NTUrls.csMnoProvidersRoute))
           .thenAnswer((_) async => throw MockDioError());
       List<String> list =
-          await TechnologyApiService(testing: true).getMobileOperators();
+          await TechnologyApiService(testing: true).getMnoProviders();
+      expect(list, []);
+    });
+  });
+
+  group('Test fixed-line providers API', () {
+    test('returns a list when the request is successful', () async {
+      when(GetIt.I.get<Dio>().get(NTUrls.csIspProvidersRoute)).thenAnswer(
+          (_) async => Response(
+                  requestOptions:
+                      RequestOptions(path: NTUrls.csIspProvidersRoute),
+                  statusCode: 200,
+                  data: {
+                    'statsByProvider': [
+                      {'providerName': 'Name'}
+                    ],
+                  }));
+      List<String> list =
+          await TechnologyApiService(testing: true).getIspProviders();
+      expect(list, ['Name']);
+    });
+
+    test('returns an empty list when the request fails', () async {
+      when(GetIt.I.get<Dio>().get(NTUrls.csIspProvidersRoute))
+          .thenAnswer((_) async => throw MockDioError());
+      List<String> list =
+          await TechnologyApiService(testing: true).getIspProviders();
       expect(list, []);
     });
   });

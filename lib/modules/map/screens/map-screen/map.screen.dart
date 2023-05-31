@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +27,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   MapboxMap? _map;
   CoreState? _coreState;
+  StreamSubscription? _styleSub;
 
   @override
   void initState() {
@@ -35,19 +38,18 @@ class _MapScreenState extends State<MapScreen> {
       return;
     }
     GetIt.I.get<MapCubit>().init();
-    _map = MapboxMap(
-      onMapCreated: context.read<MapCubit>().onMapCreated,
-      onStyleLoadedCallback: context.read<MapCubit>().onMapStyleLoaded,
-      onMapClick: context.read<MapCubit>().onMapClick,
-      myLocationEnabled: false,
-      trackCameraPosition: true,
-      initialCameraPosition: CameraPosition(
-        target: LatLng(MapBoxConsts.initialLat, MapBoxConsts.initialLng),
-        zoom: MapBoxConsts.initialZoom,
-      ),
-      styleString: MapBoxConsts.styleUrl,
-      accessToken: dotenv.env['MAPBOX_TOKEN']!,
-    );
+    _styleSub = GetIt.I
+        .get<MapCubit>()
+        .stream
+        .distinct((a, b) => a.isIspActive == b.isIspActive)
+        .map((state) => state.isIspActive)
+        .listen(_setMap);
+  }
+
+  @override
+  void dispose() {
+    _styleSub?.cancel();
+    super.dispose();
   }
 
   @override
@@ -55,6 +57,9 @@ class _MapScreenState extends State<MapScreen> {
     return BlocBuilder<MapCubit, MapState>(
       bloc: GetIt.I.get<MapCubit>(),
       builder: (context, state) {
+        if (_map == null) {
+          return Container();
+        }
         if (_coreState?.connectivity == null ||
             _coreState?.connectivity == ConnectivityResult.none) {
           return NTErrorWidget(ApiErrors.noInternetConnection);
@@ -65,6 +70,23 @@ class _MapScreenState extends State<MapScreen> {
           builder: (config) => config.getContent(context),
         );
       },
+    );
+  }
+
+  _setMap(bool isIspActive) {
+    _map = MapboxMap(
+      onMapCreated: GetIt.I.get<MapCubit>().onMapCreated,
+      onStyleLoadedCallback: GetIt.I.get<MapCubit>().onMapStyleLoaded,
+      onMapClick: GetIt.I.get<MapCubit>().onMapClick,
+      myLocationEnabled: false,
+      trackCameraPosition: true,
+      initialCameraPosition: CameraPosition(
+        target: LatLng(MapBoxConsts.initialLat, MapBoxConsts.initialLng),
+        zoom: MapBoxConsts.initialZoom,
+      ),
+      styleString:
+          isIspActive ? MapBoxConsts.ispStyleUrl : MapBoxConsts.styleUrl,
+      accessToken: dotenv.env['MAPBOX_TOKEN']!,
     );
   }
 }

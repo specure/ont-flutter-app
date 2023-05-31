@@ -51,6 +51,7 @@ class CoreCubit extends Cubit<CoreState> {
     emit(state.copyWith(
       connectivity: connectivity,
       netNeutralityTestsEnabled: netNeutralityTestsEnabled,
+      project: cmsProject,
     ));
   }
 

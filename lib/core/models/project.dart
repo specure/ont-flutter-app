@@ -29,6 +29,8 @@ class NTProject extends Equatable {
   final bool enableAppQosResultExplanation;
   @JsonKey(name: 'enable_app_qoe_result_explanation')
   final bool enableAppQoeResultExplanation;
+  @JsonKey(name: 'enable_map_mno_isp_switch')
+  final bool enableMapMnoIspSwitch;
 
   NTProject({
     this.mapboxActualDate,
@@ -43,6 +45,7 @@ class NTProject extends Equatable {
     this.enableAppJitterAndPacketLoss = false,
     this.enableAppQosResultExplanation = false,
     this.enableAppQoeResultExplanation = false,
+    this.enableMapMnoIspSwitch = false,
   });
 
   Map<String, dynamic> toJson() => _$NTProjectToJson(this);
@@ -63,5 +66,6 @@ class NTProject extends Equatable {
         enableAppJitterAndPacketLoss,
         enableAppQosResultExplanation,
         enableAppQoeResultExplanation,
+        enableMapMnoIspSwitch,
       ];
 }

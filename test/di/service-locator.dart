@@ -20,6 +20,7 @@ import 'package:nt_flutter_standalone/modules/history/services/api/history.api.s
 import 'package:nt_flutter_standalone/modules/history/store/history.cubit.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/map-search.api.service.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/technology.api.service.dart';
+import 'package:nt_flutter_standalone/modules/map/store/map.cubit.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/services/measurement-result.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/carrier-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-info.wrapper.dart';
@@ -45,6 +46,7 @@ import '../history/unit-tests/history-api-service_test.mocks.dart';
 import '../history/unit-tests/history-cubit_test.dart';
 import '../history/unit-tests/history-cubit_test.mocks.dart';
 import '../history/widget-tests/history-screen_test.mocks.dart';
+import '../map/unit-tests/map-cubit_test.dart';
 import '../map/unit-tests/map-cubit_test.mocks.dart';
 import '../measurement-result/unit-tests/measurement-result-cubit_test.mocks.dart';
 import '../measurement-result/widget-tests/results-qos-view-widget_test.mocks.dart';
@@ -131,6 +133,7 @@ class TestingServiceLocator {
     _registerLazySingleton<CoreCubit>(() => MockCoreCubitCalls());
     _registerLazySingleton<HistoryCubit>(() => MockHistoryCubit());
     _registerLazySingleton<NetNeutralityCubit>(() => MockNetNeutralityCubit());
+    _registerLazySingleton<MapCubit>(() => MockMapCubit());
     // End cubits
   }
 
