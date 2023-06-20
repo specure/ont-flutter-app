@@ -45,17 +45,18 @@ class NetNeutralityState
           .where((item) => item.testStatus == NetNeutralityTestStatus.SUCCEED)
           .toList();
 
-  List<NetNeutralityHistoryItem> getFailedHistoryResultsByType(
-      String type) =>
+  List<NetNeutralityHistoryItem> getFailedHistoryResultsByType(String type) =>
       getHistoryResultsByType(type)
           .where((item) => item.testStatus != NetNeutralityTestStatus.SUCCEED)
           .toList();
 
-  List<NetNeutralityHistoryItem> getSuccessfulHistoryResult() =>
-      historyResults.where((item) => item.testStatus == NetNeutralityTestStatus.SUCCEED).toList();
+  List<NetNeutralityHistoryItem> getSuccessfulHistoryResult() => historyResults
+      .where((item) => item.testStatus == NetNeutralityTestStatus.SUCCEED)
+      .toList();
 
-  List<NetNeutralityHistoryItem> getFailedHistoryResult() =>
-      historyResults.where((item) => item.testStatus != NetNeutralityTestStatus.SUCCEED).toList();
+  List<NetNeutralityHistoryItem> getFailedHistoryResult() => historyResults
+      .where((item) => item.testStatus != NetNeutralityTestStatus.SUCCEED)
+      .toList();
 
   int get successfullHistoryResultsPercent => historyResults.length != 0
       ? ((historyResults
@@ -68,24 +69,24 @@ class NetNeutralityState
       : 0;
 
   List<NetNeutralityHistoryCategory> get categories => [
-        NetNeutralityHistoryCategory(
-          'Web page',
-          type: NetNeutralityType.WEB,
-          totalResults: getHistoryResultsByType(NetNeutralityType.WEB).length,
-          successfulResults:
-              getSuccessfullHistoryResultsByType(NetNeutralityType.WEB).length,
-          failedResults: getFailedHistoryResultsByType(NetNeutralityType.WEB).length,
-          items: getHistoryResultsByType(NetNeutralityType.WEB)
-        ),
-        NetNeutralityHistoryCategory(
-          'DNS',
-          type: NetNeutralityType.DNS,
-          totalResults: getHistoryResultsByType(NetNeutralityType.DNS).length,
-          successfulResults:
-              getSuccessfullHistoryResultsByType(NetNeutralityType.DNS).length,
-            failedResults: getFailedHistoryResultsByType(NetNeutralityType.DNS).length,
-          items: getHistoryResultsByType(NetNeutralityType.DNS)
-        ),
+        NetNeutralityHistoryCategory('Web page',
+            type: NetNeutralityType.WEB,
+            totalResults: getHistoryResultsByType(NetNeutralityType.WEB).length,
+            successfulResults:
+                getSuccessfullHistoryResultsByType(NetNeutralityType.WEB)
+                    .length,
+            failedResults:
+                getFailedHistoryResultsByType(NetNeutralityType.WEB).length,
+            items: getHistoryResultsByType(NetNeutralityType.WEB)),
+        NetNeutralityHistoryCategory('DNS',
+            type: NetNeutralityType.DNS,
+            totalResults: getHistoryResultsByType(NetNeutralityType.DNS).length,
+            successfulResults:
+                getSuccessfullHistoryResultsByType(NetNeutralityType.DNS)
+                    .length,
+            failedResults:
+                getFailedHistoryResultsByType(NetNeutralityType.DNS).length,
+            items: getHistoryResultsByType(NetNeutralityType.DNS)),
       ];
 
   NetNeutralityState({
@@ -138,5 +139,6 @@ class NetNeutralityState
         this.connectivity,
         this.resultDetailsItems,
         this.resultDetailsConfig,
+        this.interimResults,
       ];
 }

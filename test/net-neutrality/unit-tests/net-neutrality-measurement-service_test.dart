@@ -20,7 +20,6 @@ import 'package:nt_flutter_standalone/modules/net-neutrality/store/net-neutralit
 
 import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';
-import 'net-neutrality-measurement-service_test.mocks.dart';
 
 final _requestSentAt = 3000;
 final _settings = NetNeutralitySettingsResponse.fromJson(jsonDecode(
@@ -29,8 +28,6 @@ final _settings = NetNeutralitySettingsResponse.fromJson(jsonDecode(
 final _settingsMoreDns = NetNeutralitySettingsResponse.fromJson(jsonDecode(File(
         'test/net-neutrality/unit-tests/data/net-neutrality-settings-more-dns.json')
     .readAsStringSync()));
-late final NetNeutralityProgressHandler _progressHandler =
-    MockNetNeutralityCubitCalls();
 final _service = NetNeutralityMeasurementService(testing: true);
 final _clientUuid = "clientUuid";
 final _dioError = MockDioError();
@@ -114,49 +111,38 @@ void main() {
 
   group('Net neutrality measurement service', () {
     test('initWithSettings', () async {
-      await _service.initWithSettings(_settings,
-          progressHandler: _progressHandler);
+      await _service.initWithSettings(_settings);
       expect(_service.settings, _settings);
-      expect(_service.progressHandler, _progressHandler);
     });
 
     test('runAllWebPageTests', () async {
-      await _service.initWithSettings(_settings,
-          progressHandler: _progressHandler);
+      await _service.initWithSettings(_settings);
       when(GetIt.I.get<Dio>().get(""))
           .thenAnswer((realInvocation) async => _webTestResponse);
-      await _service.runAllWebPageTests();
-      verify(_progressHandler.updateProgress(
-              resultItem: anyNamed('resultItem')))
-          .called(_settings.web!.length);
+      expect(_service.runAllWebPageTests(), emitsInOrder([]));
     });
 
     test('runOneWebPageTest', () async {
-      await _service.initWithSettings(_settings,
-          progressHandler: _progressHandler);
+      await _service.initWithSettings(_settings);
       final test = _settings.web!.first;
       when(GetIt.I.get<Dio>().get(""))
           .thenAnswer((realInvocation) async => _webTestResponse);
-      final WebNetNeutralityResultItem resultItem =
-          await _service.runOneWebPageTest(test);
+      final WebNetNeutralityResultItem resultItem = (await _service
+          .runOneWebPageTest(test)) as WebNetNeutralityResultItem;
       expect(resultItem.statusCode, 200);
       expect(resultItem.timeoutExceeded, false);
-      verify(
-          _progressHandler.updateProgress(resultItem: anyNamed('resultItem')));
     });
 
     test('runOneWebPageTest with error', () async {
-      await _service.initWithSettings(_settings,
-          progressHandler: _progressHandler);
+      await _service.initWithSettings(_settings);
       final test = _settings.web!.first;
       WebNetNeutralityResultItem resultItem;
       when(GetIt.I.get<Dio>().get(""))
           .thenAnswer((realInvocation) async => throw _dioError);
 
       when(_dioError.type).thenReturn(DioErrorType.connectTimeout);
-      resultItem = await _service.runOneWebPageTest(test);
-      verify(
-          _progressHandler.updateProgress(resultItem: anyNamed('resultItem')));
+      resultItem = (await _service.runOneWebPageTest(test))
+          as WebNetNeutralityResultItem;
       expect(resultItem.statusCode, null);
       expect(resultItem.timeoutExceeded, true);
 
@@ -165,19 +151,17 @@ void main() {
         requestOptions: RequestOptions(path: ""),
         statusCode: 500,
       ));
-      resultItem = await _service.runOneWebPageTest(test);
+      resultItem = (await _service.runOneWebPageTest(test))
+          as WebNetNeutralityResultItem;
       expect(resultItem.statusCode, 500);
       expect(resultItem.timeoutExceeded, false);
-      verify(
-          _progressHandler.updateProgress(resultItem: anyNamed('resultItem')));
 
       when(GetIt.I.get<Dio>().get(""))
           .thenAnswer((realInvocation) async => throw Exception());
-      resultItem = await _service.runOneWebPageTest(test);
+      resultItem = (await _service.runOneWebPageTest(test))
+          as WebNetNeutralityResultItem;
       expect(resultItem.statusCode, null);
       expect(resultItem.timeoutExceeded, false);
-      verify(
-          _progressHandler.updateProgress(resultItem: anyNamed('resultItem')));
     });
 
     test('runAllDnsTests', () async {
@@ -187,22 +171,17 @@ void main() {
       final test2 = _settingsMoreDns.dns![1];
       when(GetIt.I.get<DnsTestService>().execute(test2))
           .thenAnswer((realInvocation) async => _dnsTestNonExistingResponse);
-      await _service.initWithSettings(_settings,
-          progressHandler: _progressHandler);
-      await _service.runAllDnsTests();
-      verify(_progressHandler.updateProgress(
-              resultItem: anyNamed('resultItem')))
-          .called(_settings.dns!.length);
+      await _service.initWithSettings(_settings);
+      expect(_service.runAllDnsTests(), emitsInOrder([]));
     });
 
     test('runOneDnsTest - existing', () async {
       final test = _settings.dns![0];
       when(GetIt.I.get<DnsTestService>().execute(test))
           .thenAnswer((realInvocation) async => _dnsTestExistingResponse);
-      await _service.initWithSettings(_settings,
-          progressHandler: _progressHandler);
+      await _service.initWithSettings(_settings);
       final DnsNetNeutralityResultItem resultItem =
-          await _service.runOneDnsTest(test);
+          (await _service.runOneDnsTest(test)) as DnsNetNeutralityResultItem;
       expect(resultItem.resolver, "8.8.8.8");
       expect(resultItem.timeoutExceeded, false);
       expect(resultItem.dnsStatus,
@@ -210,18 +189,15 @@ void main() {
       expect(resultItem.durationNs, 80901875);
       expect(resultItem.type, NetNeutralityType.DNS);
       expect(resultItem.dnsEntries, _dnsEntries);
-      verify(
-          _progressHandler.updateProgress(resultItem: anyNamed('resultItem')));
     });
 
     test('runOneDnsTest - non-existing', () async {
       final test = _settingsMoreDns.dns![1];
       when(GetIt.I.get<DnsTestService>().execute(test))
           .thenAnswer((realInvocation) async => _dnsTestNonExistingResponse);
-      await _service.initWithSettings(_settingsMoreDns,
-          progressHandler: _progressHandler);
+      await _service.initWithSettings(_settingsMoreDns);
       final DnsNetNeutralityResultItem resultItem =
-          await _service.runOneDnsTest(test);
+          (await _service.runOneDnsTest(test)) as DnsNetNeutralityResultItem;
       expect(resultItem.resolver, "8.8.8.8");
       expect(resultItem.timeoutExceeded, false);
       expect(resultItem.dnsStatus,
@@ -229,8 +205,6 @@ void main() {
       expect(resultItem.durationNs, 80901875);
       expect(resultItem.type, NetNeutralityType.DNS);
       expect(resultItem.dnsEntries, []);
-      verify(
-          _progressHandler.updateProgress(resultItem: anyNamed('resultItem')));
     });
   });
 }

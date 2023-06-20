@@ -37,6 +37,7 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
   final _location = GetIt.I.get<LocationService>();
   final _platform = GetIt.I.get<PlatformWrapper>();
   final _deviceInfoPlugin = GetIt.I.get<DeviceInfoPlugin>();
+  List<StreamSubscription<NetNeutralityResultItem>?> _testSubscriptions = [];
 
   ErrorHandler? errorHandler;
   ConnectivityChangesHandler? connectivityChangesHandler;
@@ -67,6 +68,10 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
   Future<void> close() async {
     _connectivitySubscription?.cancel();
     _connectivitySubscription = null;
+    _testSubscriptions.forEach((element) {
+      element?.cancel();
+    });
+    _testSubscriptions.clear();
     super.close();
   }
 
@@ -87,9 +92,15 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
       handleError(noSettingsException);
       return;
     }
-    _testService.initWithSettings(settings, progressHandler: this);
-    await _testService.runAllWebPageTests();
-    await _testService.runAllDnsTests();
+    _testService.initWithSettings(settings);
+    _testSubscriptions.addAll([
+      _testService.runAllWebPageTests()?.listen((event) {
+        updateProgress(resultItem: event);
+      }),
+      _testService.runAllDnsTests()?.listen((event) {
+        updateProgress(resultItem: event);
+      }),
+    ]);
   }
 
   restartMeasurement() {
@@ -126,15 +137,19 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
       100,
       (state.lastResultForCurrentPhase +
               (1 / (_testService.settings!.totalTests)) * 100)
-          .ceilToDouble(),
+          .roundToDouble(),
     );
-    if (progress < 100) {
+    if (interimResults.length < _testService.settings!.totalTests) {
       emit(state.copyWith(
         lastResultForCurrentPhase: progress,
         phase: NetNeutralityPhase.runningTests,
         interimResults: interimResults,
       ));
-    } else if (state.lastResultForCurrentPhase != progress) {
+    } else {
+      _testSubscriptions.forEach((element) {
+        element?.cancel();
+      });
+      _testSubscriptions.clear();
       var result = NetNeutralityResult();
       int? networkTypeId;
       int? signalStrength;

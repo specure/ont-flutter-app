@@ -3,27 +3,29 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i6;
 
 import 'package:dio/dio.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i9;
+import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i10;
 import 'package:nt_flutter_standalone/modules/history/models/net-neutrality-history.dart'
-    as _i12;
+    as _i13;
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/dns-net-neutrality-settings-item.dart'
-    as _i7;
-import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-history-item.dart'
-    as _i11;
-import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-result.dart'
-    as _i10;
-import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-settings-response.dart'
-    as _i4;
-import 'package:nt_flutter_standalone/modules/net-neutrality/models/web-net-neutrality-settings-item.dart'
-    as _i6;
-import 'package:nt_flutter_standalone/modules/net-neutrality/services/net-neutrality-api.service.dart'
     as _i8;
-import 'package:nt_flutter_standalone/modules/net-neutrality/services/net-neutrality-measurement.service.dart'
+import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-history-item.dart'
+    as _i12;
+import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-result-item.dart'
     as _i3;
+import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-result.dart'
+    as _i11;
+import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-settings-response.dart'
+    as _i5;
+import 'package:nt_flutter_standalone/modules/net-neutrality/models/web-net-neutrality-settings-item.dart'
+    as _i7;
+import 'package:nt_flutter_standalone/modules/net-neutrality/services/net-neutrality-api.service.dart'
+    as _i9;
+import 'package:nt_flutter_standalone/modules/net-neutrality/services/net-neutrality-measurement.service.dart'
+    as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -46,26 +48,28 @@ class _FakeDio_0 extends _i1.SmartFake implements _i2.Dio {
         );
 }
 
+class _FakeNetNeutralityResultItem_1 extends _i1.SmartFake
+    implements _i3.NetNeutralityResultItem {
+  _FakeNetNeutralityResultItem_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [NetNeutralityMeasurementService].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockNetNeutralityMeasurementService extends _i1.Mock
-    implements _i3.NetNeutralityMeasurementService {
+    implements _i4.NetNeutralityMeasurementService {
   @override
-  set settings(_i4.NetNeutralitySettingsResponse? _settings) =>
+  set settings(_i5.NetNeutralitySettingsResponse? _settings) =>
       super.noSuchMethod(
         Invocation.setter(
           #settings,
           _settings,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  set progressHandler(_i3.NetNeutralityProgressHandler? _progressHandler) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #progressHandler,
-          _progressHandler,
         ),
         returnValueForMissingStub: null,
       );
@@ -97,8 +101,8 @@ class MockNetNeutralityMeasurementService extends _i1.Mock
       );
   @override
   dynamic initWithSettings(
-    _i4.NetNeutralitySettingsResponse? settings, {
-    _i3.NetNeutralityProgressHandler? progressHandler,
+    _i5.NetNeutralitySettingsResponse? settings, {
+    _i4.NetNeutralityProgressHandler? progressHandler,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -109,44 +113,57 @@ class MockNetNeutralityMeasurementService extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  _i5.Future<dynamic> runAllWebPageTests() => (super.noSuchMethod(
-        Invocation.method(
-          #runAllWebPageTests,
-          [],
-        ),
-        returnValue: _i5.Future<dynamic>.value(),
-        returnValueForMissingStub: _i5.Future<dynamic>.value(),
-      ) as _i5.Future<dynamic>);
-  @override
-  _i5.Future<dynamic> runOneWebPageTest(
-          _i6.WebNetNeutralitySettingsItem? test) =>
+  _i6.Future<_i3.NetNeutralityResultItem> runOneWebPageTest(
+          _i7.WebNetNeutralitySettingsItem? test) =>
       (super.noSuchMethod(
         Invocation.method(
           #runOneWebPageTest,
           [test],
         ),
-        returnValue: _i5.Future<dynamic>.value(),
-        returnValueForMissingStub: _i5.Future<dynamic>.value(),
-      ) as _i5.Future<dynamic>);
+        returnValue: _i6.Future<_i3.NetNeutralityResultItem>.value(
+            _FakeNetNeutralityResultItem_1(
+          this,
+          Invocation.method(
+            #runOneWebPageTest,
+            [test],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i6.Future<_i3.NetNeutralityResultItem>.value(
+                _FakeNetNeutralityResultItem_1(
+          this,
+          Invocation.method(
+            #runOneWebPageTest,
+            [test],
+          ),
+        )),
+      ) as _i6.Future<_i3.NetNeutralityResultItem>);
   @override
-  _i5.Future<dynamic> runAllDnsTests() => (super.noSuchMethod(
-        Invocation.method(
-          #runAllDnsTests,
-          [],
-        ),
-        returnValue: _i5.Future<dynamic>.value(),
-        returnValueForMissingStub: _i5.Future<dynamic>.value(),
-      ) as _i5.Future<dynamic>);
-  @override
-  _i5.Future<dynamic> runOneDnsTest(_i7.DnsNetNeutralitySettingsItem? test) =>
+  _i6.Future<_i3.NetNeutralityResultItem> runOneDnsTest(
+          _i8.DnsNetNeutralitySettingsItem? test) =>
       (super.noSuchMethod(
         Invocation.method(
           #runOneDnsTest,
           [test],
         ),
-        returnValue: _i5.Future<dynamic>.value(),
-        returnValueForMissingStub: _i5.Future<dynamic>.value(),
-      ) as _i5.Future<dynamic>);
+        returnValue: _i6.Future<_i3.NetNeutralityResultItem>.value(
+            _FakeNetNeutralityResultItem_1(
+          this,
+          Invocation.method(
+            #runOneDnsTest,
+            [test],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i6.Future<_i3.NetNeutralityResultItem>.value(
+                _FakeNetNeutralityResultItem_1(
+          this,
+          Invocation.method(
+            #runOneDnsTest,
+            [test],
+          ),
+        )),
+      ) as _i6.Future<_i3.NetNeutralityResultItem>);
   @override
   _i2.Dio dioInstanceForUrl(String? url) => (super.noSuchMethod(
         Invocation.method(
@@ -174,7 +191,7 @@ class MockNetNeutralityMeasurementService extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockNetNeutralityApiService extends _i1.Mock
-    implements _i8.NetNeutralityApiService {
+    implements _i9.NetNeutralityApiService {
   @override
   _i2.Dio get dio => (super.noSuchMethod(
         Invocation.getter(#dio),
@@ -202,22 +219,22 @@ class MockNetNeutralityApiService extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  _i5.Future<_i4.NetNeutralitySettingsResponse?> getSettings(
-          {_i9.ErrorHandler? errorHandler}) =>
+  _i6.Future<_i5.NetNeutralitySettingsResponse?> getSettings(
+          {_i10.ErrorHandler? errorHandler}) =>
       (super.noSuchMethod(
         Invocation.method(
           #getSettings,
           [],
           {#errorHandler: errorHandler},
         ),
-        returnValue: _i5.Future<_i4.NetNeutralitySettingsResponse?>.value(),
+        returnValue: _i6.Future<_i5.NetNeutralitySettingsResponse?>.value(),
         returnValueForMissingStub:
-            _i5.Future<_i4.NetNeutralitySettingsResponse?>.value(),
-      ) as _i5.Future<_i4.NetNeutralitySettingsResponse?>);
+            _i6.Future<_i5.NetNeutralitySettingsResponse?>.value(),
+      ) as _i6.Future<_i5.NetNeutralitySettingsResponse?>);
   @override
-  _i5.Future<void> postResults({
-    _i10.NetNeutralityResult? results,
-    _i9.ErrorHandler? errorHandler,
+  _i6.Future<void> postResults({
+    _i11.NetNeutralityResult? results,
+    _i10.ErrorHandler? errorHandler,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -228,13 +245,13 @@ class MockNetNeutralityApiService extends _i1.Mock
             #errorHandler: errorHandler,
           },
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
   @override
-  _i5.Future<List<_i11.NetNeutralityHistoryItem>?> getHistory(
+  _i6.Future<List<_i12.NetNeutralityHistoryItem>?> getHistory(
     String? openTestUuid, {
-    _i9.ErrorHandler? errorHandler,
+    _i10.ErrorHandler? errorHandler,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -242,14 +259,14 @@ class MockNetNeutralityApiService extends _i1.Mock
           [openTestUuid],
           {#errorHandler: errorHandler},
         ),
-        returnValue: _i5.Future<List<_i11.NetNeutralityHistoryItem>?>.value(),
+        returnValue: _i6.Future<List<_i12.NetNeutralityHistoryItem>?>.value(),
         returnValueForMissingStub:
-            _i5.Future<List<_i11.NetNeutralityHistoryItem>?>.value(),
-      ) as _i5.Future<List<_i11.NetNeutralityHistoryItem>?>);
+            _i6.Future<List<_i12.NetNeutralityHistoryItem>?>.value(),
+      ) as _i6.Future<List<_i12.NetNeutralityHistoryItem>?>);
   @override
-  _i5.Future<_i12.NetNeutralityHistory?> getWholeHistory(
+  _i6.Future<_i13.NetNeutralityHistory?> getWholeHistory(
     int? page, {
-    _i9.ErrorHandler? errorHandler,
+    _i10.ErrorHandler? errorHandler,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -257,10 +274,10 @@ class MockNetNeutralityApiService extends _i1.Mock
           [page],
           {#errorHandler: errorHandler},
         ),
-        returnValue: _i5.Future<_i12.NetNeutralityHistory?>.value(),
+        returnValue: _i6.Future<_i13.NetNeutralityHistory?>.value(),
         returnValueForMissingStub:
-            _i5.Future<_i12.NetNeutralityHistory?>.value(),
-      ) as _i5.Future<_i12.NetNeutralityHistory?>);
+            _i6.Future<_i13.NetNeutralityHistory?>.value(),
+      ) as _i6.Future<_i13.NetNeutralityHistory?>);
   @override
   _i2.Dio dioInstanceForUrl(String? url) => (super.noSuchMethod(
         Invocation.method(

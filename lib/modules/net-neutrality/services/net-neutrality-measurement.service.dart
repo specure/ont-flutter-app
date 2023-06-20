@@ -18,31 +18,32 @@ abstract class NetNeutralityProgressHandler {
 
 class NetNeutralityMeasurementService extends DioService {
   NetNeutralitySettingsResponse? settings;
-  NetNeutralityProgressHandler? progressHandler;
   DnsTestService _dnsTestService = GetIt.I.get<DnsTestService>();
   final _dateTimeWrapper = GetIt.I.get<DateTimeWrapper>();
 
-  NetNeutralityMeasurementService(
-      {this.settings, this.progressHandler, bool testing = false})
+  NetNeutralityMeasurementService({this.settings, bool testing = false})
       : super(testing: testing);
 
-  initWithSettings(NetNeutralitySettingsResponse settings,
-      {NetNeutralityProgressHandler? progressHandler}) {
+  initWithSettings(NetNeutralitySettingsResponse settings) {
     this.settings = settings;
-    if (progressHandler != null) {
-      this.progressHandler = progressHandler;
-    }
   }
 
-  Future runAllWebPageTests() async {
-    if (this.settings == null) {
-      return;
+  Stream<NetNeutralityResultItem>? runAllWebPageTests() {
+    if (this.settings?.web == null) {
+      return null;
     }
-    return Future.wait(
-        this.settings!.web?.map(runOneWebPageTest).toList() ?? []);
+    return Stream.fromFutures(this.settings!.web!.map(runOneWebPageTest));
   }
 
-  Future runOneWebPageTest(WebNetNeutralitySettingsItem test) async {
+  Stream<NetNeutralityResultItem>? runAllDnsTests() {
+    if (this.settings?.dns == null) {
+      return null;
+    }
+    return Stream.fromFutures(this.settings!.dns!.map(runOneDnsTest));
+  }
+
+  Future<NetNeutralityResultItem> runOneWebPageTest(
+      WebNetNeutralitySettingsItem test) async {
     final requestSentAt = _dateTimeWrapper.nowInMillis();
     WebNetNeutralityResultItem resultItem;
     final localDio = dioInstanceForUrl(test.target);
@@ -91,18 +92,11 @@ class NetNeutralityMeasurementService extends DioService {
         timeoutExceeded: false,
       );
     }
-    this.progressHandler?.updateProgress(resultItem: resultItem);
     return resultItem;
   }
 
-  Future runAllDnsTests() async {
-    if (this.settings == null) {
-      return;
-    }
-    return Future.wait(this.settings!.dns?.map(runOneDnsTest).toList() ?? []);
-  }
-
-  Future runOneDnsTest(DnsNetNeutralitySettingsItem test) async {
+  Future<NetNeutralityResultItem> runOneDnsTest(
+      DnsNetNeutralitySettingsItem test) async {
     var result;
     try {
       result = await _dnsTestService.execute(test);
@@ -115,7 +109,6 @@ class NetNeutralityMeasurementService extends DioService {
       result,
       openTestUuid: settings!.openTestUuid,
     );
-    this.progressHandler?.updateProgress(resultItem: resultItem);
     return resultItem;
   }
 }

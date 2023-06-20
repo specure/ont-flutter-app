@@ -33,12 +33,6 @@ final _errorHandler = NetNeutralityCubitErrorHandler();
 final _settings = NetNeutralitySettingsResponse.fromJson(jsonDecode(
     File('test/net-neutrality/unit-tests/data/net-neutrality-settings.json')
         .readAsStringSync()));
-final _webResultItem = WebNetNeutralityResultItem.fromJson(jsonDecode(
-    File('test/net-neutrality/unit-tests/data/net-neutrality-results.json')
-        .readAsStringSync())['WEB'][0]);
-final _dnsResultItem = DnsNetNeutralityResultItem.fromJson(jsonDecode(
-    File('test/net-neutrality/unit-tests/data/net-neutrality-results.json')
-        .readAsStringSync())['DNS'][0]);
 const _ipV4PublicAddress = '192.168.0.0';
 const _ipV4PrivateAddress = '192.168.0.1';
 const _ipV6Address = '2001:0db8:85a3:0000:0000:8a2e:0370:7334';
@@ -47,8 +41,8 @@ const _radioType = 'LTE';
 const _networkGeneration = '4g';
 
 List<SignalInfo> _allSignals4gLteCa = (jsonDecode(File(
-    'test/measurements/unit-tests/data/allPrimaryDataCellSignalInfo4gLteCa.json')
-    .readAsStringSync()) as List)
+            'test/measurements/unit-tests/data/allPrimaryDataCellSignalInfo4gLteCa.json')
+        .readAsStringSync()) as List)
     .map((signalInfo) => SignalInfo.fromJson(signalInfo))
     .toList();
 
@@ -67,9 +61,25 @@ final _networkInfoDetails = NetworkInfoDetails(
   telephonyNetworkOperator: '231-06',
   telephonyNetworkOperatorName: "O2-SK",
   telephonyNetworkCountry: 'sk',
-  telephonyNetworkSimCountry:'sk',
+  telephonyNetworkSimCountry: 'sk',
 );
-
+final _webResultItem = WebNetNeutralityResultItem(
+  id: 0,
+  openTestUuid: '',
+  durationNs: 1,
+  timeoutExceeded: false,
+  type: '',
+);
+final _dnsResultItem = DnsNetNeutralityResultItem(
+  id: 0,
+  openTestUuid: '',
+  durationNs: 1,
+  timeoutExceeded: false,
+  type: '',
+  dnsStatus: '',
+  resolver: '',
+  dnsEntries: [''],
+);
 
 @GenerateMocks([], customMocks: [
   MockSpec<NetNeutralityMeasurementService>(
@@ -109,34 +119,31 @@ void main() {
         .thenAnswer((realInvocation) async => null);
     when(GetIt.I
             .get<NetNeutralityMeasurementService>()
-            .initWithSettings(_settings, progressHandler: _cubit))
+            .initWithSettings(_settings))
         .thenAnswer((realInvocation) async => null);
     when(GetIt.I.get<NetNeutralityMeasurementService>().settings)
         .thenReturn(_settings);
     when(GetIt.I.get<NetNeutralityMeasurementService>().runAllWebPageTests())
-        .thenAnswer((realInvocation) async {
-      _cubit.updateProgress(resultItem: _webResultItem);
+        .thenAnswer((realInvocation) {
       return null;
     });
     when(GetIt.I.get<NetNeutralityMeasurementService>().runAllDnsTests())
-        .thenAnswer((realInvocation) async {
-      _cubit.updateProgress(resultItem: _dnsResultItem);
+        .thenAnswer((realInvocation) {
       return null;
     });
     final networkService = GetIt.I.get<NetworkService>();
-    when(networkService.getAllNetworkDetails()).thenAnswer((_) async => _networkInfoDetails);
-    when(GetIt.I.get<PlatformWrapper>().isAndroid)
-        .thenReturn(false);
-    when(GetIt.I.get<PlatformWrapper>().isIOS)
-        .thenReturn(true);
+    when(networkService.getAllNetworkDetails())
+        .thenAnswer((_) async => _networkInfoDetails);
+    when(GetIt.I.get<PlatformWrapper>().isAndroid).thenReturn(false);
+    when(GetIt.I.get<PlatformWrapper>().isIOS).thenReturn(true);
     when(GetIt.I.get<DeviceInfoPlugin>().iosInfo)
         .thenAnswer((_) async => IosDeviceInfo.fromMap({
-          'isPhysicalDevice': false,
-          'name': 'iPhone',
-          'utsname': {
-            'sysname': 'iPhone',
-          },
-        }));
+              'isPhysicalDevice': false,
+              'name': 'iPhone',
+              'utsname': {
+                'sysname': 'iPhone',
+              },
+            }));
     when(GetIt.I.get<LocationService>().latestLocation)
         .thenAnswer((_) async => null);
   });
@@ -174,9 +181,15 @@ void main() {
       act: (cubit) {
         when(GetIt.I
                 .get<NetNeutralityApiService>()
-                .getSettings(errorHandler: _errorHandler))
+                .getSettings(errorHandler: anyNamed('errorHandler')))
             .thenAnswer((realInvocation) async => _settings);
         cubit.startMeasurement();
+        cubit.updateProgress(
+          resultItem: _webResultItem,
+        );
+        cubit.updateProgress(
+          resultItem: _dnsResultItem,
+        );
       },
       expect: () => [
         _cubit.state.copyWith(
@@ -187,33 +200,41 @@ void main() {
         _cubit.state.copyWith(
           lastResultForCurrentPhase: 50,
           phase: NetNeutralityPhase.runningTests,
+          interimResults: [_webResultItem],
         ),
         _cubit.state.copyWith(
           lastResultForCurrentPhase: 100,
           phase: NetNeutralityPhase.submittingResult,
+          interimResults: [_webResultItem, _dnsResultItem],
         ),
         _cubit.state.copyWith(
           lastResultForCurrentPhase: 100,
           phase: NetNeutralityPhase.finish,
+          interimResults: [_webResultItem, _dnsResultItem],
         )
       ],
       verify: (_) {
         verify(GetIt.I
+            .get<NavigationService>()
+            .pushNamed(NetNeutralityMeasurementScreen.route));
+
+        verify(GetIt.I
             .get<NetNeutralityApiService>()
             .getSettings(errorHandler: _errorHandler));
+
         verify(GetIt.I
             .get<NetNeutralityMeasurementService>()
-            .initWithSettings(_settings, progressHandler: _cubit));
+            .initWithSettings(_settings));
+
         verify(GetIt.I
             .get<NetNeutralityMeasurementService>()
             .runAllWebPageTests());
         verify(GetIt.I.get<NetNeutralityMeasurementService>().runAllDnsTests());
-        verify(GetIt.I
-            .get<NavigationService>()
-            .pushNamed(NetNeutralityMeasurementScreen.route));
+
         verify(GetIt.I
             .get<NavigationService>()
             .pushReplacementRoute(NetNeutralityResultScreen.route, null));
+
         var result = NetNeutralityResult();
         result.testResults = _cubit.state.interimResults;
         result.device = 'iPhone';
@@ -226,7 +247,7 @@ void main() {
         result.telephonyNetworkOperator = '231-06';
         result.telephonyNetworkOperatorName = "O2-SK";
         result.telephonyNetworkCountry = 'sk';
-        result.telephonyNetworkSimCountry ='sk';
+        result.telephonyNetworkSimCountry = 'sk';
         result.dualSim = false;
         result.localIpAddress = _ipV4PublicAddress;
         result.signalStrength = -112;
