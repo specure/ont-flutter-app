@@ -151,16 +151,17 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
       });
       _testSubscriptions.clear();
       var result = NetNeutralityResult();
-      int? networkTypeId;
+      int networkTypeId;
       int? signalStrength;
       String? networkBand;
 
       var networkInfoDetails = await _networkService.getAllNetworkDetails();
       var signals = networkInfoDetails.currentAllSignalInfo;
-      networkTypeId = serverNetworkTypes[networkInfoDetails.type];
+      networkTypeId = serverNetworkTypes[networkInfoDetails.type] ??
+          serverNetworkTypes[unknown]!;
       if (signals.isNotEmpty) {
         var firstSignal = signals[0];
-        networkTypeId = firstSignal.networkTypeId;
+        networkTypeId = firstSignal.networkTypeId ?? networkTypeId;
         signalStrength = firstSignal.signal;
         networkBand = firstSignal.band;
       }

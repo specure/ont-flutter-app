@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
+import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-result-item.dart';
 
 part 'net-neutrality-result.g.dart';
@@ -20,7 +21,7 @@ class NetNeutralityResult with EquatableMixin {
   @JsonKey(name: 'dualSim')
   bool? dualSim;
   @JsonKey(name: 'networkType')
-  int? networkType;
+  int networkType = serverNetworkTypes[unknown]!;
   @JsonKey(name: 'testIpLocal')
   String? localIpAddress;
   @JsonKey(name: 'platform')
