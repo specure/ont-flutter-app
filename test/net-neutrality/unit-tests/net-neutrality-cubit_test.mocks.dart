@@ -100,15 +100,11 @@ class MockNetNeutralityMeasurementService extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  dynamic initWithSettings(
-    _i5.NetNeutralitySettingsResponse? settings, {
-    _i4.NetNeutralityProgressHandler? progressHandler,
-  }) =>
+  dynamic initWithSettings(_i5.NetNeutralitySettingsResponse? settings) =>
       super.noSuchMethod(
         Invocation.method(
           #initWithSettings,
           [settings],
-          {#progressHandler: progressHandler},
         ),
         returnValueForMissingStub: null,
       );

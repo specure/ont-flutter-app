@@ -15,6 +15,7 @@ import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
 import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
+import 'package:nt_flutter_standalone/core/wrappers/wakelock.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/screens/measurement-result/measurement-result.screen.dart';
@@ -64,6 +65,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
   final SharedPreferencesWrapper preferences =
       GetIt.I.get<SharedPreferencesWrapper>();
   final CMSService _cmsService = GetIt.I.get<CMSService>();
+  final WakelockWrapper _wakelock = GetIt.I.get<WakelockWrapper>();
   ErrorHandler? errorHandler;
   ConnectivityChangesHandler? connectivityChangesHandler;
   LoopModeChangesHandler? loopModeChangesHandler;
@@ -159,6 +161,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
     });
     on<StartMeasurement>((event, emit) async {
       // this happens before setMeasurementScreenOpen event - called only first time when we open the screen
+      _wakelock.enable();
       await loopModeService.initializeNewLoopMode(state.currentLocation);
       emit(MeasurementsState.started(state));
       emit(await startMeasurement());
@@ -221,6 +224,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
       // called only on iOS
       if (!loopModeService.isLoopModeActivated)
         showMeasurementResult(event.payload);
+        _wakelock.disable();
     });
     on<OnMeasurementComplete>((event, emit) async {
       // called only on iOS
@@ -299,6 +303,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
       } else if (loopModeDetails.isLoopModeFinished) {
         emit(MeasurementsState.finished(state));
         GetIt.I.get<CoreCubit>().goToScreen<HistoryScreen>();
+        _wakelock.disable();
       }
     });
     on<CheckIfLoopModeShouldStart>((event, emit) {
@@ -484,7 +489,10 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
   void _onMeasurementComplete(String testUuid) {
     _signalsMeasurementTimer?.cancel();
     // todo add displaying result according loop uuid or redo
-    if (!loopModeService.isLoopModeActivated) showMeasurementResult(testUuid);
+    if (!loopModeService.isLoopModeActivated) {
+      _wakelock.disable();
+      showMeasurementResult(testUuid);
+    }
   }
 
   Future _completeMeasurement(MeasurementResult result) async {

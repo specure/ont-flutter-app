@@ -17,15 +17,17 @@ import 'package:mapbox_gl/mapbox_gl.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:nt_flutter_standalone/core/models/bloc-event.dart' as _i23;
 import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i28;
-import 'package:nt_flutter_standalone/core/models/project.dart' as _i38;
+import 'package:nt_flutter_standalone/core/models/project.dart' as _i39;
 import 'package:nt_flutter_standalone/core/models/settings.dart' as _i29;
-import 'package:nt_flutter_standalone/core/services/cms.service.dart' as _i37;
+import 'package:nt_flutter_standalone/core/services/cms.service.dart' as _i38;
 import 'package:nt_flutter_standalone/core/services/localization.service.dart'
     as _i33;
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart'
     as _i31;
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart'
     as _i16;
+import 'package:nt_flutter_standalone/core/wrappers/wakelock.wrapper.dart'
+    as _i36;
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart'
     as _i24;
 import 'package:nt_flutter_standalone/modules/measurement-result/models/loop-mode-settings-model.dart'
@@ -57,7 +59,7 @@ import 'package:nt_flutter_standalone/modules/measurements/services/loop.mode.se
 import 'package:nt_flutter_standalone/modules/measurements/services/measurement.service.dart'
     as _i21;
 import 'package:nt_flutter_standalone/modules/measurements/services/network.service.dart'
-    as _i36;
+    as _i37;
 import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart'
     as _i26;
 import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart'
@@ -1027,10 +1029,19 @@ class MockLoopModeService extends _i1.Mock implements _i35.LoopModeService {
       );
 }
 
+/// A class which mocks [WakelockWrapper].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockWakelockWrapper extends _i1.Mock implements _i36.WakelockWrapper {
+  MockWakelockWrapper() {
+    _i1.throwOnMissingStub(this);
+  }
+}
+
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i36.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i37.NetworkService {
   @override
   _i12.IPInfoService get ipInfoService => (super.noSuchMethod(
         Invocation.getter(#ipInfoService),
@@ -1117,7 +1128,7 @@ class MockNetworkService extends _i1.Mock implements _i36.NetworkService {
       ) as _i18.Connectivity);
   @override
   _i19.Future<_i19.StreamSubscription<dynamic>> subscribeToNetworkChanges(
-          {_i36.ConnectivityChangesHandler? changesHandler}) =>
+          {_i37.ConnectivityChangesHandler? changesHandler}) =>
       (super.noSuchMethod(
         Invocation.method(
           #subscribeToNetworkChanges,
@@ -1197,7 +1208,7 @@ class MockNetworkService extends _i1.Mock implements _i36.NetworkService {
 /// A class which mocks [CMSService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCMSService extends _i1.Mock implements _i37.CMSService {
+class MockCMSService extends _i1.Mock implements _i38.CMSService {
   @override
   _i4.Dio get dio => (super.noSuchMethod(
         Invocation.getter(#dio),
@@ -1225,16 +1236,16 @@ class MockCMSService extends _i1.Mock implements _i37.CMSService {
         returnValueForMissingStub: null,
       );
   @override
-  _i19.Future<_i38.NTProject?> getProject({_i28.ErrorHandler? errorHandler}) =>
+  _i19.Future<_i39.NTProject?> getProject({_i28.ErrorHandler? errorHandler}) =>
       (super.noSuchMethod(
         Invocation.method(
           #getProject,
           [],
           {#errorHandler: errorHandler},
         ),
-        returnValue: _i19.Future<_i38.NTProject?>.value(),
-        returnValueForMissingStub: _i19.Future<_i38.NTProject?>.value(),
-      ) as _i19.Future<_i38.NTProject?>);
+        returnValue: _i19.Future<_i39.NTProject?>.value(),
+        returnValueForMissingStub: _i19.Future<_i39.NTProject?>.value(),
+      ) as _i19.Future<_i39.NTProject?>);
   @override
   _i19.Future<String?>? getPage(
     String? route, {

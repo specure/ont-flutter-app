@@ -15,6 +15,7 @@ import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.d
 import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
 import 'package:nt_flutter_standalone/core/wrappers/url-launcher-wrapper.dart';
+import 'package:nt_flutter_standalone/core/wrappers/wakelock.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/history/services/api/history.api.service.dart';
 import 'package:nt_flutter_standalone/modules/history/store/history.cubit.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/map-search.api.service.dart';
@@ -69,6 +70,7 @@ class ServiceLocator {
     _registerLazySingleton<InAppReviewWrapper>(() => InAppReviewWrapper());
     _registerLazySingleton<DateTimeWrapper>(() => DateTimeWrapper());
     _registerLazySingleton<UrlLauncherWrapper>(() => UrlLauncherWrapper());
+    _registerLazySingleton<WakelockWrapper>(() => WakelockWrapper());
     // End plugins and wrappers
 
     //Components

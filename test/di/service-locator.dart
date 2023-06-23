@@ -16,6 +16,7 @@ import 'package:nt_flutter_standalone/core/services/cms.service.dart';
 import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
 import 'package:nt_flutter_standalone/core/wrappers/url-launcher-wrapper.dart';
+import 'package:nt_flutter_standalone/core/wrappers/wakelock.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/history/services/api/history.api.service.dart';
 import 'package:nt_flutter_standalone/modules/history/store/history.cubit.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/map-search.api.service.dart';
@@ -122,6 +123,7 @@ class TestingServiceLocator {
     _registerLazySingleton<InAppReviewWrapper>(() => MockInAppReviewWrapper());
     _registerLazySingleton<DateTimeWrapper>(() => MockDateTimeWrapper());
     _registerLazySingleton<UrlLauncherWrapper>(() => MockUrlLauncherWrapper());
+    _registerLazySingleton<WakelockWrapper>(() => MockWakelockWrapper());
     // End plugin wrappers
 
     //Components

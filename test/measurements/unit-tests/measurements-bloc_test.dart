@@ -18,6 +18,7 @@ import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
+import 'package:nt_flutter_standalone/core/wrappers/wakelock.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/screens/measurement-result/measurement-result.screen.dart';
 import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
@@ -130,6 +131,7 @@ final _unknownErrorString = 'Unknown error';
   LocalizationService,
   AppReviewService,
   LoopModeService,
+  WakelockWrapper,
 ], customMocks: [
   MockSpec<NetworkService>(
     onMissingStub: OnMissingStub.returnDefault,
@@ -855,4 +857,10 @@ _setUpStubs() {
 
   when(GetIt.I.get<AppReviewService>().startAppReview())
       .thenAnswer((_) async => false);
+
+  when(GetIt.I.get<WakelockWrapper>().enable())
+      .thenAnswer((_) {});
+
+  when(GetIt.I.get<WakelockWrapper>().disable())
+      .thenAnswer((_) {});
 }
