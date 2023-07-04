@@ -38,8 +38,7 @@ final _history = NetNeutralityHistoryListFactory.parseHistoryResponse(
   _historyJson,
 );
 
-final HistoryState _historyState =
-    HistoryState(speedHistory: [], netNeutralityHistory: []);
+final HistoryState _historyState = HistoryState(speedHistory: []);
 
 final _webResultDetailsJson = jsonDecode(File(
         'test/net-neutrality/unit-tests/data/net-neutrality-result-details-web.json')

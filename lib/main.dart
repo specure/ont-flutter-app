@@ -22,6 +22,7 @@ import 'package:nt_flutter_standalone/core/wrappers/in-app-review.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/history/screens/filters.screen.dart';
 import 'package:nt_flutter_standalone/modules/history/store/history.cubit.dart';
+import 'package:nt_flutter_standalone/modules/history/store/net-neutrality-history.cubit.dart';
 import 'package:nt_flutter_standalone/modules/map/store/map.cubit.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/screens/advanced-results.screen.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/screens/loop-measurement-result/loop-measurement-result.screen.dart';
@@ -115,6 +116,9 @@ class App extends StatelessWidget {
         ),
         BlocProvider<HistoryCubit>(
           create: (context) => GetIt.I.get<HistoryCubit>(),
+        ),
+        BlocProvider<NetNeutralityHistoryCubit>(
+          create: (context) => GetIt.I.get<NetNeutralityHistoryCubit>(),
         ),
         BlocProvider<MapCubit>(
           create: (context) => GetIt.I.get<MapCubit>(),

@@ -18,6 +18,7 @@ import 'package:nt_flutter_standalone/core/wrappers/url-launcher-wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/wakelock.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/history/services/api/history.api.service.dart';
 import 'package:nt_flutter_standalone/modules/history/store/history.cubit.dart';
+import 'package:nt_flutter_standalone/modules/history/store/net-neutrality-history.cubit.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/map-search.api.service.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/technology.api.service.dart';
 import 'package:nt_flutter_standalone/modules/map/store/map.cubit.dart';
@@ -112,6 +113,8 @@ class ServiceLocator {
     _registerLazySingleton<CoreCubit>(() => CoreCubit());
     _registerLazySingleton<MapCubit>(() => MapCubit());
     _registerLazySingleton<HistoryCubit>(() => HistoryCubit());
+    _registerLazySingleton<NetNeutralityHistoryCubit>(
+        () => NetNeutralityHistoryCubit());
     _registerLazySingleton<SettingsCubit>(() => SettingsCubit());
     _registerLazySingleton<WizardCubit>(() => WizardCubit());
     _registerLazySingleton<NetNeutralityCubit>(() => NetNeutralityCubit());

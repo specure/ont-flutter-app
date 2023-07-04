@@ -49,9 +49,8 @@ class HistorySpeedView extends StatelessWidget {
                           child: ConditionalContent(
                             conditional: !state.loading,
                             truthyBuilder: () => LazyLoadScrollView(
-                              onEndOfPage: () => context
-                                  .read<HistoryCubit>()
-                                  .onEndOfSpeedPage(),
+                              onEndOfPage: () =>
+                                  context.read<HistoryCubit>().onEndOfPage(),
                               child: ListView.builder(
                                 itemCount: state.speedHistory.length,
                                 itemBuilder: (context, index) =>

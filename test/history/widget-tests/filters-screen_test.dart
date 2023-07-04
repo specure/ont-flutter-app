@@ -40,10 +40,9 @@ final List<HistoryFilterItem> _networks = [
   HistoryFilterItem(text: '3G'),
 ];
 
-final _initialStateEmptyFilters = HistoryState(speedHistory: [], netNeutralityHistory: [], loading: true);
+final _initialStateEmptyFilters = HistoryState(speedHistory: [], loading: true);
 final _initialStateFewFilters = HistoryState(
     speedHistory: [],
-    netNeutralityHistory: [],
     loading: true,
     deviceFilters: _devices,
     networkTypeFilters: _networks);
@@ -53,8 +52,12 @@ final String _selectedLocaleTag = 'sr-Latn-rs';
 void main() {
   setUpAll(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
-    when(GetIt.I.get<SharedPreferencesWrapper>().init()).thenAnswer((_) async => null);
-    when(GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag)).thenReturn(_selectedLocaleTag);
+    when(GetIt.I.get<SharedPreferencesWrapper>().init())
+        .thenAnswer((_) async => null);
+    when(GetIt.I
+            .get<SharedPreferencesWrapper>()
+            .getString(StorageKeys.selectedLocaleTag))
+        .thenReturn(_selectedLocaleTag);
     _historyCubit = GetIt.I.get<HistoryCubit>();
   });
 
@@ -66,8 +69,8 @@ void main() {
         loading: false,
         error: dioError,
       );
-      whenListen(
-          _historyCubit, Stream.fromIterable([_initialStateEmptyFilters, state]),
+      whenListen(_historyCubit,
+          Stream.fromIterable([_initialStateEmptyFilters, state]),
           initialState: _initialStateEmptyFilters);
       await tester.createWidget();
       expect(find.text('Filter'), findsOneWidget);

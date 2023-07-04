@@ -161,6 +161,8 @@ PODS:
   - SwiftLocation/Core (5.1.0)
   - url_launcher_ios (0.0.1):
     - Flutter
+  - wakelock (0.0.1):
+    - Flutter
   - wifi_iot (0.0.1):
     - Flutter
   - XCGLogger (7.0.1):
@@ -189,6 +191,7 @@ DEPENDENCIES:
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
   - SwiftLocation/Core
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - wifi_iot (from `.symlinks/plugins/wifi_iot/ios`)
 
 SPEC REPOS:
@@ -259,6 +262,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
+  wakelock:
+    :path: ".symlinks/plugins/wakelock/ios"
   wifi_iot:
     :path: ".symlinks/plugins/wifi_iot/ios"
 
@@ -306,6 +311,7 @@ SPEC CHECKSUMS:
   shared_preferences_foundation: 297b3ebca31b34ec92be11acd7fb0ba932c822ca
   SwiftLocation: 83e0ea75a1969cee3a1197e2b7095603fc23fde5
   url_launcher_ios: ae1517e5e344f5544fb090b079e11f399dfbe4d2
+  wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   wifi_iot: b5aafd6f9b52f8a357383a1deabab45f31cd602d
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 

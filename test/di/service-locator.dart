@@ -19,6 +19,7 @@ import 'package:nt_flutter_standalone/core/wrappers/url-launcher-wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/wakelock.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/history/services/api/history.api.service.dart';
 import 'package:nt_flutter_standalone/modules/history/store/history.cubit.dart';
+import 'package:nt_flutter_standalone/modules/history/store/net-neutrality-history.cubit.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/map-search.api.service.dart';
 import 'package:nt_flutter_standalone/modules/map/services/api/technology.api.service.dart';
 import 'package:nt_flutter_standalone/modules/map/store/map.cubit.dart';
@@ -134,6 +135,8 @@ class TestingServiceLocator {
     // Cubits
     _registerLazySingleton<CoreCubit>(() => MockCoreCubitCalls());
     _registerLazySingleton<HistoryCubit>(() => MockHistoryCubit());
+    _registerLazySingleton<NetNeutralityHistoryCubit>(
+        () => MockNetNeutralityHistoryCubit());
     _registerLazySingleton<NetNeutralityCubit>(() => MockNetNeutralityCubit());
     _registerLazySingleton<MapCubit>(() => MockMapCubit());
     // End cubits

@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:nt_flutter_standalone/core/mixins/error-state.mixin.dart';
 import 'package:nt_flutter_standalone/core/mixins/loading-state.mixin.dart';
 import 'package:nt_flutter_standalone/modules/history/models/history-filter.item.dart';
@@ -5,9 +6,8 @@ import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrali
 
 import '../../measurement-result/models/measurement-history-results.dart';
 
-class HistoryState with ErrorState, LoadingState {
+class HistoryState with ErrorState, LoadingState, EquatableMixin {
   final List<MeasurementHistoryResults> speedHistory;
-  final List<NetNeutralityHistoryMeasurement>? netNeutralityHistory;
   final List<HistoryFilterItem> networkTypeFilters;
   final List<HistoryFilterItem> deviceFilters;
   final bool isHistoryEnabled;
@@ -15,7 +15,6 @@ class HistoryState with ErrorState, LoadingState {
 
   HistoryState({
     required this.speedHistory,
-    required this.netNeutralityHistory,
     this.networkTypeFilters = const [],
     this.deviceFilters = const [],
     this.isHistoryEnabled = true,
@@ -39,7 +38,6 @@ class HistoryState with ErrorState, LoadingState {
   }) {
     return HistoryState(
       speedHistory: speedHistory ?? this.speedHistory,
-      netNeutralityHistory: netNeutralityHistory ?? this.netNeutralityHistory,
       loading: loading ?? this.loading,
       networkTypeFilters: networkTypeFilters ?? this.networkTypeFilters,
       deviceFilters: deviceFilters ?? this.deviceFilters,
@@ -49,4 +47,15 @@ class HistoryState with ErrorState, LoadingState {
       error: error,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        speedHistory,
+        loading,
+        networkTypeFilters,
+        deviceFilters,
+        isHistoryEnabled,
+        enableSynchronization,
+        error,
+      ];
 }

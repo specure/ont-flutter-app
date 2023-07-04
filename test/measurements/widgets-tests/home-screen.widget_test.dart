@@ -31,8 +31,7 @@ final _navCubit = MockCoreCubit();
 final _settingsCubit = MockSettingsCubit();
 final _initMeasurementsState = MeasurementsState.init();
 final _measurementsBloc = MockMeasurementsBloc();
-final _initHistoryState =
-    HistoryState(speedHistory: [], netNeutralityHistory: []);
+final _initHistoryState = HistoryState(speedHistory: []);
 final _initialSettingsState = SettingsState();
 final _uuid = 'uuid';
 final String _selectedLocaleTag = 'sr-Latn-rs';

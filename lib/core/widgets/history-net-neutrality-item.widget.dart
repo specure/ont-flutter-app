@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:nt_flutter_standalone/core/constants/dimensions.dart';
 import 'package:nt_flutter_standalone/core/extensions/string.ext.dart';
 import 'package:nt_flutter_standalone/core/widgets/conditional-content.dart';
+import 'package:nt_flutter_standalone/modules/history/widgets/net-neutrality-view.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/constants/net-neutrality-server-constants.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-history-category.dart';
@@ -35,7 +36,7 @@ class HistoryNetNeutralityItemWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: 60,
+          height: netNeutalityHistoryItemHeight,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
             child: Row(

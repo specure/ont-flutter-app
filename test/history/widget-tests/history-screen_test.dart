@@ -14,6 +14,8 @@ import 'package:nt_flutter_standalone/core/widgets/error.widget.dart';
 import 'package:nt_flutter_standalone/core/widgets/history-net-neutrality-item.widget.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/history/screens/history.screen.dart';
+import 'package:nt_flutter_standalone/modules/history/store/net-neutrality-history.cubit.dart';
+import 'package:nt_flutter_standalone/modules/history/store/net-neutrality-history.state.dart';
 import 'package:nt_flutter_standalone/modules/history/widgets/net-neutrality-view.dart';
 import 'package:nt_flutter_standalone/modules/history/widgets/no-results.view.dart';
 import 'package:nt_flutter_standalone/modules/history/widgets/speed-view/speed.view.dart';
@@ -30,10 +32,16 @@ import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';
 
 extension _HistoryWidgetTester on WidgetTester {
-  findWidgetOfType(Type type) async {
-    HistoryScreen widget = HistoryScreen();
-    await this.pumpWidget(BlocProvider<HistoryCubit>(
-      create: (context) => historyCubit,
+  findWidgetOfType(Type type, Widget widget) async {
+    await this.pumpWidget(MultiBlocProvider(
+      providers: [
+        BlocProvider<HistoryCubit>(
+          create: (context) => _historyCubit,
+        ),
+        BlocProvider<NetNeutralityHistoryCubit>(
+          create: (context) => _netNeutralityHistoryCubit,
+        )
+      ],
       child: MaterialApp(
         home: widget,
       ),
@@ -44,11 +52,64 @@ extension _HistoryWidgetTester on WidgetTester {
   }
 }
 
-late final HistoryCubit historyCubit;
-late final NetNeutralityCubit netNeutralityCubit;
-final initialState =
-    HistoryState(speedHistory: [], netNeutralityHistory: [], loading: true);
+late final HistoryCubit _historyCubit;
+late final NetNeutralityHistoryCubit _netNeutralityHistoryCubit;
+late final NetNeutralityCubit _netNeutralityCubit;
+final _initialState = HistoryState(speedHistory: [], loading: true);
+final _initialNNState =
+    NetNeutralityHistoryState(netNeutralityHistory: [], loading: true);
 final String _selectedLocaleTag = 'sr-Latn-rs';
+final _nnHistory = [
+  NetNeutralityHistoryMeasurement(
+    openTestUuid: 'openTestUuid1',
+    deviceName: 'device',
+    networkType: '4G',
+    measurementDate: "2022-10-10T10:45:13.309631Z",
+    tests: HashMap.fromEntries([
+      MapEntry(
+          'WEB',
+          NetNeutralityHistoryCategory('WEB',
+              totalResults: 3,
+              successfulResults: 1,
+              failedResults: 1,
+              deviceName: 'device',
+              networkType: '4G',
+              measurementDate: '2020-01-01T15:00:00.000Z',
+              type: 'WEB',
+              items: [])),
+      MapEntry(
+          'DNS',
+          NetNeutralityHistoryCategory('DNS',
+              totalResults: 1,
+              successfulResults: 1,
+              failedResults: 0,
+              deviceName: 'device',
+              networkType: '4G',
+              measurementDate: '2020-01-01T15:00:00.000Z',
+              type: 'DNS',
+              items: [])),
+    ]),
+  ),
+  NetNeutralityHistoryMeasurement(
+    openTestUuid: 'openTestUuid2',
+    deviceName: 'device',
+    networkType: '4G',
+    measurementDate: "2022-10-11T10:43:13.309631Z",
+    tests: HashMap.fromEntries([
+      MapEntry(
+          'WEB',
+          NetNeutralityHistoryCategory('WEB',
+              totalResults: 3,
+              successfulResults: 2,
+              failedResults: 1,
+              deviceName: 'device',
+              networkType: '4G',
+              measurementDate: '2020-01-01',
+              type: 'WEB',
+              items: [])),
+    ]),
+  )
+];
 
 @GenerateMocks([NetNeutralityCubit])
 void main() {
@@ -64,20 +125,21 @@ void main() {
             .get<SharedPreferencesWrapper>()
             .getBool(StorageKeys.netNeutralityTestsEnabled))
         .thenReturn(false);
-    historyCubit = GetIt.I.get<HistoryCubit>();
-    netNeutralityCubit = GetIt.I.get<NetNeutralityCubit>();
+    _historyCubit = GetIt.I.get<HistoryCubit>();
+    _netNeutralityHistoryCubit = GetIt.I.get<NetNeutralityHistoryCubit>();
+    _netNeutralityCubit = GetIt.I.get<NetNeutralityCubit>();
     TestingServiceLocator.swapLazySingleton<NetNeutralityCubit>(
-        () => netNeutralityCubit);
+        () => _netNeutralityCubit);
   });
 
   group('HistoryScreen', () {
     testWidgets('when the history is not enabled shows no results view',
         (tester) async {
       final state =
-          initialState.copyWith(loading: false, isHistoryEnabled: false);
-      whenListen(historyCubit, Stream.fromIterable([initialState, state]),
-          initialState: initialState);
-      await tester.findWidgetOfType(NoResultsView);
+          _initialState.copyWith(loading: false, isHistoryEnabled: false);
+      whenListen(_historyCubit, Stream.fromIterable([_initialState, state]),
+          initialState: _initialState);
+      await tester.findWidgetOfType(NoResultsView, HistoryScreen());
       when(GetIt.I.get<CoreCubit>().goToScreen())
           .thenAnswer((realInvocation) async {});
       await tester.tap(find.text('Go to the privacy permissions'));
@@ -88,13 +150,13 @@ void main() {
         (tester) async {
       final dioError = MockDioError();
       when(dioError.message).thenReturn(ApiErrors.historyNotAccessible);
-      final state = initialState.copyWith(
+      final state = _initialState.copyWith(
         loading: false,
         error: dioError,
       );
-      whenListen(historyCubit, Stream.fromIterable([initialState, state]),
-          initialState: initialState);
-      await tester.findWidgetOfType(NoResultsView);
+      whenListen(_historyCubit, Stream.fromIterable([_initialState, state]),
+          initialState: _initialState);
+      await tester.findWidgetOfType(NoResultsView, HistoryScreen());
       when(GetIt.I.get<CoreCubit>().goToScreen())
           .thenAnswer((realInvocation) async {});
       await tester.tap(find.text('Make your first measurement'));
@@ -106,35 +168,37 @@ void main() {
         (tester) async {
       final dioError = MockDioError();
       when(dioError.message).thenReturn('Test');
-      final state = initialState.copyWith(
+      final state = _initialState.copyWith(
         loading: false,
         error: dioError,
       );
-      whenListen(historyCubit, Stream.fromIterable([initialState, state]),
-          initialState: initialState);
-      await tester.findWidgetOfType(NTErrorWidget);
+      whenListen(_historyCubit, Stream.fromIterable([_initialState, state]),
+          initialState: _initialState);
+      await tester.findWidgetOfType(NTErrorWidget, HistoryScreen());
     });
 
     testWidgets(
         'when net neutrality tests are enabled but there are no tests yet',
         (tester) async {
-      final dioError = MockDioError();
+      final state = _initialState.copyWith(loading: false);
+      final nnState = _initialNNState.copyWith(loading: false);
       when(GetIt.I
               .get<SharedPreferencesWrapper>()
               .getBool(StorageKeys.netNeutralityTestsEnabled))
           .thenReturn(true);
-      when(dioError.message).thenReturn('Test');
-      final state = initialState.copyWith(loading: false);
-      whenListen(historyCubit, Stream.fromIterable([initialState, state]),
-          initialState: initialState);
-      await tester.findWidgetOfType(NoResultsView);
-      await tester.findWidgetOfType(HistorySpeedView);
+      whenListen(_netNeutralityHistoryCubit,
+          Stream.fromIterable([_initialNNState, nnState]),
+          initialState: _initialNNState);
+      whenListen(_historyCubit, Stream.fromIterable([_initialState, state]),
+          initialState: _initialState);
+      await tester.findWidgetOfType(NoResultsView, HistoryScreen());
+      await tester.findWidgetOfType(HistorySpeedView, HistoryScreen());
       var netNeutralityTab = find.text('Net Neutrality');
       expect(netNeutralityTab, findsOneWidget);
       await tester.tap(netNeutralityTab);
       await tester.pumpAndSettle();
-      await tester.findWidgetOfType(NoResultsView);
-      await tester.findWidgetOfType(NetNeutralityView);
+      await tester.findWidgetOfType(NoResultsView, HistoryScreen());
+      await tester.findWidgetOfType(NetNeutralityView, HistoryScreen());
       await tester.tap(find.text('Make your first measurement'));
       verify(GetIt.I.get<CoreCubit>().goToScreen()).called(1);
     });
@@ -147,69 +211,23 @@ void main() {
               .getBool(StorageKeys.netNeutralityTestsEnabled))
           .thenReturn(true);
       when(dioError.message).thenReturn('Test');
-      final state =
-          initialState.copyWith(loading: false, netNeutralityHistory: [
-        NetNeutralityHistoryMeasurement(
-          openTestUuid: 'openTestUuid1',
-          deviceName: 'device',
-          networkType: '4G',
-          measurementDate: "2022-10-10T10:45:13.309631Z",
-          tests: HashMap.fromEntries([
-            MapEntry(
-                'WEB',
-                NetNeutralityHistoryCategory('WEB',
-                    totalResults: 3,
-                    successfulResults: 1,
-                    failedResults: 1,
-                    deviceName: 'device',
-                    networkType: '4G',
-                    measurementDate: '2020-01-01T15:00:00.000Z',
-                    type: 'WEB',
-                    items: [])),
-            MapEntry(
-                'DNS',
-                NetNeutralityHistoryCategory('DNS',
-                    totalResults: 1,
-                    successfulResults: 1,
-                    failedResults: 0,
-                    deviceName: 'device',
-                    networkType: '4G',
-                    measurementDate: '2020-01-01T15:00:00.000Z',
-                    type: 'DNS',
-                    items: [])),
-          ]),
-        ),
-        NetNeutralityHistoryMeasurement(
-          openTestUuid: 'openTestUuid2',
-          deviceName: 'device',
-          networkType: '4G',
-          measurementDate: "2022-10-11T10:43:13.309631Z",
-          tests: HashMap.fromEntries([
-            MapEntry(
-                'WEB',
-                NetNeutralityHistoryCategory('WEB',
-                    totalResults: 3,
-                    successfulResults: 2,
-                    failedResults: 1,
-                    deviceName: 'device',
-                    networkType: '4G',
-                    measurementDate: '2020-01-01',
-                    type: 'WEB',
-                    items: [])),
-          ]),
-        )
-      ]);
-      whenListen(historyCubit, Stream.fromIterable([initialState, state]),
-          initialState: initialState);
-      await tester.findWidgetOfType(NoResultsView);
-      await tester.findWidgetOfType(HistorySpeedView);
+      final state = _initialState.copyWith(loading: false);
+      final nnState = _initialNNState.copyWith(
+          loading: false, netNeutralityHistory: _nnHistory);
+      whenListen(_historyCubit, Stream.fromIterable([_initialState, state]),
+          initialState: _initialState);
+      whenListen(_netNeutralityHistoryCubit,
+          Stream.fromIterable([_initialNNState, nnState]),
+          initialState: _initialNNState);
+      await tester.findWidgetOfType(NoResultsView, HistoryScreen());
+      await tester.findWidgetOfType(HistorySpeedView, HistoryScreen());
       final netNeutralityTab = find.text('Net Neutrality');
       expect(netNeutralityTab, findsOneWidget);
-      await tester.tap(netNeutralityTab);
-      await tester.pumpAndSettle();
-      await tester.findWidgetOfType(NetNeutralityView);
-      final deviceTexts = find.text('device');
-      expect(deviceTexts, findsNWidgets(2));
+      await tester.findWidgetOfType(
+          NetNeutralityView,
+          NetNeutralityView(
+            testing: true,
+          ));
       final netNeutralityHistoryItems =
           find.byType(HistoryNetNeutralityItemWidget);
       expect(netNeutralityHistoryItems, findsNWidgets(2));
@@ -227,7 +245,7 @@ void main() {
       final measurementDate = find.textContaining("11.10.2022");
       expect(measurementDate, findsOneWidget);
       await tester.tap(measurementDate);
-      verify(netNeutralityCubit.loadResults('openTestUuid2')).called(1);
+      verify(_netNeutralityCubit.loadResults('openTestUuid2')).called(1);
     });
 
     testWidgets(
@@ -235,7 +253,7 @@ void main() {
         (tester) async {
       final dioError = MockDioError();
       when(dioError.message).thenReturn('Test');
-      final state = initialState.copyWith(
+      final state = _initialState.copyWith(
         speedHistory: [
           MeasurementHistoryResults([
             MeasurementHistoryResult(
@@ -251,9 +269,9 @@ void main() {
         error: dioError,
         enableSynchronization: true,
       );
-      whenListen(historyCubit, Stream.fromIterable([initialState, state]),
-          initialState: initialState);
-      await tester.findWidgetOfType(HistorySpeedView);
+      whenListen(_historyCubit, Stream.fromIterable([_initialState, state]),
+          initialState: _initialState);
+      await tester.findWidgetOfType(HistorySpeedView, HistoryScreen());
       expect(find.byIcon(Icons.devices), findsOneWidget);
     });
   });

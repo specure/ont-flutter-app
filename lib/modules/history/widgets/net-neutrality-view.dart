@@ -7,8 +7,8 @@ import 'package:nt_flutter_standalone/core/constants/dimensions.dart';
 import 'package:nt_flutter_standalone/core/extensions/string.ext.dart';
 import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/widgets/conditional-content.dart';
-import 'package:nt_flutter_standalone/modules/history/store/history.cubit.dart';
-import 'package:nt_flutter_standalone/modules/history/store/history.state.dart';
+import 'package:nt_flutter_standalone/modules/history/store/net-neutrality-history.cubit.dart';
+import 'package:nt_flutter_standalone/modules/history/store/net-neutrality-history.state.dart';
 import 'package:nt_flutter_standalone/modules/history/widgets/history-net-neutrality-item-container.dart';
 import 'package:nt_flutter_standalone/modules/history/widgets/no-results.view.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/constants/net-neutrality-server-constants.dart';
@@ -16,14 +16,33 @@ import 'package:nt_flutter_standalone/modules/net-neutrality/screens/net-neutral
 
 import '../../../core/constants/api-errors.dart';
 
-class NetNeutralityView extends StatelessWidget {
+const netNeutalityHistoryItemHeight = 60.0;
+const netNeutalityHistoryPadding = 8.0;
+
+class NetNeutralityView extends StatefulWidget {
+  late final bool testing;
+
+  NetNeutralityView({this.testing = false});
+
+  @override
+  State<NetNeutralityView> createState() => _NetNeutralityViewState();
+}
+
+class _NetNeutralityViewState extends State<NetNeutralityView> {
+  @override
+  void initState() {
+    super.initState();
+    GetIt.I.get<NetNeutralityHistoryCubit>().init();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HistoryCubit, HistoryState>(
+    final screenHeight = MediaQuery.of(context).size.height;
+    return BlocBuilder<NetNeutralityHistoryCubit, NetNeutralityHistoryState>(
       builder: (context, state) {
         return ConditionalContent(
           conditional: (!state.loading &&
-              state.netNeutralityHistory?.isEmpty == true &&
+              state.netNeutralityHistory.isEmpty == true &&
               (state.errorMessage == ApiErrors.historyNotAccessible ||
                   state.errorMessage == null)),
           truthyBuilder: () {
@@ -38,20 +57,31 @@ class NetNeutralityView extends StatelessWidget {
           falsyBuilder: () {
             return Column(
               children: [
-                SizedBox(height: 8),
+                SizedBox(height: netNeutalityHistoryPadding),
                 NetNeutralityHistoryHeader(),
                 Expanded(
                   child: ConditionalContent(
                     conditional: !state.loading,
                     truthyBuilder: () => LazyLoadScrollView(
-                      onEndOfPage: () =>
-                          context.read<HistoryCubit>().onEndOfSpeedPage(),
+                      scrollOffset: 300,
+                      onEndOfPage: () => GetIt.I
+                          .get<NetNeutralityHistoryCubit>()
+                          .onEndOfPage(),
                       child: ListView.builder(
-                        itemCount: state.netNeutralityHistory?.length,
-                        itemBuilder: (context, index) =>
-                            HistoryNetNeutralityItemContainerWidget(
-                          item: state.netNeutralityHistory![index],
-                        ),
+                        itemCount: state.netNeutralityHistory.length,
+                        itemBuilder: (context, index) {
+                          final contentHeight = _contentHeight(index);
+                          if (index == state.netNeutralityHistory.length - 1 &&
+                              contentHeight < screenHeight &&
+                              !widget.testing) {
+                            GetIt.I
+                                .get<NetNeutralityHistoryCubit>()
+                                .onEndOfPage();
+                          }
+                          return HistoryNetNeutralityItemContainerWidget(
+                            item: state.netNeutralityHistory[index],
+                          );
+                        },
                       ),
                     ),
                     falsyBuilder: () => Center(
@@ -68,6 +98,12 @@ class NetNeutralityView extends StatelessWidget {
         );
       },
     );
+  }
+
+  _contentHeight(int index) {
+    return netNeutalityHistoryPadding +
+        NTDimensions.textXXXS +
+        (index + 1) * netNeutalityHistoryItemHeight;
   }
 }
 

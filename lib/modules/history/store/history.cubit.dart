@@ -6,39 +6,28 @@ import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/services/cms.service.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/history/mixins/endless-history-page.mixin.dart';
 import 'package:nt_flutter_standalone/modules/history/models/history-filter.item.dart';
 import 'package:nt_flutter_standalone/modules/history/models/history.dart';
-import 'package:nt_flutter_standalone/modules/history/models/net-neutrality-history.dart';
 import 'package:nt_flutter_standalone/modules/history/services/api/history.api.service.dart';
 import 'package:nt_flutter_standalone/modules/history/store/history.state.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/measurement-history-result.dart';
-import 'package:nt_flutter_standalone/modules/net-neutrality/services/net-neutrality-api.service.dart';
 
-class HistoryCubit extends Cubit<HistoryState> implements ErrorHandler {
+class HistoryCubit extends Cubit<HistoryState>
+    with EndlessHistoryPage<History> {
   final HistoryApiService _historyApiService = GetIt.I.get<HistoryApiService>();
-  final NetNeutralityApiService _netNeutralityApiService = GetIt.I.get<NetNeutralityApiService>();
   final SharedPreferencesWrapper _preferencesWrapper =
       GetIt.I.get<SharedPreferencesWrapper>();
   final CMSService _cmsService = GetIt.I.get<CMSService>();
 
   History? _history;
-  NetNeutralityHistory? _netNeutralityHistory;
-  int _historySpeedPage = 1;
-  int get historySpeedPage => _historySpeedPage;
-  int _historyNetNeutralityPage = 1;
-  int get historyNetNeutralityPage => _historyNetNeutralityPage;
-
-  List<String> _activeNetworkTypeFilters = [];
-  List<String> _activeDeviceFilters = [];
 
   Timer? _filterTimer;
 
-  bool get _isFiltersActive =>
-      _activeNetworkTypeFilters.isNotEmpty || _activeDeviceFilters.isNotEmpty;
+  HistoryCubit() : super(HistoryState(speedHistory: []));
 
-  HistoryCubit() : super(HistoryState(speedHistory: [], netNeutralityHistory: []));
-
-  init() async {
+  init({HistoryErrorHandler? errorHandler}) async {
+    this.errorHandler = errorHandler ?? HistoryErrorHandler();
     final isHistoryEnabled =
         _preferencesWrapper.getBool(StorageKeys.persistentClientUuidEnabled);
     if (isHistoryEnabled != true) {
@@ -46,20 +35,9 @@ class HistoryCubit extends Cubit<HistoryState> implements ErrorHandler {
       return;
     }
     emit(state.copyWith(isHistoryEnabled: isHistoryEnabled, loading: true));
-    _activeNetworkTypeFilters.clear();
-    _activeDeviceFilters.clear();
-    _history = await _getSpeedHistory(resetPage: true);
-    if (_preferencesWrapper.getBool(StorageKeys.netNeutralityTestsEnabled) == true) {
-      _netNeutralityHistory =
-        await _getNetNeutralityHistory(resetPage: true);
-    }
-    if (_netNeutralityHistory != null) {
-      emit(state.copyWith(
-        speedHistory: state.speedHistory,
-        netNeutralityHistory: _netNeutralityHistory!.content,
-        loading: false,
-      ));
-    }
+    activeNetworkTypeFilters.clear();
+    activeDeviceFilters.clear();
+    _history = await getHistory(resetPage: true);
 
     if (_history == null) {
       return;
@@ -76,7 +54,6 @@ class HistoryCubit extends Cubit<HistoryState> implements ErrorHandler {
     if (_history != null) {
       newState = state.copyWith(
         speedHistory: _history!.content,
-        netNeutralityHistory: state.netNeutralityHistory,
         networkTypeFilters: networkTypeFilters,
         deviceFilters: deviceFilters,
         enableSynchronization: enableSynchronization,
@@ -88,28 +65,39 @@ class HistoryCubit extends Cubit<HistoryState> implements ErrorHandler {
     }
   }
 
-  Future<History?> _getSpeedHistory({bool resetPage = false}) async {
+  @override
+  onBeforeLoad() {
     emit(state.copyWith(error: null));
-    if (resetPage) {
-      _historySpeedPage = 1;
-    }
+  }
+
+  @override
+  load(int pageNumber) {
     return _historyApiService.getSpeedHistory(
-      _historySpeedPage,
-      _activeNetworkTypeFilters,
-      _activeDeviceFilters,
-      errorHandler: this,
+      pageNumber,
+      activeNetworkTypeFilters,
+      activeDeviceFilters,
+      errorHandler: errorHandler,
     );
   }
 
-  Future<NetNeutralityHistory?> _getNetNeutralityHistory({bool resetPage = false}) async {
-    emit(state.copyWith(error: null));
-    if (resetPage) {
-      _historyNetNeutralityPage = 1;
+  @override
+  updateHistory(history) {
+    if (history == null || history.content.length <= 0) {
+      return;
     }
-    return _netNeutralityApiService.getWholeHistory(
-      _historyNetNeutralityPage,
-      errorHandler: this,
-    );
+    var allHistoryList = [
+      ...state.speedHistory.expand((element) => [...element.tests]).toList(),
+      ...history.getFlatResult()
+    ];
+    var networkTypeFilters = getFiltersFromHistory(
+        allHistoryList, MeasurementHistoryResult.networkTypeField);
+    var deviceFilters = getFiltersFromHistory(
+        allHistoryList, MeasurementHistoryResult.deviceField);
+    emit(state.copyWith(
+      speedHistory: [...state.speedHistory, ...history.content],
+      networkTypeFilters: !isFiltersActive ? networkTypeFilters : null,
+      deviceFilters: !isFiltersActive ? deviceFilters : null,
+    ));
   }
 
   List<HistoryFilterItem> getFiltersFromHistory(
@@ -123,11 +111,11 @@ class HistoryCubit extends Cubit<HistoryState> implements ErrorHandler {
 
   Future onFilterTap(HistoryFilterItem filter) async {
     filter.active = !filter.active;
-    _activeNetworkTypeFilters = state.networkTypeFilters
+    activeNetworkTypeFilters = state.networkTypeFilters
         .where((e) => e.active)
         .map((e) => e.text)
         .toList();
-    _activeDeviceFilters =
+    activeDeviceFilters =
         state.deviceFilters.where((e) => e.active).map((e) => e.text).toList();
     emit(state.copyWith(loading: true));
     if (_filterTimer?.isActive ?? false) {
@@ -135,7 +123,7 @@ class HistoryCubit extends Cubit<HistoryState> implements ErrorHandler {
     }
     final completer = Completer();
     _filterTimer = Timer(Duration(milliseconds: 600), () async {
-      _history = await _getSpeedHistory(resetPage: true);
+      _history = await getHistory(resetPage: true);
       if (_history != null) {
         emit(state.copyWith(
           speedHistory: _history!.content,
@@ -147,29 +135,14 @@ class HistoryCubit extends Cubit<HistoryState> implements ErrorHandler {
     return completer.future;
   }
 
-  Future onEndOfSpeedPage() async {
-    if (!(_history?.last ?? false)) {
-      _historySpeedPage++;
-      _history = await _getSpeedHistory();
-      if (_history == null) {
-        _historySpeedPage--;
-        return;
-      }
-      var allHistoryList = [...state.speedHistory.expand((element) => {...element.tests}).toList(), ..._history!.getFlatResult()];
-      var networkTypeFilters = getFiltersFromHistory(
-          allHistoryList, MeasurementHistoryResult.networkTypeField);
-      var deviceFilters = getFiltersFromHistory(
-          allHistoryList, MeasurementHistoryResult.deviceField);
-      emit(state.copyWith(
-        speedHistory: [...state.speedHistory, ..._history!.content],
-        networkTypeFilters: !_isFiltersActive ? networkTypeFilters : null,
-        deviceFilters: !_isFiltersActive ? deviceFilters : null,
-      ));
-    }
+  processError(Exception? error) {
+    emit(state.copyWith(loading: false, error: error));
   }
+}
 
+class HistoryErrorHandler implements ErrorHandler {
   @override
   process(Exception? error) {
-    emit(state.copyWith(loading: false, error: error));
+    GetIt.I.get<HistoryCubit>().processError(error);
   }
 }
