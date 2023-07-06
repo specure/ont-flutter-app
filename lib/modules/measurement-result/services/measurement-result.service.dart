@@ -61,20 +61,15 @@ class MeasurementResultService extends DioService {
   }
 
   List<double> _getSpeedCurveFromGraph(List<SpeedCurveItem> list) {
-    final listLength = list.length;
-    List<double> speedList = [];
-    var index = 1;
-    for (int i = 0; i < listLength - 1; i++) {
-      var prevTimeDiff = 1000 - (list[index - 1].time % 1000);
-      var currentTimeDiff = 1000 - (list[index].time % 1000);
-      if (prevTimeDiff > currentTimeDiff || prevTimeDiff == currentTimeDiff) {
-        list.removeAt(index - 1);
-      } else {
-        index++;
-      }
-    }
+    Map<int, SpeedCurveItem> dedupedMap = {};
     for (int i = 0; i < list.length - 1; i++) {
-      speedList.add((list[i + 1].bytes - list[i].bytes) / 125000);
+      dedupedMap[list[i].time] = list[i];
+    }
+    List<double> speedList = [];
+    List<SpeedCurveItem> dedupedList = dedupedMap.values.toList();
+    for (int i = 0; i < dedupedList.length - 1; i++) {
+      final thisItem = dedupedList[i];
+      speedList.add(thisItem.bytes / thisItem.time);
     }
     return speedList;
   }

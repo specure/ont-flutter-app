@@ -95,8 +95,8 @@ void main() {
     test('returns history with speed curves', () async {
       final result = await service.getResultWithSpeedCurves(_correctUuid);
       expect(result, isA<MeasurementHistoryResult>());
-      expect(result!.downloadSpeedDetails, [0.008]);
-      expect(result.uploadSpeedDetails, []);
+      expect(result!.downloadSpeedDetails, [1]);
+      expect(result.uploadSpeedDetails, [1]);
     });
   });
 }
