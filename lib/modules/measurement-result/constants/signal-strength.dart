@@ -60,8 +60,8 @@ String get4gSignalQuality(int signal) =>
     getCommonSignalQuality(lteMaxSignal, lteMinSignal, signal);
 
 String getSignalQuality(String technology, int signal) {
-  String quality; 
-  switch (technology) {
+  String quality;
+  switch (technology.toLowerCase()) {
     case wifi:
       quality = getWifiSignalQuality(signal);
       break;
