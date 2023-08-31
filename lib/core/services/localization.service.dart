@@ -162,6 +162,8 @@ class LocalizationService extends DioService {
     switch (languageCode) {
       case "sr-Latn":
         return "sr-Latn";
+      case "sr_me-Latn":
+        return "sr_ME-Latn";
       case "sr-Cyrl":
         return "sr";
     }

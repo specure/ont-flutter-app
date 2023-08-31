@@ -13,6 +13,7 @@ import 'package:nt_flutter_standalone/core/constants/locales.dart';
 import 'package:nt_flutter_standalone/core/constants/mapbox.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/constants/urls.dart';
+import 'package:nt_flutter_standalone/core/delegates/localization-sr-me-latn.delegate.dart';
 import 'package:nt_flutter_standalone/core/di/service-locator.dart';
 import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
@@ -149,6 +150,8 @@ class App extends StatelessWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
+          MaterialLocalizationSrMeLatnDelegate(),
+          CupertinoLocalizationSrMeLatnDelegate(),
         ],
         locale: GetIt.I.get<LocalizationService>().currentLocale,
         supportedLocales: GetIt.I.get<LocalizationService>().supportedLocales,
