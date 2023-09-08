@@ -158,14 +158,17 @@ class LocalizationService extends DioService {
 
   String translate(String key) => _translations?[key] ?? key;
 
-  String toCMSLanguageCode(String languageCode) {
+  String toCMSLanguageCode(String languageCode, {String? scriptCode}) {
     switch (languageCode) {
       case "sr-Latn":
         return "sr-Latn";
+      case "sr_ME":
       case "sr_me-Latn":
         return "sr_ME-Latn";
       case "sr-Cyrl":
         return "sr";
+      case "sr":
+        return scriptCode?.toLowerCase() == "latn" ? "sr-Latn" : "sr";
     }
     return languageCode;
   }

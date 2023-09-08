@@ -913,10 +913,15 @@ class MockLocalizationService extends _i1.Mock
         returnValue: '',
       ) as String);
   @override
-  String toCMSLanguageCode(String? languageCode) => (super.noSuchMethod(
+  String toCMSLanguageCode(
+    String? languageCode, {
+    String? scriptCode,
+  }) =>
+      (super.noSuchMethod(
         Invocation.method(
           #toCMSLanguageCode,
           [languageCode],
+          {#scriptCode: scriptCode},
         ),
         returnValue: '',
       ) as String);

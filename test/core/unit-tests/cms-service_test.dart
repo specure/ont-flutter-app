@@ -106,6 +106,8 @@ void main() {
 }
 
 _setUpStubs() {
+  when(GetIt.I.get<LocalizationService>().toCMSLanguageCode('nb'))
+      .thenReturn('nb');
   when(GetIt.I.get<LocalizationService>().loadSelectedLanguage).thenReturn(
       Language(
           name: "Norway",

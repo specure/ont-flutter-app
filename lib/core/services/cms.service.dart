@@ -45,10 +45,13 @@ class CMSService extends DioService {
       final List<dynamic> translations = response.data['translations'];
       Map<String, dynamic>? translation;
       try {
+        final locale = _localizationService.currentLocale;
+        final localeCode = _localizationService.toCMSLanguageCode(
+          locale.languageCode,
+          scriptCode: locale.scriptCode,
+        );
         translation = translations.length > 0
-            ? translations.firstWhere((e) =>
-                e['language'] ==
-                _localizationService.currentLocale.languageCode)
+            ? translations.firstWhere((e) => e['language'] == localeCode)
             : null;
       } on StateError catch (_) {}
       if (translation != null) {
