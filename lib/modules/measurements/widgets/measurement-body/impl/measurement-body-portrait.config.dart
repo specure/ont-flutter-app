@@ -22,9 +22,8 @@ class MeasurementBodyPortraitConfig extends MeasurementBodyConfig {
           children: [
             const MeasurementProgressBar(),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(),
                 MeasurementBox(),
                 ConditionalContent(
                   conditional: state.loopModeDetails.isLoopModeActive &&
