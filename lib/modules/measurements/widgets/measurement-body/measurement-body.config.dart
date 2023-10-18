@@ -32,9 +32,10 @@ abstract class MeasurementBodyConfig {
                     flex: 3,
                     child: Text(
                       "Measurement".translated.toUpperCase(),
+                      softWrap: false,
                       style: TextStyle(
                         color: NTColors.pale,
-                        fontSize: NTDimensions.textS,
+                        fontSize: NTDimensions.textXS,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -44,9 +45,10 @@ abstract class MeasurementBodyConfig {
                     child: Text(
                       "Current".translated.toUpperCase(),
                       textAlign: TextAlign.end,
+                      softWrap: false,
                       style: TextStyle(
                         color: NTColors.pale,
-                        fontSize: NTDimensions.textS,
+                        fontSize: NTDimensions.textXS,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -60,10 +62,11 @@ abstract class MeasurementBodyConfig {
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Text(
                                 "Median".translated.toUpperCase(),
+                                softWrap: false,
                                 textAlign: TextAlign.end,
                                 style: TextStyle(
                                   color: NTColors.pale,
-                                  fontSize: NTDimensions.textS,
+                                  fontSize: NTDimensions.textXS,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

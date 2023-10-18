@@ -147,7 +147,7 @@ abstract class LoopWaitingBodyConfig {
                 children: [
                   Flexible(
                     child: TextSection(
-                      title: 'Time to next test'.toUpperCase(),
+                      title: 'Time to next test',
                       value: sprintf("%s min", [
                         (state.loopModeDetails.currentTimeToNextTestSeconds
                             .formatSecondsToMinutesAndSeconds())
@@ -188,10 +188,12 @@ abstract class LoopWaitingBodyConfig {
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: state.loopModeDetails.historyResults?.length,
                     itemBuilder: (context, index) => HistoryItemWidget(
-                      item: MeasurementHistoryResults([state.loopModeDetails.historyResults![
-                          (state.loopModeDetails.historyResults!.length -
-                              1 -
-                              index)]]),
+                      item: MeasurementHistoryResults([
+                        state.loopModeDetails.historyResults![
+                            (state.loopModeDetails.historyResults!.length -
+                                1 -
+                                index)]
+                      ]),
                       flexFit: FlexFit.loose,
                     ),
                   ),

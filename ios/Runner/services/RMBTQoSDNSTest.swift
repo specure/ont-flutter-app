@@ -18,6 +18,7 @@ import Sentry
     private var host: String = ""
     private var record: String = ""
     private var rcode: String?
+    private var ipv: Int32 = 0
     
     private var timedOut: Bool = false
     
@@ -47,6 +48,7 @@ import Sentry
             } else {
                 resolverHost = resolver
             }
+            self.setIPV()
         } else if let defaultDNSServerIpAndPort = GetDNSIP.getdnsIPandPort() {
             if let host = defaultDNSServerIpAndPort["host"] as? String {
                 self.resolverHost = host
@@ -54,9 +56,24 @@ import Sentry
             if let port = defaultDNSServerIpAndPort["port"] as? NSNumber {
                 self.resolverPort = Int32(truncating: port)
             }
+            if let ipv = defaultDNSServerIpAndPort["ipv"] as? NSNumber {
+                self.ipv = Int32(truncating: ipv)
+            }
         }
         if (resolverHost == nil || resolverHost?.isEmpty == true) {
             SentrySDK.capture(message: "Unable to detect default DNS server iOS")
+        }
+    }
+    
+    func setIPV()() -> void {
+
+        var sin = sockaddr_in()
+        var sin6 = sockaddr_in6()
+
+        if self.resolverHost?.withCString({ cstring in inet_pton(AF_INET6, cstring, &sin6.sin6_addr) }) == 1 {
+            self.ipv = 6
+        } else if self.resolverHost?.withCString({ cstring in inet_pton(AF_INET, cstring, &sin.sin_addr) }) == 1 {
+            self.ipv = 4
         }
     }
     
@@ -89,7 +106,11 @@ import Sentry
             inet_aton(resolverHost, &addr)
             
             res.nsaddr_list.0.sin_addr = addr
-            res.nsaddr_list.0.sin_family = sa_family_t(AF_INET) // TODO: support ipv6 name servers
+            if (self.ipv == 6) {
+                res.nsaddr_list.0.sin_family = sa_family_t(AF_INET6)
+            } else {
+                res.nsaddr_list.0.sin_family = sa_family_t(AF_INET)
+            }
             res.nsaddr_list.0.sin_port = in_port_t(resolverPort).bigEndian
             res.nscount = 1
         }

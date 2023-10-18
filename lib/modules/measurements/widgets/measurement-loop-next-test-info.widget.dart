@@ -28,18 +28,20 @@ class MeasurementLoopNextTestInfo extends StatelessWidget {
                         fit: FlexFit.tight,
                         child: Text(
                           "Time to next test".translated.toUpperCase(),
+                          softWrap: false,
                           style: TextStyle(
                             color: NTColors.pale,
-                            fontSize: NTDimensions.textS,
+                            fontSize: NTDimensions.textXS,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Text(
                         "Movement".translated.toUpperCase(),
+                        softWrap: false,
                         style: TextStyle(
                           color: NTColors.pale,
-                          fontSize: NTDimensions.textS,
+                          fontSize: NTDimensions.textXS,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -55,8 +57,8 @@ class MeasurementLoopNextTestInfo extends StatelessWidget {
                           fit: FlexFit.tight,
                           child: Text(
                             sprintf("%s min", [
-                              state
-                                  .loopModeDetails.currentTimeToNextTestSeconds.formatSecondsToMinutesAndSeconds()
+                              state.loopModeDetails.currentTimeToNextTestSeconds
+                                  .formatSecondsToMinutesAndSeconds()
                             ]),
                             style: TextStyle(
                               color: NTColors.progressItem,
@@ -72,7 +74,8 @@ class MeasurementLoopNextTestInfo extends StatelessWidget {
                             sprintf("%d/%dm", [
                               state.loopModeDetails
                                   .currentDistanceMetersPassedFromLastTest,
-                              state.loopModeDetails.targetDistanceMetersToNextTest
+                              state.loopModeDetails
+                                  .targetDistanceMetersToNextTest
                             ]),
                             textAlign: TextAlign.end,
                             style: TextStyle(
