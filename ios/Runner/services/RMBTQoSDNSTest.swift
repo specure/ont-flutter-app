@@ -65,7 +65,7 @@ import Sentry
         }
     }
     
-    func setIPV()() -> void {
+    func setIPV() {
 
         var sin = sockaddr_in()
         var sin6 = sockaddr_in6()
