@@ -43,7 +43,12 @@ class CarrierInfoWrapper {
     try {
       Map<dynamic, dynamic>? respMap =
           await _channel.invokeMethod('getIosInfo');
-      return respMap?['carrierData'][0]?['carrierName'] ?? unknown;
+      final Iterable? carriers = respMap?['carrierData'];
+      final Map? activeCarrier = carriers?.firstWhere(
+        (element) => element["isActive"],
+        orElse: () => null,
+      );
+      return activeCarrier?['carrierName'] ?? unknown;
     } catch (e) {
       return unknown;
     }

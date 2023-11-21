@@ -132,9 +132,12 @@ final public class Carrier {
         
         var dataList =  [[String: Any?]]()
         
-        for carr in carriers.values {
+        for carrKey in carriers.keys {
+            guard let carr = carriers[carrKey] else {continue}
             dataList.append([
                 "carrierName": carr.carrierName,
+                "carrierId": carrKey,
+                "isActive": networkInfo.dataServiceIdentifier == carrKey,
                 "isoCountryCode": carr.isoCountryCode,
                 "mobileCountryCode": carr.mobileCountryCode,
                 "mobileNetworkCode": carr.mobileNetworkCode,
