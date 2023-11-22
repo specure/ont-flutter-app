@@ -23,12 +23,6 @@ import 'package:nt_flutter_standalone/modules/measurements/models/network-info-d
     as _i9;
 import 'package:nt_flutter_standalone/modules/measurements/models/signal-info.dart'
     as _i18;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/carrier-info.wrapper.dart'
-    as _i6;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-info.wrapper.dart'
-    as _i3;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-for-iot-plugin.wrapper.dart'
-    as _i8;
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart'
     as _i16;
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart'
@@ -37,6 +31,12 @@ import 'package:nt_flutter_standalone/modules/measurements/services/permissions.
     as _i5;
 import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart'
     as _i17;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart'
+    as _i6;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart'
+    as _i3;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart'
+    as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -268,6 +268,14 @@ class MockCarrierInfoWrapper extends _i1.Mock
   _i11.Future<String> getRadioType() => (super.noSuchMethod(
         Invocation.method(
           #getRadioType,
+          [],
+        ),
+        returnValue: _i11.Future<String>.value(''),
+      ) as _i11.Future<String>);
+  @override
+  _i11.Future<String> getNativeCarrierName() => (super.noSuchMethod(
+        Invocation.method(
+          #getNativeCarrierName,
           [],
         ),
         returnValue: _i11.Future<String>.value(''),

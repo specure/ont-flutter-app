@@ -7,7 +7,7 @@ import 'dart:async' as _i3;
 
 import 'package:geocoding/geocoding.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/geocoding-wrapper.dart'
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/geocoding-wrapper.dart'
     as _i2;
 
 // ignore_for_file: type=lint

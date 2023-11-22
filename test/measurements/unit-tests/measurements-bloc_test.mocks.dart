@@ -40,14 +40,6 @@ import 'package:nt_flutter_standalone/modules/measurements/models/network-info-d
     as _i20;
 import 'package:nt_flutter_standalone/modules/measurements/models/permissions-map.dart'
     as _i3;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/carrier-info.wrapper.dart'
-    as _i14;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-info.wrapper.dart'
-    as _i15;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/geocoding-wrapper.dart'
-    as _i5;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-for-iot-plugin.wrapper.dart'
-    as _i13;
 import 'package:nt_flutter_standalone/modules/measurements/services/app.review.service.dart'
     as _i34;
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart'
@@ -64,6 +56,14 @@ import 'package:nt_flutter_standalone/modules/measurements/services/permissions.
     as _i26;
 import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart'
     as _i17;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart'
+    as _i14;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart'
+    as _i15;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/geocoding-wrapper.dart'
+    as _i5;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart'
+    as _i13;
 import 'package:nt_flutter_standalone/modules/settings/models/language.dart'
     as _i9;
 import 'package:nt_flutter_standalone/modules/settings/services/settings.service.dart'

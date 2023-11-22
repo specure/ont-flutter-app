@@ -49,15 +49,7 @@ final public class Carrier {
             }
         }
         
-        if #available(iOS 12.0, *) {
-            self.carriers = networkInfo.serviceSubscriberCellularProviders ?? [:]
-            
-        } else {
-            if(networkInfo.subscriberCellularProvider != nil){
-                carriers = ["0": networkInfo.subscriberCellularProvider!]
-            }
-            
-        }
+        self.carriers = networkInfo.serviceSubscriberCellularProviders ?? [:]
         
         
     }
@@ -69,27 +61,23 @@ final public class Carrier {
     public weak var delegate: CarrierDelegate?
     
     /// Returns current radio access technology type used (GPRS, Edge, LTE, etc.) with the carrier.
-    public var carrierRadioAccessTechnologyTypeList: [String?] {
-        var technologyList  =  [String]()
+    public var carrierRadioAccessTechnologyTypeList: [[String:Any?]] {
+        var technologyList  =  [[String:Any?]]()
         
-        if #available(iOS 12.0, *) {
-            
-            let prefix = "CTRadioAccessTechnology"
-            guard let currentTechnologies = networkInfo.serviceCurrentRadioAccessTechnology else {
-                return []
-            }
-            
-            
-            for technology in currentTechnologies.values {
-                
-                if technology.hasPrefix(prefix) {
-                    technologyList.append(String(technology.dropFirst(prefix.count)))
-                    
-                } else{
-                    technologyList.append(String(technology))
-                }
-                
-            }
+
+        let prefix = "CTRadioAccessTechnology"
+        guard let currentTechnologies = networkInfo.serviceCurrentRadioAccessTechnology else {
+            return []
+        }
+        
+        for techKey in currentTechnologies.keys {
+            guard let technology = currentTechnologies[techKey] else {continue}
+            let name = technology.hasPrefix(prefix) ? String(technology.dropFirst(prefix.count)) : String(technology)
+            technologyList.append([
+                "name": name,
+                "carrierId": techKey,
+                "isActive": networkInfo.dataServiceIdentifier == techKey
+            ])
             
         }
         
@@ -98,27 +86,26 @@ final public class Carrier {
     }
     
     /// Returns current radio access technology type used (GPRS, Edge, LTE, etc.) with the carrier.
-    public var carrierRadioAccessTechnologyGenerationList: [String?] {
-        var technologyList  =  [String]()
+    public var carrierRadioAccessTechnologyGenerationList: [[String: Any?]] {
+        var technologyList  =  [[String: Any?]]()
+
+        let prefix = "CTRadioAccessTechnology"
+        guard let currentTechnologies = networkInfo.serviceCurrentRadioAccessTechnology else {
+            return []
+        }
         
-        if #available(iOS 12.0, *) {
+        
+        for techKey in currentTechnologies.keys {
+            guard let technology = currentTechnologies[techKey] else {continue}
             
-            let prefix = "CTRadioAccessTechnology"
-            guard let currentTechnologies = networkInfo.serviceCurrentRadioAccessTechnology else {
-                return []
-            }
+            let name = technology.hasPrefix(prefix) ? String(technology.dropFirst(prefix.count)) : String(technology)
+            let generation = ShortRadioAccessTechnologyList(rawValue: name)?.generation ?? "3G"
             
-            
-            for technology in currentTechnologies.values {
-                
-                if technology.hasPrefix(prefix) {
-                    let techNoPrefix = String(technology.dropFirst(prefix.count))
-                    technologyList.append(ShortRadioAccessTechnologyList(rawValue: techNoPrefix)?.generation ?? "3G")
-                } else{
-                    technologyList.append(ShortRadioAccessTechnologyList(rawValue: technology)?.generation ?? "3G")
-                }
-                
-            }
+            technologyList.append([
+                "name": generation,
+                "carrierId": techKey,
+                "isActive": networkInfo.dataServiceIdentifier == techKey
+            ])
             
         }
         

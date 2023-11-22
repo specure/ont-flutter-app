@@ -24,10 +24,10 @@ import 'package:nt_flutter_standalone/modules/map/services/api/map-search.api.se
 import 'package:nt_flutter_standalone/modules/map/services/api/technology.api.service.dart';
 import 'package:nt_flutter_standalone/modules/map/store/map.cubit.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/services/measurement-result.service.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/carrier-info.wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-info.wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/geocoding-wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-for-iot-plugin.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/geocoding-wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/loop.mode.service.dart';

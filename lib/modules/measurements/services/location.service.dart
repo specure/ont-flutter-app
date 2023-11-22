@@ -7,7 +7,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/address.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/geocoding-wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/geocoding-wrapper.dart';
 
 class LocationService extends DioService {
   static const MethodChannel _channel = const MethodChannel("nettest/location");

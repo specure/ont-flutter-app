@@ -4,6 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/api-errors.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/models/bloc-event.dart';
+import 'package:nt_flutter_standalone/core/services/max-mind.service.dart';
+import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
 import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
@@ -12,6 +14,7 @@ import 'package:nt_flutter_standalone/modules/measurements/models/measurement-re
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../measurement-result/models/loop-mode-settings-model.dart';
@@ -24,6 +27,8 @@ class MeasurementService {
   MeasurementPhase? lastPhase;
   BlocEvent? lastDispatchedEvent;
   final _prefs = GetIt.I.get<SharedPreferencesWrapper>();
+  final _carrier = GetIt.I.get<CarrierInfoWrapper>();
+  final _platform = GetIt.I.get<PlatformWrapper>();
 
   MeasurementService({
     this.channel = const MethodChannel('nettest/measurements'),
@@ -56,6 +61,18 @@ class MeasurementService {
         'uuidPermissionGranted':
             _prefs.getBool(StorageKeys.persistentClientUuidEnabled)
       };
+      var carrierName = await _carrier.getNativeCarrierName();
+      if (_platform.isIOS && carrierName == unknown) {
+        final maxMindInfo =
+            await GetIt.I.get<MaxMindService>().getInfoForCurrentIp();
+        params["telephonyInfo"] = {
+          'telephonyNetworkSimOperator':
+              "${maxMindInfo?.traits.mobileCountryCode}-${maxMindInfo?.traits.mobileNetworkCode}",
+          'telephonyNetworkSimCountry': maxMindInfo?.registeredCountry.iso,
+          'telephonyNetworkOperatorName': maxMindInfo?.traits.organization,
+          'telephonyNetworkSimOperatorName': maxMindInfo?.traits.isp,
+        };
+      }
       final message = await channel.invokeMethod(
         'startTest',
         params,

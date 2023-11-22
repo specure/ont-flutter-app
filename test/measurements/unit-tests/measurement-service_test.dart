@@ -6,12 +6,14 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/environment.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/measurement.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../core/unit-tests/dio-service_test.mocks.dart';
@@ -32,8 +34,12 @@ void main() {
   setUpAll(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
     GetIt.I.registerLazySingleton<MeasurementsBloc>(() => _bloc);
-    when(GetIt.I.get<SharedPreferencesWrapper>().init()).thenAnswer((_) async => null);
-    when(GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag)).thenReturn(null);
+    when(GetIt.I.get<SharedPreferencesWrapper>().init())
+        .thenAnswer((_) async => null);
+    when(GetIt.I
+            .get<SharedPreferencesWrapper>()
+            .getString(StorageKeys.selectedLocaleTag))
+        .thenReturn(null);
     when(GetIt.I
             .get<SharedPreferencesWrapper>()
             .getBool(StorageKeys.phoneStatePermissionsGranted))
@@ -46,6 +52,9 @@ void main() {
             .get<SharedPreferencesWrapper>()
             .getBool(StorageKeys.persistentClientUuidEnabled))
         .thenReturn(true);
+    when(GetIt.I.get<CarrierInfoWrapper>().getNativeCarrierName())
+        .thenAnswer((realInvocation) async => "Carrier");
+    when(GetIt.I.get<PlatformWrapper>().isIOS).thenReturn(true);
     PackageInfo.setMockInitialValues(
       appName: '',
       packageName: '',

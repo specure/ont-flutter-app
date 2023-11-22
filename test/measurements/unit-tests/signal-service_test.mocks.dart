@@ -17,16 +17,16 @@ import 'package:nt_flutter_standalone/modules/measurements/models/measurement-re
     as _i5;
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart'
     as _i7;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/carrier-info.wrapper.dart'
-    as _i10;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-info.wrapper.dart'
-    as _i11;
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-for-iot-plugin.wrapper.dart'
-    as _i9;
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart'
     as _i12;
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart'
     as _i3;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart'
+    as _i10;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart'
+    as _i11;
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart'
+    as _i9;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -182,6 +182,14 @@ class MockCarrierInfoWrapper extends _i1.Mock
   _i4.Future<String> getRadioType() => (super.noSuchMethod(
         Invocation.method(
           #getRadioType,
+          [],
+        ),
+        returnValue: _i4.Future<String>.value(''),
+      ) as _i4.Future<String>);
+  @override
+  _i4.Future<String> getNativeCarrierName() => (super.noSuchMethod(
+        Invocation.method(
+          #getNativeCarrierName,
           [],
         ),
         returnValue: _i4.Future<String>.value(''),

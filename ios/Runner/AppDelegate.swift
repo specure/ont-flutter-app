@@ -140,5 +140,9 @@ enum EClientSuffix: String {
         if let uuidPermissionGranted = arguments["uuidPermissionGranted"] as? Bool {
             RMBTConfig.sharedInstance.uuidPermissionGranted = uuidPermissionGranted
         }
+        
+        if let telephonyInfo = arguments["telephonyInfo"] as? [String:Any] {
+            RMBTConfig.sharedInstance.telephonyInfo = telephonyInfo
+        }
     }
 }

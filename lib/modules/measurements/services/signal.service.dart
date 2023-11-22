@@ -7,9 +7,9 @@ import 'package:nt_flutter_standalone/modules/measurements/models/cell-info.dart
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/signal-info.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/carrier-info.wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-info.wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-for-iot-plugin.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart';
 import 'package:sprintf/sprintf.dart';
@@ -111,7 +111,7 @@ class SignalService {
     if (await isEnoughPermissionGranted()) {
       final simsInfoData = await cellPlugin.getSimInfo();
       final primaryDataSubscriptionId =
-      _getPrimaryDataSubscriptionId(simsInfoData);
+          _getPrimaryDataSubscriptionId(simsInfoData);
       final cellsInfoData = await cellPlugin.getCellInfo();
       final list = await _getConnectedCellInfosForSubscription(
           primaryDataSubscriptionId, cellsInfoData);
@@ -131,14 +131,15 @@ class SignalService {
           registered: true,
           areaCode: _getAreaCode(cell, networkType),
           channelNumber: cell[networkType]?['band${networkType.toUpperCase()}']
-          ?['channelNumber'],
+              ?['channelNumber'],
           primaryDataSubscription: true,
           locationId: _getLocationId(cell, networkType),
           mcc: int.parse(cell[networkType]?['network']?['mcc'] ?? '0'),
           mnc: int.parse(cell[networkType]?['network']?['mnc'] ?? '0'),
           primaryScramblingCode: _getPrimaryScramblingCode(cell, networkType),
-          technology:
-          currentNetwork == ConnectivityResult.mobile ? cellTechnology : wifi,
+          technology: currentNetwork == ConnectivityResult.mobile
+              ? cellTechnology
+              : wifi,
           uuid: _getCellUuid(networkType, cell[networkType]?['cid']),
         );
       }
@@ -398,8 +399,8 @@ class SignalService {
       var allPrimaryCells = _getPrimaryCells(cellsInfoData);
       var primaryDataCell = allPrimaryCells.firstWhere(
           (element) =>
-              element[(element['type'] as String).toLowerCase()]?
-                  ['subscriptionId'] ==
+              element[(element['type'] as String).toLowerCase()]
+                  ?['subscriptionId'] ==
               subscriptionId,
           orElse: () => null);
       if (primaryDataCell != null) {
@@ -441,8 +442,8 @@ class SignalService {
       var allPrimaryCells = _getPrimaryCells(cellsInfoData);
       var primaryDataCell = allPrimaryCells.firstWhere(
           (element) =>
-              element[(element['type'] as String).toLowerCase()]?
-                  ['subscriptionId'] ==
+              element[(element['type'] as String).toLowerCase()]
+                  ?['subscriptionId'] ==
               subscriptionId,
           orElse: () => null);
       if (primaryDataCell != null) {
@@ -583,9 +584,9 @@ class SignalService {
     if (platform.isAndroid &&
         permission.permissionsMap.locationPermissionsGranted &&
         permission.permissionsMap.phoneStatePermissionsGranted &&
-        permission.permissionsMap.preciseLocationPermissionsGranted
-        ) {
-      var locationServiceEnabled = await _locationService.isLocationServiceEnabled;
+        permission.permissionsMap.preciseLocationPermissionsGranted) {
+      var locationServiceEnabled =
+          await _locationService.isLocationServiceEnabled;
       if (locationServiceEnabled) {
         return true;
       } else {

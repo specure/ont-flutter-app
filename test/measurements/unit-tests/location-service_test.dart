@@ -6,7 +6,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/geocoding-wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/geocoding-wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart';
 
 import '../../di/service-locator.dart';

@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/locales.dart';
+import 'package:nt_flutter_standalone/core/services/max-mind.service.dart';
 import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/wrappers/date-time.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/firebase-analytics.wrapper.dart';
@@ -24,10 +25,10 @@ import 'package:nt_flutter_standalone/modules/map/services/api/technology.api.se
 import 'package:nt_flutter_standalone/modules/map/store/map.cubit.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/services/measurement-result.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/store/measurement-result.cubit.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/carrier-info.wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/cell-info.wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/geocoding-wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/wrappers/wifi-for-iot-plugin.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/geocoding-wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/services/dns-test.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart';
@@ -104,6 +105,7 @@ class ServiceLocator {
         () => NetNeutralityApiService());
     _registerLazySingleton<NetNeutralityMeasurementService>(
         () => NetNeutralityMeasurementService());
+    _registerLazySingleton<MaxMindService>(() => MaxMindService());
     // End services
 
     //Blocs and Cubits
