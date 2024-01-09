@@ -45,7 +45,7 @@ class MapSearchApiService extends DioService {
         );
       }).toList();
       return items;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       return [];
     }

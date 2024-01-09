@@ -32,9 +32,9 @@ void main() {
   group('DioService', () {
     test('error interceptor', () async {
       final interceptor = ErrorInterceptor(testing: true);
-      final err = DioError(
+      final err = DioException(
         requestOptions: RequestOptions(path: ''),
-        type: DioErrorType.connectTimeout,
+        type: DioExceptionType.connectionTimeout,
         error: SocketException.closed(),
       );
       final handler = ErrorInterceptorHandler();

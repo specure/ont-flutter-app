@@ -83,7 +83,7 @@ void main() {
       expect(json, _historyToJson);
     });
 
-    test('returns null and calls error handler on DioError', () async {
+    test('returns null and calls error handler on DioException', () async {
       final history = await HistoryApiService(testing: true)
           .getSpeedHistory(2, null, null, errorHandler: _errorHandler);
       expect(history?.content, null);

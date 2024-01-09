@@ -11,12 +11,12 @@ DnsNetNeutralitySettingsItem _$DnsNetNeutralitySettingsItemFromJson(
     DnsNetNeutralitySettingsItem(
       resolver: json['resolver'] as String?,
       expectedDnsEntries: json['expectedDnsEntries'] as String?,
+      expectedDnsStatus: json['expectedDnsStatus'] as String?,
       target: json['target'] as String,
       entryType: json['entryType'] as String,
-      expectedDnsStatus: json['expectedDnsStatus'] as String,
       id: json['id'] as int,
       type: json['type'] as String,
-      timeout: json['timeout'] as num,
+      timeout: (json['timeout'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$DnsNetNeutralitySettingsItemToJson(

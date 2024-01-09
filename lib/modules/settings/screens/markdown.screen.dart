@@ -42,9 +42,7 @@ class MarkdownScreen extends StatelessWidget {
                     child: Html(
                       data:
                           markdownToHtml(state.staticPageContent.markdownReady),
-                      onLinkTap: (String? url,
-                          RenderContext context,
-                          Map<String, String> attributes,
+                      onLinkTap: (String? url, Map<String, String> attributes,
                           dom.Element? element) {
                         final fixedUrl = url?.asCmsUrl;
                         if (fixedUrl != null) {

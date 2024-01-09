@@ -6,14 +6,14 @@ part 'web-net-neutrality-settings-item.g.dart';
 @JsonSerializable()
 class WebNetNeutralitySettingsItem extends NetNeutralitySettingsItem {
   final String target;
-  final int expectedStatusCode;
+  final int? expectedStatusCode;
 
   WebNetNeutralitySettingsItem({
+    this.expectedStatusCode,
     required this.target,
-    required this.expectedStatusCode,
     required int id,
     required String type,
-    required num timeout,
+    required double timeout,
   }) : super(
           id: id,
           type: type,

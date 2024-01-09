@@ -9,11 +9,11 @@ part of 'web-net-neutrality-settings-item.dart';
 WebNetNeutralitySettingsItem _$WebNetNeutralitySettingsItemFromJson(
         Map<String, dynamic> json) =>
     WebNetNeutralitySettingsItem(
+      expectedStatusCode: json['expectedStatusCode'] as int?,
       target: json['target'] as String,
-      expectedStatusCode: json['expectedStatusCode'] as int,
       id: json['id'] as int,
       type: json['type'] as String,
-      timeout: json['timeout'] as num,
+      timeout: (json['timeout'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$WebNetNeutralitySettingsItemToJson(

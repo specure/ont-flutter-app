@@ -13,7 +13,7 @@ class MeasurementResultService extends DioService {
     try {
       var response = await dio.get('${NTUrls.csResultsRoute}/$uuid');
       return MeasurementHistoryResult.fromJson(response.data);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
       return null;
@@ -31,7 +31,7 @@ class MeasurementResultService extends DioService {
         'upload': SpeedCurveItem.fromJsonToList(
             response.data['speed_curve']['upload']),
       };
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
       return null;

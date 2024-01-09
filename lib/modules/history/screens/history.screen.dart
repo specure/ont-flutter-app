@@ -59,6 +59,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   children: [
                     Expanded(
                       child: TabBar(
+                        tabAlignment: TabAlignment.start,
                         isScrollable: true,
                         labelColor: NTColors.primary,
                         unselectedLabelColor: Colors.black,

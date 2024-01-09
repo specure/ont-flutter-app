@@ -10,13 +10,12 @@ class Section extends StatelessWidget {
   final List<int> widths;
   final Axis direction;
 
-  Section({
-    required this.titles,
-    required this.values,
-    this.icons = const [],
-    this.direction = Axis.horizontal,
-    this.widths = const []
-  });
+  Section(
+      {required this.titles,
+      required this.values,
+      this.icons = const [],
+      this.direction = Axis.horizontal,
+      this.widths = const []});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +27,7 @@ class Section extends StatelessWidget {
         titles.length,
         (index) => Flexible(
             flex: widths.length > 1 ? widths[index] : 1,
-            child: _buildSubSection(index)
-        ),
+            child: _buildSubSection(index)),
       ),
     );
   }
@@ -62,6 +60,8 @@ class Section extends StatelessWidget {
                   Expanded(
                     child: Text(
                       values[index][subSectionNum],
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
                       style: TextStyle(
                         fontSize: NTDimensions.textS,
                         fontWeight: FontWeight.w500,

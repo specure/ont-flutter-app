@@ -83,8 +83,7 @@ class HistoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var paramWidth = 55.0;
-    var paramSmallWidth = 36.0;
+    var paramWidth = 50.0;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: Row(
@@ -127,10 +126,10 @@ class HistoryHeader extends StatelessWidget {
           Flexible(
             flex: 2,
             fit: flexFit,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
-              child: Container(
-                width: paramSmallWidth,
+            child: Container(
+              width: paramWidth,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
                 child: Text(
                   'Ping (ms)'.translated,
                   textAlign: TextAlign.center,

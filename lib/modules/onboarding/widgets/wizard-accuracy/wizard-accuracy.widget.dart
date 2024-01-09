@@ -30,6 +30,12 @@ class _WizardAccuracyState extends State<WizardAccuracy> {
   @override
   Widget build(BuildContext context) {
     final WizardState state = GetIt.I.get<WizardCubit>().state;
+    final shortestSide = MediaQuery.of(context).size.shortestSide;
+    if (shortestSide >= 600 && _canContinue == false) {
+      setState(() {
+        _canContinue = true;
+      });
+    }
     return NTOrientationBuilder<WizardAccuracyConfig>(
       builder: (config) {
         final size = MediaQuery.of(context).size;

@@ -13,10 +13,10 @@ class PermissionDialog extends StatefulWidget {
   final bool locationServicesEnabled;
   final bool preciseLocationPermissionsGranted;
 
-  PermissionDialog({
-    required this.child,
-    this.locationServicesEnabled = true,
-    this.preciseLocationPermissionsGranted = true});
+  PermissionDialog(
+      {required this.child,
+      this.locationServicesEnabled = true,
+      this.preciseLocationPermissionsGranted = true});
 
   @override
   State<PermissionDialog> createState() => _PermissionDialogState();
@@ -31,7 +31,8 @@ class _PermissionDialogState extends State<PermissionDialog> {
             _showProblemResolvingDialog(
                 'Location services disabled',
                 "We need enabled location services in order to provide more accurate information about your network connection.",
-                AppSettings.openLocationSettings);
+                () => AppSettings.openAppSettings(
+                    type: AppSettingsType.location));
           } else if (widget.preciseLocationPermissionsGranted == false) {
             _showProblemResolvingDialog(
                 'Missing permissions',
@@ -72,8 +73,8 @@ class _PermissionDialogState extends State<PermissionDialog> {
                 GetIt.I.get<NavigationService>().goBack();
                 action();
               },
-              height: 84 * MediaQuery.of(context).textScaleFactor,
-              width: 170 * MediaQuery.of(context).textScaleFactor,
+              height: MediaQuery.textScalerOf(context).scale(84),
+              width: MediaQuery.textScalerOf(context).scale(170),
             ),
             GradientButton(
               colors: [Colors.transparent],
@@ -89,8 +90,8 @@ class _PermissionDialogState extends State<PermissionDialog> {
               onPressed: () {
                 GetIt.I.get<NavigationService>().goBack();
               },
-              height: 84 * MediaQuery.of(context).textScaleFactor,
-              width: 92 * MediaQuery.of(context).textScaleFactor,
+              height: MediaQuery.textScalerOf(context).scale(84),
+              width: MediaQuery.textScalerOf(context).scale(92),
             )
           ],
         );

@@ -8,8 +8,8 @@ mixin ErrorState {
     if (error == null) {
       return null;
     }
-    if (error is DioError) {
-      final dioError = error as DioError;
+    if (error is DioException) {
+      final dioError = error as DioException;
       try {
         final String? message = dioError.response?.data?['message'];
         if (message != null && message.isNotEmpty) {
@@ -17,7 +17,7 @@ mixin ErrorState {
         }
         throw dioError;
       } catch (_) {
-        if (dioError.message.isNotEmpty) {
+        if (dioError.message != null && dioError.message!.isNotEmpty) {
           return dioError.message;
         }
         return dioError.toString();

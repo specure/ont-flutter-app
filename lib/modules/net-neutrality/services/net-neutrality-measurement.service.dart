@@ -47,9 +47,10 @@ class NetNeutralityMeasurementService extends DioService {
     final requestSentAt = _dateTimeWrapper.nowInMillis();
     WebNetNeutralityResultItem resultItem;
     final localDio = dioInstanceForUrl(test.target);
-    localDio.options.connectTimeout = (test.timeout * 1000).toInt();
-    localDio.options.sendTimeout = (test.timeout * 1000).toInt();
-    localDio.options.receiveTimeout = (test.timeout * 1000).toInt();
+    final timeoutMs = (test.timeout * 1000).toInt();
+    localDio.options.connectTimeout = Duration(milliseconds: timeoutMs);
+    localDio.options.sendTimeout = Duration(milliseconds: timeoutMs);
+    localDio.options.receiveTimeout = Duration(milliseconds: timeoutMs);
     localDio.options.followRedirects = false;
     try {
       final response = await localDio.get("");
@@ -60,11 +61,11 @@ class NetNeutralityMeasurementService extends DioService {
         timeoutExceeded: false,
         statusCode: response.statusCode,
       );
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       switch (e.type) {
-        case DioErrorType.connectTimeout:
-        case DioErrorType.sendTimeout:
-        case DioErrorType.receiveTimeout:
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
           resultItem = WebNetNeutralityResultItem.fromSettingsItem(
             test,
             openTestUuid: settings!.openTestUuid,
@@ -73,7 +74,7 @@ class NetNeutralityMeasurementService extends DioService {
             statusCode: e.response?.statusCode,
           );
           break;
-        case DioErrorType.response:
+        case DioExceptionType.badResponse:
         default:
           resultItem = WebNetNeutralityResultItem.fromSettingsItem(
             test,

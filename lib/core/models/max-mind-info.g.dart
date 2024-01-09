@@ -21,10 +21,10 @@ Map<String, dynamic> _$MaxMindInfoToJson(MaxMindInfo instance) =>
 
 MaxMindInfoTraits _$MaxMindInfoTraitsFromJson(Map<String, dynamic> json) =>
     MaxMindInfoTraits(
-      isp: json['isp'] as String,
-      mobileCountryCode: json['mobile_country_code'] as String,
-      mobileNetworkCode: json['mobile_network_code'] as String,
-      organization: json['organization'] as String,
+      isp: json['isp'] as String?,
+      mobileCountryCode: json['mobile_country_code'] as String?,
+      mobileNetworkCode: json['mobile_network_code'] as String?,
+      organization: json['organization'] as String?,
     );
 
 Map<String, dynamic> _$MaxMindInfoTraitsToJson(MaxMindInfoTraits instance) =>
@@ -38,7 +38,7 @@ Map<String, dynamic> _$MaxMindInfoTraitsToJson(MaxMindInfoTraits instance) =>
 MaxMindInfoRegisteredCountry _$MaxMindInfoRegisteredCountryFromJson(
         Map<String, dynamic> json) =>
     MaxMindInfoRegisteredCountry(
-      iso: json['iso_code'] as String,
+      iso: json['iso_code'] as String?,
     );
 
 Map<String, dynamic> _$MaxMindInfoRegisteredCountryToJson(

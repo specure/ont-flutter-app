@@ -70,7 +70,7 @@ class TechnologyOverTimeChart extends StatelessWidget {
             isVisible: false,
             isInversed: true,
           ),
-          series: <ChartSeries>[
+          series: [
             AreaSeries<TechnologySignal?, int>(
               dataSource: signals,
               xValueMapper: (value, x) => x,

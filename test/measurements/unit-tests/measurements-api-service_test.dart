@@ -32,7 +32,7 @@ final _measurementResult = MeasurementResult(
 );
 final _emptyMeasurementResult =
     MeasurementResult.fromPlatformChannelArguments({});
-final DioError _dioError = MockDioError();
+final DioException _dioError = MockDioError();
 final ErrorHandler _errorHandler = MockErrorHandler();
 late final Dio _dio;
 

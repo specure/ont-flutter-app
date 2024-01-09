@@ -1,7 +1,7 @@
 abstract class NetNeutralitySettingsItem {
   final int id;
   final String type;
-  final num timeout;
+  final double timeout;
 
   NetNeutralitySettingsItem({
     required this.id,

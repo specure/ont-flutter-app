@@ -28,7 +28,7 @@ import '../../measurements/widgets-tests/start-test.widget_test.dart';
 late SettingsCubit _cubit;
 late SharedPreferencesWrapper _prefs;
 late FirebaseAnalyticsWrapper _analytics;
-final DioError _dioError = MockDioError();
+final DioException _dioError = MockDioError();
 final _route = 'about';
 final _uuid = 'uuid';
 final _newUuid = 'newUuid';

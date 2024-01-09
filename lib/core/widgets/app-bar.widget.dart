@@ -20,6 +20,7 @@ class NTAppBar extends AppBar {
             ),
           ],
           backgroundColor: color ?? Colors.transparent,
+          surfaceTintColor: color ?? Colors.transparent,
           centerTitle: true,
           elevation: 0,
           leading: Padding(

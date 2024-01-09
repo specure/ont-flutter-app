@@ -147,7 +147,7 @@ class LocalizationService extends DioService {
         },
       );
       _translations = response.data;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
     }
   }

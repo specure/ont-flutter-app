@@ -106,28 +106,32 @@ class QualityBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 24 * MediaQuery.of(context).textScaleFactor,
+      height: MediaQuery.textScalerOf(context).scale(24),
       decoration: BoxDecoration(
         borderRadius:
-            BorderRadius.circular(12 * MediaQuery.of(context).textScaleFactor),
+            BorderRadius.circular(MediaQuery.textScalerOf(context).scale(12)),
         color: qualityColor[quality] != null
             ? qualityColor[quality]
             : NTColors.pale,
       ),
-      padding: EdgeInsets.fromLTRB(12, 5, shouldShowIcon ? 6 : 12, 6),
+      padding: EdgeInsets.fromLTRB(12, 3, shouldShowIcon ? 6 : 12, 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             qualityTitle[quality] != null
                 ? qualityTitle[quality]!.translated
                 : "",
-            style: TextStyle(color: Colors.white, fontSize: NTDimensions.textS),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: NTDimensions.textS,
+            ),
           ),
           ConditionalContent(
             conditional: shouldShowIcon,
             truthyBuilder: () => Container(
-              margin: EdgeInsets.only(left: 6),
+              margin: EdgeInsets.only(left: 6, top: 2),
               child: Icon(Icons.check_circle, color: Colors.white, size: 14),
             ),
           ),

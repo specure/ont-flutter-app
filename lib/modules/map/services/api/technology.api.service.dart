@@ -9,7 +9,7 @@ class TechnologyApiService extends DioService {
     try {
       var response = await dio.get(NTUrls.csMnoProvidersRoute);
       return _parseResponse(response);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       return [];
     }
@@ -19,7 +19,7 @@ class TechnologyApiService extends DioService {
     try {
       var response = await dio.get(NTUrls.csIspProvidersRoute);
       return _parseResponse(response);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       return [];
     }

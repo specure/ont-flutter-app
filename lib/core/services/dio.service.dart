@@ -37,6 +37,9 @@ abstract class DioService {
       dio.options.headers = headers != null
           ? headers
           : {'X-Nettest-Client': Environment.appSuffix.replaceAll('.', '')};
+      dio.options.validateStatus = (int? status) {
+        return status != null;
+      };
     }
   }
 
@@ -78,19 +81,21 @@ class ErrorInterceptor extends Interceptor {
   ErrorInterceptor({this.testing = false});
 
   @override
-  Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
-    if (err.type != DioErrorType.response && err.error is SocketException) {
+  Future<void> onError(
+      DioException err, ErrorInterceptorHandler handler) async {
+    DioException newErr = err;
+    if (err.type != DioExceptionType.badResponse) {
       try {
         await GetIt.I
             .get<InternetAddressWrapper>()
             .lookup(ErrorInterceptor.lookupHost);
       } on SocketException catch (_) {
-        err.error = ApiErrors.noInternetConnection;
+        newErr = err.copyWith(message: ApiErrors.noInternetConnection);
         GetIt.I.get<MeasurementsBloc>().add(
               GetNetworkInfo(connectivity: ConnectivityResult.none),
             );
       }
     }
-    if (!testing) super.onError(err, handler);
+    if (!testing) super.onError(newErr, handler);
   }
 }

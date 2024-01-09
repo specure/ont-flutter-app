@@ -19,7 +19,7 @@ import '../../di/service-locator.dart';
 
 final String _openTestUuid = 'openTestUuid';
 final String _clientUuid = 'clientUuid';
-final DioError _dioError = MockDioError();
+final DioException _dioError = MockDioError();
 final ErrorHandler _errorHandler = MockErrorHandler();
 final _settingsJson = jsonDecode(
   File('test/net-neutrality/unit-tests/data/net-neutrality-settings.json')

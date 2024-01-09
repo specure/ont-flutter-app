@@ -8,7 +8,7 @@ part 'measurement-server.g.dart';
 @JsonSerializable()
 class MeasurementServer with EquatableMixin {
   final int id;
-  final String uuid;
+  final String? uuid;
   final String? name;
   final String? webAddress;
   final String? city;
@@ -32,7 +32,7 @@ class MeasurementServer with EquatableMixin {
 
   MeasurementServer({
     required this.id,
-    required this.uuid,
+    this.uuid,
     this.name,
     this.webAddress,
     this.city,

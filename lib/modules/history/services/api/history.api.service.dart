@@ -25,7 +25,7 @@ class HistoryApiService extends DioService {
         },
       );
       history = History.fromJson(response.data['measurements']);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
     }

@@ -25,7 +25,7 @@ class CMSService extends DioService {
         '_limit': 1,
       });
       project = NTProject.fromJson(response.data[0]);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
     }
@@ -59,7 +59,7 @@ class CMSService extends DioService {
       } else {
         content = response.data['content'];
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
     }
@@ -92,7 +92,7 @@ class CMSService extends DioService {
       } else {
         content = response.data['description'];
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
     }

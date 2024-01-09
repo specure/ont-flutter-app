@@ -36,7 +36,7 @@ class SettingsService extends DioService {
     try {
       var response = await dio.post(NTUrls.csSettingsRoute, data: data);
       return response.data['settings'][0]['uuid'];
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
       return null;

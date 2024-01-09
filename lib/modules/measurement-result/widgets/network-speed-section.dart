@@ -48,7 +48,7 @@ class NetworkSpeedSection extends StatelessWidget {
               plotAreaBorderWidth: 0,
               primaryXAxis: NumericAxis(isVisible: false),
               primaryYAxis: NumericAxis(isVisible: false),
-              series: <ChartSeries>[
+              series: [
                 AreaSeries<double, int>(
                   dataSource: speedList!,
                   xValueMapper: (value, x) => x,

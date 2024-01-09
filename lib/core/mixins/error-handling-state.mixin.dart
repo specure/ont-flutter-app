@@ -72,8 +72,8 @@ mixin ErrorHandlingState {
                   isDialogShown = false;
                 });
               },
-              height: 42 * MediaQuery.of(context).textScaleFactor,
-              width: 92 * MediaQuery.of(context).textScaleFactor,
+              height: MediaQuery.textScalerOf(context).scale(42),
+              width: MediaQuery.textScalerOf(context).scale(92),
             ),
           ),
           GradientButton(
@@ -94,8 +94,8 @@ mixin ErrorHandlingState {
                 isDialogShown = false;
               });
             },
-            height: 42 * MediaQuery.of(context).textScaleFactor,
-            width: 92 * MediaQuery.of(context).textScaleFactor,
+            height: MediaQuery.textScalerOf(context).scale(42),
+            width: MediaQuery.textScalerOf(context).scale(92),
           )
         ],
       ),

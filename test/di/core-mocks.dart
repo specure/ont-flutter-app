@@ -29,7 +29,7 @@ class MockNTLocales extends Mock implements NTLocales {
       });
 }
 
-class MockDioError extends Mock implements DioError {
+class MockDioError extends Mock implements DioException {
   @override
   String get message =>
       (super.noSuchMethod(Invocation.getter(#message), returnValue: '')

@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +74,6 @@ void main() async {
         options.enableNativeCrashHandling = true;
         options.enableAutoSessionTracking = true;
         options.anrEnabled = true;
-        options.enableOutOfMemoryTracking = true;
       },
       appRunner: () => runApp(App()),
     );
@@ -88,24 +86,29 @@ class App extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final bottomSheetTheme = BottomSheetThemeData(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,
+    );
+    final radioTheme = Theme.of(context).radioTheme.copyWith(
+          fillColor: MaterialStatePropertyAll(NTColors.primary),
+        );
     final theme = Environment.appSuffix == '.no'
         ? ThemeData(
+            bottomSheetTheme: bottomSheetTheme,
             primaryColor: NTColors.primary,
             textTheme: Theme.of(context).textTheme.apply(
                   fontSizeFactor: NTDimensions.factor,
                   fontFamily: 'NewAtten',
                 ),
             visualDensity: VisualDensity.compact,
-            radioTheme: Theme.of(context).radioTheme.copyWith(
-                  fillColor: MaterialStatePropertyAll(NTColors.primary),
-                ),
+            radioTheme: radioTheme,
           )
         : ThemeData(
+            bottomSheetTheme: bottomSheetTheme,
             primaryColor: NTColors.primary,
             visualDensity: VisualDensity.compact,
-            radioTheme: Theme.of(context).radioTheme.copyWith(
-                  fillColor: MaterialStatePropertyAll(NTColors.primary),
-                ),
+            radioTheme: radioTheme,
           );
     return MultiBlocProvider(
       providers: [

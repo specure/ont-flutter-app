@@ -1,14 +1,12 @@
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:nt_flutter_standalone/core/widgets/conditional-content.dart';
 import 'package:nt_flutter_standalone/modules/map/screens/map-screen/map-screen-config.dart';
-import 'package:nt_flutter_standalone/modules/map/store/map.cubit.dart';
 import 'package:nt_flutter_standalone/modules/map/store/map.state.dart';
 import 'package:nt_flutter_standalone/modules/map/widgets/period.badge.dart';
 import 'package:nt_flutter_standalone/modules/map/widgets/search.bar.dart';
 import 'package:nt_flutter_standalone/modules/map/widgets/technology.bar.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MapScreenPortraitConfig extends MapScreenConfig {
   MapScreenPortraitConfig(MapState state, MapboxMap? map)

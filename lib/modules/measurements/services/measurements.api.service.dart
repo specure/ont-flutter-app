@@ -16,7 +16,7 @@ class MeasurementsApiService extends DioService {
         NTUrls.csResultRoute,
         data: result.toJson(),
       );
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
     }
@@ -38,7 +38,7 @@ class MeasurementsApiService extends DioService {
         queryParameters: queryParameters,
       );
       return MeasurementServer.fromJsonToList(response.data);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
       return [];

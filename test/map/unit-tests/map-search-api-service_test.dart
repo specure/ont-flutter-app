@@ -17,7 +17,7 @@ const String _queryWithoutResults = 'Query without results';
 const double _lat = 10;
 const double _lng = 20;
 const String _countryCode = 'US';
-final DioError _dioError = MockDioError();
+final DioException _dioError = MockDioError();
 
 final String _selectedLocaleTag = 'sr-Latn-rs';
 
@@ -26,8 +26,12 @@ void main() async {
     TestWidgetsFlutterBinding.ensureInitialized();
     await dotenv.load(fileName: '.env');
     TestingServiceLocator.registerInstances(withRealLocalization: true);
-    when(GetIt.I.get<SharedPreferencesWrapper>().init()).thenAnswer((_) async => null);
-    when(GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag)).thenReturn(_selectedLocaleTag);
+    when(GetIt.I.get<SharedPreferencesWrapper>().init())
+        .thenAnswer((_) async => null);
+    when(GetIt.I
+            .get<SharedPreferencesWrapper>()
+            .getString(StorageKeys.selectedLocaleTag))
+        .thenReturn(_selectedLocaleTag);
     _setUpStubs();
   });
 

@@ -126,44 +126,48 @@ class _HomeInfoBoxState extends State<HomeInfoBox> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MeasurementsBloc, MeasurementsState>(
-        builder: (context, state) => ElevatedButton(
-            onPressed: () {
-              if (!state.permissions.locationPermissionsGranted ||
-                  !state.permissions.phoneStatePermissionsGranted) {
-                if (GetIt.I.get<PlatformWrapper>().isIOS) {
-                  GetIt.I
-                      .get<PermissionsService>()
-                      .isLocationPermissionGranted
-                      .then((value) {
-                    if (!value) {
-                      openAppSettings();
-                    }
-                  });
-                } else {
+      builder: (context, state) => ElevatedButton(
+        onPressed: () {
+          if (!state.permissions.locationPermissionsGranted ||
+              !state.permissions.phoneStatePermissionsGranted) {
+            if (GetIt.I.get<PlatformWrapper>().isIOS) {
+              GetIt.I
+                  .get<PermissionsService>()
+                  .isLocationPermissionGranted
+                  .then((value) {
+                if (!value) {
                   openAppSettings();
                 }
-              } else {
-                showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    isDismissible: true,
-                    backgroundColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(16),
-                        topLeft: Radius.circular(16),
-                      ),
-                    ),
-                    builder: (context) => HomeBottomSheet(context, state));
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
+              });
+            } else {
+              openAppSettings();
+            }
+          } else {
+            showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+              isDismissible: true,
               backgroundColor: Colors.white,
-            ),
-            child: _getNetworkDetails(state)));
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(16),
+                  topLeft: Radius.circular(16),
+                ),
+              ),
+              builder: (context) => HomeBottomSheet(context, state),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+        ),
+        child: _getNetworkDetails(state),
+      ),
+    );
   }
 }

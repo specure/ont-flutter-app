@@ -37,7 +37,7 @@ class NetworkService {
 
   Future<NetworkInfoDetails> getBasicNetworkDetails() async {
     final currentNetwork = await connectivity.checkConnectivity();
-    var networkInfoDetails = await _getNetworkIpAddresses();
+    var networkInfoDetails = await _getNetworkIpAddresses(currentNetwork);
     switch (currentNetwork) {
       case ConnectivityResult.wifi:
         networkInfoDetails = networkInfoDetails.copyWith(
@@ -62,8 +62,8 @@ class NetworkService {
   Future<NetworkInfoDetails> getAllNetworkDetails() async {
     var locationServiceEnabled =
         await _locationService.isLocationServiceEnabled;
-    var networkInfoDetails = await _getNetworkIpAddresses();
     final currentNetwork = await connectivity.checkConnectivity();
+    var networkInfoDetails = await _getNetworkIpAddresses(currentNetwork);
     switch (currentNetwork) {
       case ConnectivityResult.wifi:
         networkInfoDetails = networkInfoDetails.copyWith(
@@ -117,10 +117,10 @@ class NetworkService {
     );
   }
 
-  Future<NetworkInfoDetails> _getNetworkIpAddresses() async {
+  Future<NetworkInfoDetails> _getNetworkIpAddresses(
+      ConnectivityResult currentNetwork) async {
     var ipV4PublicAddress = addressIsNotAvailable;
     var ipV6PublicAddress = addressIsNotAvailable;
-    final currentNetwork = await connectivity.checkConnectivity();
     if (currentNetwork != ConnectivityResult.none) {
       ipV4PublicAddress = await ipInfoService.getPublicAddress(IPVersion.v4);
       ipV6PublicAddress = await ipInfoService.getPublicAddress(IPVersion.v6);

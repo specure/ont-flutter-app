@@ -10,18 +10,18 @@ class DnsNetNeutralitySettingsItem extends NetNeutralitySettingsItem {
   String? resolver;
   String entryType;
   String target;
-  String expectedDnsStatus;
+  String? expectedDnsStatus;
   String? expectedDnsEntries;
 
   DnsNetNeutralitySettingsItem({
     this.resolver,
     this.expectedDnsEntries,
+    this.expectedDnsStatus,
     required this.target,
     required this.entryType,
-    required this.expectedDnsStatus,
     required int id,
     required String type,
-    required num timeout,
+    required double timeout,
   }) : super(
           id: id,
           type: type,

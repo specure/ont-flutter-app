@@ -66,6 +66,7 @@ class ResultsQoeView extends StatelessWidget {
                         ),
                       ),
                       backgroundColor: Colors.white,
+                      surfaceTintColor: Colors.white,
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),

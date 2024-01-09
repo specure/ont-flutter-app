@@ -10,7 +10,7 @@ class NTDimensions {
   static final textXXXS = 8.0 * factor;
   static final title = 24.0 * factor;
 
-  static final factor = Environment.appSuffix == '.no' ? 1.1 : 1;
+  static final double factor = Environment.appSuffix == '.no' ? 1.1 : 1;
 
   NTDimensions._();
 }

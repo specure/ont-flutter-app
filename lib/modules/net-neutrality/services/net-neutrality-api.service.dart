@@ -19,7 +19,7 @@ class NetNeutralityApiService extends DioService {
     try {
       final response = await dio.get(NTUrls.csNNRequestRoute);
       return NetNeutralitySettingsResponse.fromJson(response.data);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
       return null;
@@ -29,8 +29,8 @@ class NetNeutralityApiService extends DioService {
   Future<void> postResults(
       {NetNeutralityResult? results, ErrorHandler? errorHandler}) async {
     try {
-      await dio.post(NTUrls.csNNResultRoute, data: results);
-    } on DioError catch (e) {
+      await dio.post(NTUrls.csNNResultRoute, data: results?.toJson());
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
       return null;
@@ -48,7 +48,7 @@ class NetNeutralityApiService extends DioService {
       return NetNeutralityHistoryListFactory.parseHistoryResponse(
         response.data,
       );
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
       return null;
@@ -70,7 +70,7 @@ class NetNeutralityApiService extends DioService {
           totalElements: response.data?['totalElements'],
           totalPages: response.data?['totalPages'],
           last: response.data?['last']);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
       return null;

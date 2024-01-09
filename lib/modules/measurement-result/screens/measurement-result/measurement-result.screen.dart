@@ -81,7 +81,7 @@ class _MeasurementResultScreenState extends State<MeasurementResultScreen> {
             conditional: state.loading == false,
             truthyBuilder: () => SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(28, 36, 28, 0),
+                padding: EdgeInsets.fromLTRB(28, 8, 28, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

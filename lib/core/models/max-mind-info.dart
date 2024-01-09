@@ -23,19 +23,19 @@ class MaxMindInfo extends Equatable {
 @JsonSerializable()
 class MaxMindInfoTraits extends Equatable {
   @JsonKey()
-  final String isp;
+  final String? isp;
   @JsonKey(name: "mobile_country_code")
-  final String mobileCountryCode;
+  final String? mobileCountryCode;
   @JsonKey(name: "mobile_network_code")
-  final String mobileNetworkCode;
+  final String? mobileNetworkCode;
   @JsonKey()
-  final String organization;
+  final String? organization;
 
   MaxMindInfoTraits({
-    required this.isp,
-    required this.mobileCountryCode,
-    required this.mobileNetworkCode,
-    required this.organization,
+    this.isp,
+    this.mobileCountryCode,
+    this.mobileNetworkCode,
+    this.organization,
   });
 
   Map<String, dynamic> toJson() => _$MaxMindInfoTraitsToJson(this);
@@ -49,9 +49,9 @@ class MaxMindInfoTraits extends Equatable {
 @JsonSerializable()
 class MaxMindInfoRegisteredCountry extends Equatable {
   @JsonKey(name: "iso_code")
-  final String iso;
+  final String? iso;
 
-  MaxMindInfoRegisteredCountry({required this.iso});
+  MaxMindInfoRegisteredCountry({this.iso});
 
   Map<String, dynamic> toJson() => _$MaxMindInfoRegisteredCountryToJson(this);
   factory MaxMindInfoRegisteredCountry.fromJson(Map<String, dynamic> json) =>

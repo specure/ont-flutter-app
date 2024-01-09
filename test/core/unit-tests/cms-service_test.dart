@@ -51,7 +51,7 @@ final List<Map<String, dynamic>> _projects = [
   }
 ];
 
-final DioError _dioError = MockDioError();
+final DioException _dioError = MockDioError();
 final ErrorHandler _errorHandler = MockErrorHandler();
 final _service = CMSService(testing: true);
 

@@ -9,7 +9,7 @@ part of 'measurement-server.dart';
 MeasurementServer _$MeasurementServerFromJson(Map<String, dynamic> json) =>
     MeasurementServer(
       id: json['id'] as int,
-      uuid: json['uuid'] as String,
+      uuid: json['uuid'] as String?,
       name: json['name'] as String?,
       webAddress: json['webAddress'] as String?,
       city: json['city'] as String?,

@@ -49,7 +49,7 @@ final MeasurementResultService service =
     MeasurementResultService(testing: true);
 
 final ErrorHandler _errorHandler = MockErrorHandler();
-final DioError _dioError = MockDioError();
+final DioException _dioError = MockDioError();
 final String _selectedLocaleTag = 'sr-Latn-rs';
 
 void main() {
