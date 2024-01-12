@@ -86,27 +86,23 @@ class BottomSheetLandscapeConfig extends BottomSheetConfig {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ConstrainedBox(
-                          constraints: BoxConstraints(minHeight: 56),
-                          child: ConditionalContent(
-                            conditional:
-                                GetIt.I.get<CoreCubit>().state.currentScreen ==
-                                    0,
-                            truthyBuilder: () => Container(
-                              height: 50,
-                              child: MeasurementServer(
-                                measurementServerName: state.currentServerName,
-                              ),
+                        ConditionalContent(
+                          conditional:
+                              GetIt.I.get<CoreCubit>().state.currentScreen == 0,
+                          truthyBuilder: () => Container(
+                            height: 50,
+                            child: MeasurementServer(
+                              measurementServerName: state.currentServerName,
                             ),
-                            falsyBuilder: () => buildLocation(),
                           ),
+                          falsyBuilder: () => buildLocation(),
                         ),
                         buildPaddingDivider(),
                       ])),
             ],
           ),
           Row(
-            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                   flex: 1,

@@ -140,13 +140,13 @@ void main() {
       when(GetIt.I.get<Dio>().get(""))
           .thenAnswer((realInvocation) async => throw _dioError);
 
-      when(_dioError.type).thenReturn(DioErrorType.connectTimeout);
+      when(_dioError.type).thenReturn(DioExceptionType.connectionTimeout);
       resultItem = (await _service.runOneWebPageTest(test))
           as WebNetNeutralityResultItem;
       expect(resultItem.statusCode, null);
       expect(resultItem.timeoutExceeded, true);
 
-      when(_dioError.type).thenReturn(DioErrorType.response);
+      when(_dioError.type).thenReturn(DioExceptionType.badResponse);
       when(_dioError.response).thenReturn(Response(
         requestOptions: RequestOptions(path: ""),
         statusCode: 500,

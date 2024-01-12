@@ -8,33 +8,35 @@ class Section extends StatelessWidget {
   final List<List<String>> values;
   final List<Widget> icons;
   final List<int> widths;
-  final Axis direction;
 
-  Section(
-      {required this.titles,
-      required this.values,
-      this.icons = const [],
-      this.direction = Axis.horizontal,
-      this.widths = const []});
+  Section({
+    required this.titles,
+    required this.values,
+    this.icons = const [],
+    this.widths = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Flex(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
-      direction: Axis.horizontal,
-      children: List.generate(
-        titles.length,
-        (index) => Flexible(
-            flex: widths.length > 1 ? widths[index] : 1,
-            child: _buildSubSection(index)),
-      ),
+      children: titles
+          .asMap()
+          .entries
+          .map(
+            (e) => Flexible(
+              flex: widths.length > 1 ? widths[e.key] : 1,
+              child: _buildSubSection(e.key),
+            ),
+          )
+          .toList(),
     );
   }
 
   Widget _buildSubSection(int subSectionNum) {
-    return Container(
-      height: values.length > 1 ? null : 50,
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: 50),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,

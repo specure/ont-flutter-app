@@ -90,7 +90,7 @@ void main() {
               .evaluate()
               .single
               .widget as SvgPicture)
-          .pictureProvider as ExactAssetPicture;
+          .bytesLoader as SvgAssetLoader;
       expect(picProvider.assetName, 'config/.nt/images/splash-screen-hero.svg');
       expect(find.byType(WelcomeMessage), findsOneWidget);
       expect(find.text("Welcome to Open Nettest"), findsOneWidget);
@@ -115,8 +115,8 @@ void main() {
     testWidgets(
         "shows and interacts with all the elements correctly in the portrait mode",
         (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(800, 1600);
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      tester.view.physicalSize = Size(800, 1600);
+      addTearDown(tester.view.resetPhysicalSize);
       callTester(tester);
     });
   });

@@ -62,6 +62,6 @@ subprojects {
     project.evaluationDependsOn(':netmonster_core:library')
 }
 
-task clean(type: Delete) {
+tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

@@ -14,7 +14,6 @@ import 'package:nt_flutter_standalone/modules/history/store/net-neutrality-histo
 import 'package:nt_flutter_standalone/modules/history/store/net-neutrality-history.state.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/measurement-history-result.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/measurement-history-results.dart';
-import 'package:nt_flutter_standalone/modules/net-neutrality/services/net-neutrality-api.service.dart';
 
 import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';

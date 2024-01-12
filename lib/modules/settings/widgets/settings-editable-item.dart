@@ -24,62 +24,52 @@ class SettingsEditableItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
-      padding: EdgeInsets.only(
-        left: 20,
-        right: 12,
-        top: 16,
-        bottom: 16,
-      ),
-      child: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title.translated),
-                  ConditionalContent(
-                    conditional: subtitle != null,
-                    truthyBuilder: () => Padding(
-                      padding: EdgeInsets.only(top: 2),
-                      child: Text(
-                        subtitle!.translated,
-                        style: TextStyle(fontSize: NTDimensions.textXXS),
-                      ),
+      height: 64,
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title.translated),
+                ConditionalContent(
+                  conditional: subtitle != null,
+                  truthyBuilder: () => Padding(
+                    padding: EdgeInsets.only(top: 2),
+                    child: Text(
+                      subtitle!.translated,
+                      style: TextStyle(fontSize: NTDimensions.textXXS),
                     ),
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 50,
+            child: TextFormField(
+              key: key,
+              decoration: InputDecoration(
+                helperText: " ",
+              ),
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.numberWithOptions(
+                signed: false,
+                decimal: false,
+              ),
+              validator: (value) => validator(value),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              onFieldSubmitted: onFieldSubmitted,
+              initialValue: value,
+              autofocus: true,
+              style: TextStyle(
+                fontSize: NTDimensions.textL,
+                color: NTColors.primary,
               ),
             ),
-            SizedBox(
-              width: 50,
-              child: TextFormField(
-                textAlign: TextAlign.center,
-                key: key,
-                decoration: InputDecoration(
-                    helperText: " ",
-                    hintStyle: const TextStyle(fontSize: 0.01),
-                    labelStyle: const TextStyle(fontSize: 0.01),
-                    helperStyle: const TextStyle(fontSize: 0.01),
-                    errorStyle: const TextStyle(fontSize: 0.01)),
-                textAlignVertical: TextAlignVertical.bottom,
-                maxLines: 1,
-                keyboardType: TextInputType.numberWithOptions(
-                    signed: false, decimal: false),
-                onFieldSubmitted: ((text) => onFieldSubmitted(text)),
-                initialValue: value,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => validator(value),
-                style: TextStyle(
-                    fontSize: NTDimensions.textL, color: NTColors.primary),
-              ),
-            )
-            //
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

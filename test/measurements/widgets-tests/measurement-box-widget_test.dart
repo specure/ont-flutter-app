@@ -18,8 +18,12 @@ final String _selectedLocaleTag = 'sr-Latn-rs';
 void main() {
   setUp(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
-    when(GetIt.I.get<SharedPreferencesWrapper>().init()).thenAnswer((_) async => null);
-    when(GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag)).thenReturn(_selectedLocaleTag);
+    when(GetIt.I.get<SharedPreferencesWrapper>().init())
+        .thenAnswer((_) async => null);
+    when(GetIt.I
+            .get<SharedPreferencesWrapper>()
+            .getString(StorageKeys.selectedLocaleTag))
+        .thenReturn(_selectedLocaleTag);
   });
 
   group('Test measurement box widget', () {

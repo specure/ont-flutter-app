@@ -49,17 +49,24 @@ void main() {
   setUp(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
     _bloc = MeasurementsBloc();
-    when(GetIt.I.get<SharedPreferencesWrapper>().init()).thenAnswer((_) async => null);
-    when(GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag)).thenReturn(_selectedLocaleTag);
+    when(GetIt.I.get<SharedPreferencesWrapper>().init())
+        .thenAnswer((_) async => null);
+    when(GetIt.I
+            .get<SharedPreferencesWrapper>()
+            .getString(StorageKeys.selectedLocaleTag))
+        .thenReturn(_selectedLocaleTag);
     when(GetIt.I
         .get<MeasurementsApiService>()
         .getMeasurementServersForCurrentFlavor(
           location: _location,
           errorHandler: _bloc.errorHandler,
         )).thenAnswer((realInvocation) async => _servers);
-    when(GetIt.I.get<LoopModeService>().updateLocation(_location)).thenAnswer((_) {});
-    when(GetIt.I.get<LoopModeService>().isLoopModeActivated).thenAnswer((_) => false);
-    when(GetIt.I.get<LoopModeService>().loopModeDetails).thenAnswer((_) => _loopModeDetails);
+    when(GetIt.I.get<LoopModeService>().updateLocation(_location))
+        .thenAnswer((_) {});
+    when(GetIt.I.get<LoopModeService>().isLoopModeActivated)
+        .thenAnswer((_) => false);
+    when(GetIt.I.get<LoopModeService>().loopModeDetails)
+        .thenAnswer((_) => _loopModeDetails);
     _bloc.add(SetLocationInfo(_location));
     TestingServiceLocator.swapLazySingleton<MeasurementsBloc>(() => _bloc);
     _widget = MaterialApp(
@@ -88,7 +95,7 @@ void main() {
       await tester.pumpWidget(_widget);
       await tester.pumpAndSettle();
       expect(find.byType(ListView), findsOneWidget);
-      expect(find.byType(InkWell), findsNWidgets(2));
+      expect(find.byType(InkWell), findsNWidgets(3));
       expect(find.text("Name (Cupertino)"), findsNWidgets(2));
       expect(find.text("400 km"), findsOneWidget);
       expect(find.text("Distance unknown"), findsOneWidget);

@@ -19,7 +19,7 @@ class HomeBottomSheet extends DraggableScrollableSheet {
     final estimatedHeightInPx =
         state.project?.enableAppPrivateIp == true ? 580 : 366;
     final screenHeight = MediaQuery.of(context).size.height;
-    return estimatedHeightInPx / screenHeight;
+    return min(1, estimatedHeightInPx / screenHeight);
   }
 
   static double _estimateMinHeight(

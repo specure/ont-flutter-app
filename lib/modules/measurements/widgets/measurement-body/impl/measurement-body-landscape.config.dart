@@ -49,8 +49,9 @@ class MeasurementBodyLandscapeConfig extends MeasurementBodyConfig {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Wrap(
+                          direction: Axis.horizontal,
+                          runAlignment: WrapAlignment.center,
                           children: [
                             MeasurementBox(),
                             ConditionalContent(

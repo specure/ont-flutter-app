@@ -45,17 +45,12 @@ class _MeasurementProgressBarState extends State<MeasurementProgressBar>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: 54,
-      ),
-      child: SizedBox(
-        height: 2,
-        child: LinearProgressIndicator(
-          color: NTColors.measurementProgressBar,
-          backgroundColor: Colors.black.withOpacity(0.1),
-          value: _progressAnimation?.value ?? 0,
-        ),
+    return SizedBox(
+      height: 2,
+      child: LinearProgressIndicator(
+        color: NTColors.measurementProgressBar,
+        backgroundColor: Colors.black.withOpacity(0.1),
+        value: _progressAnimation?.value ?? 0,
       ),
     );
   }

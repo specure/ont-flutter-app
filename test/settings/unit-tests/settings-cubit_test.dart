@@ -74,8 +74,6 @@ class MockFirebase extends Mock implements Firebase {}
 ])
 void main() {
   setUp(() async {
-    setupFirebaseAuthMocks();
-    await Firebase.initializeApp();
     TestingServiceLocator.registerInstances();
     _cubit = SettingsCubit();
     _setUpStubs();

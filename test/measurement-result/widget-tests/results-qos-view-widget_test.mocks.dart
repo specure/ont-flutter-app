@@ -104,7 +104,7 @@ class MockMeasurementResultCubitCalls extends _i1.Mock
   @override
   _i4.Future<dynamic> init({
     required _i6.MeasurementHistoryResults? result,
-    required String? testUuid,
+    String? testUuid,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

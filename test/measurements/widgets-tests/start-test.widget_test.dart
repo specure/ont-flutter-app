@@ -373,7 +373,7 @@ Widget getNecessaryParentWidgets<T extends Bloc>(T bloc, Widget child) {
   return BlocProvider.value(
     value: bloc,
     child: MediaQuery(
-      data: MediaQueryData(),
+      data: MediaQueryData(size: Size(800, 1200)),
       child: MaterialApp(
         home: child,
       ),

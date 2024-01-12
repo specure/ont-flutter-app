@@ -43,7 +43,7 @@ void main() {
               .lookup(ErrorInterceptor.lookupHost))
           .thenAnswer((realInvocation) async => throw SocketException.closed());
       await interceptor.onError(err, handler);
-      expect(err.error, ApiErrors.noInternetConnection);
+      expect(interceptor.newErr!.message, ApiErrors.noInternetConnection);
       verify(_bloc.add(any)).called(1);
     });
   });

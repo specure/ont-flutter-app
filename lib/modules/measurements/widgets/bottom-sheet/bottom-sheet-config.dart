@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:nt_flutter_standalone/core/constants/colors.dart';
+import 'package:nt_flutter_standalone/core/constants/dimensions.dart';
 import 'package:nt_flutter_standalone/core/extensions/string.ext.dart';
 import 'package:nt_flutter_standalone/core/widgets/conditional-content.dart';
 import 'package:nt_flutter_standalone/core/widgets/divider.dart';
@@ -107,33 +108,49 @@ class MeasurementServer extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, ServersScreen.route);
       },
-      child: Flex(
-          direction: Axis.horizontal,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Flexible(
-              flex: 1,
-              fit: FlexFit.loose,
-              child: Section(titles: [
-                'Measurement Server'.translated
-              ], values: [
-                [measurementServerName]
-              ]),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            height: NTDimensions.textL,
+            margin: EdgeInsets.only(bottom: 14),
+            child: Section(
+              titles: ['Measurement Server'.translated],
+              values: [],
             ),
-            Flexible(
-              fit: FlexFit.tight,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  'Change Test Server'.translated,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(color: NTColors.primary),
+          ),
+          Flexible(
+            fit: FlexFit.tight,
+            child: Wrap(
+              direction: Axis.horizontal,
+              children: [
+                Text(
+                  measurementServerName,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: NTDimensions.textS,
+                  ),
                   softWrap: false,
                   overflow: TextOverflow.fade,
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    'Change Test Server'.translated,
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                      color: NTColors.primary,
+                      fontSize: NTDimensions.textS,
+                    ),
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                  ),
+                )
+              ],
             ),
-          ]),
+          ),
+        ],
+      ),
     );
   }
 }

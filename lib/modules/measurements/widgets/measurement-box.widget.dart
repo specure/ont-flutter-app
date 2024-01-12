@@ -29,6 +29,7 @@ class MeasurementBox extends StatelessWidget {
 
   Widget builder(context, state) {
     var boxSideLength = _getBoxSideLength(context);
+    double padding = min(24, boxSideLength / 6);
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -50,11 +51,18 @@ class MeasurementBox extends StatelessWidget {
                   color: backgroundColor,
                 ),
               ),
-              Padding(
-                padding:
-                    EdgeInsets.symmetric(vertical: min(24, boxSideLength / 7)),
-                child: getBoxText(state, min(24, boxSideLength / 7)),
-              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Container(height: padding),
+                  ),
+                  getBoxText(state, padding),
+                  Flexible(
+                    child: Container(height: padding),
+                  ),
+                ],
+              )
             ],
           )),
     );

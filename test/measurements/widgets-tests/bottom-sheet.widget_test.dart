@@ -25,24 +25,24 @@ import 'start-test.widget_test.dart';
 
 final MeasurementsBloc _measurementsBloc = MockMeasurementsBloc();
 final CoreCubit _coreCubit = MockCoreCubit();
-final Widget _screen = MultiBlocProvider(
-  providers: [
-    BlocProvider.value(
-      value: _measurementsBloc,
-    ),
-    BlocProvider.value(value: _coreCubit),
-  ],
-  child: MediaQuery(
-    data: MediaQueryData(),
-    child: MaterialApp(
-      home: BlocBuilder<MeasurementsBloc, MeasurementsState>(
-        builder: (context, state) => Scaffold(
-          body: HomeBottomSheet(context, state),
+final _getScreen = (Size size) => MultiBlocProvider(
+      providers: [
+        BlocProvider.value(
+          value: _measurementsBloc,
+        ),
+        BlocProvider.value(value: _coreCubit),
+      ],
+      child: MediaQuery(
+        data: MediaQueryData(size: size),
+        child: MaterialApp(
+          home: BlocBuilder<MeasurementsBloc, MeasurementsState>(
+            builder: (context, state) => Scaffold(
+              body: HomeBottomSheet(context, state),
+            ),
+          ),
         ),
       ),
-    ),
-  ),
-);
+    );
 
 void main() {
   setUpAll(() {
@@ -80,7 +80,10 @@ void main() {
     });
 
     testWidgets('Landscape', (tester) async {
-      await tester.pumpWidget(_screen);
+      final size = Size(1200, 800);
+      tester.view.physicalSize = size;
+      addTearDown(tester.view.resetPhysicalSize);
+      await tester.pumpWidget(_getScreen(size));
       expect(find.byType(HomeBottomSheet), findsOneWidget);
       expect(find.byType(IPInfo), findsNWidgets(2));
       expect(find.text('NETWORK TYPE'), findsOneWidget);
@@ -93,9 +96,10 @@ void main() {
     });
 
     testWidgets('Portrait', (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(1200, 1600);
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
-      await tester.pumpWidget(_screen);
+      final size = Size(800, 1200);
+      tester.view.physicalSize = size;
+      addTearDown(tester.view.resetPhysicalSize);
+      await tester.pumpWidget(_getScreen(size));
       expect(find.byType(HomeBottomSheet), findsOneWidget);
       expect(find.byType(IPInfo), findsNWidgets(2));
       expect(find.text('NETWORK TYPE'), findsOneWidget);
@@ -116,7 +120,10 @@ void main() {
     });
 
     testWidgets('Landscape', (tester) async {
-      await tester.pumpWidget(_screen);
+      final size = Size(1200, 800);
+      tester.view.physicalSize = size;
+      addTearDown(tester.view.resetPhysicalSize);
+      await tester.pumpWidget(_getScreen(size));
       expect(find.byType(HomeBottomSheet), findsOneWidget);
       expect(find.byType(IPInfo), findsNWidgets(2));
       expect(find.text('NETWORK TYPE'), findsOneWidget);

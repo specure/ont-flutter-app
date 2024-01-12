@@ -77,13 +77,14 @@ class StopwatchInterceptor extends Interceptor {
 class ErrorInterceptor extends Interceptor {
   static const lookupHost = 'example.com';
   final bool testing;
+  DioException? newErr;
 
   ErrorInterceptor({this.testing = false});
 
   @override
   Future<void> onError(
       DioException err, ErrorInterceptorHandler handler) async {
-    DioException newErr = err;
+    newErr = err;
     if (err.type != DioExceptionType.badResponse) {
       try {
         await GetIt.I
@@ -96,6 +97,6 @@ class ErrorInterceptor extends Interceptor {
             );
       }
     }
-    if (!testing) super.onError(newErr, handler);
+    if (!testing) super.onError(newErr!, handler);
   }
 }

@@ -76,6 +76,9 @@ void main() {
     expect(bottomSheetFinder, findsOneWidget);
     var linkPage = find.text("Read more on our website");
     expect(linkPage, findsOneWidget);
+    final scrollable = find.byType(Scrollable).last;
+    expect(scrollable, findsOneWidget);
+    await tester.scrollUntilVisible(linkPage, 100, scrollable: scrollable);
     await tester.tap(linkPage);
     await tester.pumpAndSettle();
     verify(mockUrlLauncher.canLaunch(Uri.parse(_pageUrl))).called(1);
@@ -160,13 +163,14 @@ Future<MeasurementResultState> _setUpStateAndPumpWidget(
     BlocProvider<MeasurementResultCubit>(
       create: (cntx) => cubit,
       child: MediaQuery(
-        data: MediaQueryData(),
+        data: MediaQueryData(size: Size(800, 1200)),
         child: MaterialApp(
           home: const ResultsQosView(),
         ),
       ),
     ),
   );
+  await tester.pumpAndSettle();
   return state;
 }
 

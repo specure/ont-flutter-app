@@ -26,7 +26,7 @@ final NetNeutralityState _state = NetNeutralityState(
 final Widget _screen = BlocProvider<NetNeutralityCubit>(
   create: (context) => _cubit,
   child: MediaQuery(
-    data: MediaQueryData(),
+    data: MediaQueryData(size: Size(800, 1200)),
     child: MaterialApp(home: const NetNeutralityMeasurementScreen()),
   ),
 );

@@ -1,6 +1,6 @@
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class WakelockWrapper {
-  enable() => Wakelock.enable();
-  disable() => Wakelock.disable();
+  enable() => WakelockPlus.enable();
+  disable() => WakelockPlus.disable();
 }

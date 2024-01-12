@@ -10,7 +10,7 @@ TechnologySignal _$TechnologySignalFromJson(Map<String, dynamic> json) =>
     TechnologySignal(
       signal: json['signal'] as int,
       technology: json['technology'] as String,
-      timeNs: json['timeNs'] as int,
+      timeNs: json['timeNs'] as int?,
     );
 
 Map<String, dynamic> _$TechnologySignalToJson(TechnologySignal instance) =>

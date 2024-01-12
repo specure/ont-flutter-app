@@ -20,25 +20,23 @@ class BasicBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        height: height ?? 300,
-        child: ConditionalContent(
-          conditional: includeHeader ?? true,
-          truthyBuilder: () => Column(
-            children: [
-              _Header(headerTitle ?? ''),
-              Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: padding ?? EdgeInsets.zero,
-                  child: child,
-                ),
+    return Container(
+      height: height ?? 300,
+      child: ConditionalContent(
+        conditional: includeHeader ?? true,
+        truthyBuilder: () => Column(
+          children: [
+            _Header(headerTitle ?? ''),
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: padding ?? EdgeInsets.zero,
+                child: child,
               ),
-            ],
-          ),
-          falsyBuilder: () => child,
+            ),
+          ],
         ),
+        falsyBuilder: () => child,
       ),
     );
   }

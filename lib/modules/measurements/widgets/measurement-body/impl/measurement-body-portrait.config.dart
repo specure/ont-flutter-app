@@ -21,6 +21,11 @@ class MeasurementBodyPortraitConfig extends MeasurementBodyConfig {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const MeasurementProgressBar(),
+            Flexible(
+              child: Container(
+                height: 54,
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -44,8 +49,9 @@ class MeasurementBodyPortraitConfig extends MeasurementBodyConfig {
               ],
             ),
             Container(
-                margin: EdgeInsets.symmetric(vertical: 40),
-                child: MeasurementChart()),
+              margin: EdgeInsets.symmetric(vertical: 40),
+              child: MeasurementChart(),
+            ),
             ConditionalContent(
               conditional: state.loopModeDetails.isLoopModeActive,
               truthyBuilder: () => Padding(

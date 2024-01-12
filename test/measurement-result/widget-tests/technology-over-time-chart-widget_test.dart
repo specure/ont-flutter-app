@@ -23,6 +23,7 @@ void main() {
       ],
     );
     await tester.pumpWidget(MaterialApp(home: widget));
+    await tester.pumpAndSettle();
     final chartFinder = find.byType(SfCartesianChart);
     final label4GFinder = find.text('4G');
     final labelWifiFinder = find.text('WI-FI');

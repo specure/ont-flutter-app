@@ -16,11 +16,16 @@ import 'package:nt_flutter_standalone/modules/settings/store/settings.state.dart
 import 'package:nt_flutter_standalone/modules/settings/widgets/settings-editable-item.dart';
 import 'package:sprintf/sprintf.dart';
 
-class LoopModeSettingsScreen extends StatelessWidget {
+class LoopModeSettingsScreen extends StatefulWidget {
   static const route = 'settings/loopModeSettings';
 
   const LoopModeSettingsScreen({Key? key}) : super(key: key);
 
+  @override
+  State<LoopModeSettingsScreen> createState() => _LoopModeSettingsScreenState();
+}
+
+class _LoopModeSettingsScreenState extends State<LoopModeSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SettingsCubit, SettingsState>(
@@ -51,26 +56,51 @@ class LoopModeSettingsScreen extends StatelessWidget {
           ],
         ),
         body: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              Flexible(
-                flex: 1,
-                child: Container(
-                  color: Colors.white,
-                  child: ListView(
-                    padding: EdgeInsets.all(16),
-                    children: [
-                      ..._buildHeader(context, state),
-                      ..._buildLoopModeSettings(context, state)
-                    ],
-                  ),
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.only(bottom: 64),
+                child: ListView(
+                  padding: EdgeInsets.all(16),
+                  children: [
+                    _buildHeader(context, state),
+                    ThinDivider(),
+                    _buildWaitingTime(context, state),
+                    ThinDivider(),
+                    _buildDistance(context, state),
+                    ThinDivider(),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        right: 20,
+                        left: 20,
+                        top: 20,
+                        bottom: 8,
+                      ),
+                      child: Text(
+                        'When loop mode is enabled, new tests are automatically performed after the configured waiting time or when the devices moves more than the configured distance.'
+                            .translated,
+                        style: TextStyle(
+                          fontSize: NTDimensions.textM,
+                          color: Colors.black26,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Container(
-                height: 1,
-                color: Colors.black26,
-              ),
-              _buildButtons(context, state),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Column(
+                  children: [
+                    Container(height: 1, color: Colors.black26),
+                    _buildButtons(context, state),
+                    ThinDivider(),
+                  ],
+                ),
+              )
             ],
           ),
         ),
@@ -103,14 +133,17 @@ class LoopModeSettingsScreen extends StatelessWidget {
     _onValidationError(fieldType);
   }
 
-  List<Widget> _buildHeader(BuildContext context, SettingsState state) {
-    return [
-      Column(
+  Widget _buildHeader(BuildContext context, SettingsState state) {
+    return Container(
+      height: 152,
+      child: Column(
         children: [
           Text(
             'Number of measurements'.translated,
             style: TextStyle(
-                fontSize: NTDimensions.textL, fontWeight: FontWeight.w500),
+              fontSize: NTDimensions.textL,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
@@ -125,13 +158,17 @@ class LoopModeSettingsScreen extends StatelessWidget {
                 keyboardType: TextInputType.numberWithOptions(
                     signed: false, decimal: false),
                 validator: (value) {
-                  if (_isValueValid(value, LoopMode.loopModeMeasurementCountMin,
-                      LoopMode.loopModeMeasurementCountMax)) {
+                  if (_isValueValid(
+                    value,
+                    LoopMode.loopModeMeasurementCountMin,
+                    LoopMode.loopModeMeasurementCountMax,
+                  )) {
                     if (value != null) {
                       _onValidationSucceeded(
-                          LoopModeCheckedFieldType.LOOP_MODE_COUNT,
-                          int.tryParse(value) ??
-                              LoopMode.loopModeDefaultMeasurementCount);
+                        LoopModeCheckedFieldType.LOOP_MODE_COUNT,
+                        int.tryParse(value) ??
+                            LoopMode.loopModeDefaultMeasurementCount,
+                      );
                     }
                     return null;
                   } else {
@@ -142,24 +179,29 @@ class LoopModeSettingsScreen extends StatelessWidget {
                 },
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 onFieldSubmitted: (text) {
-                  if (_isValueValid(text, LoopMode.loopModeMeasurementCountMin,
-                      LoopMode.loopModeMeasurementCountMax)) {
+                  if (_isValueValid(
+                    text,
+                    LoopMode.loopModeMeasurementCountMin,
+                    LoopMode.loopModeMeasurementCountMax,
+                  )) {
                     GetIt.I
                         .get<SettingsCubit>()
                         .onLoopModeMeasurementCountChange(int.tryParse(text));
                   } else {
                     _showErrorMessage(
-                        LoopMode.loopModeMeasurementCountMin,
-                        LoopMode.loopModeMeasurementCountMax,
-                        LoopModeCheckedFieldType.LOOP_MODE_COUNT);
+                      LoopMode.loopModeMeasurementCountMin,
+                      LoopMode.loopModeMeasurementCountMax,
+                      LoopModeCheckedFieldType.LOOP_MODE_COUNT,
+                    );
                   }
                 },
                 initialValue: state.loopModeTestCountSet.toString(),
                 autofocus: true,
                 style: TextStyle(
-                    fontSize: NTDimensions.title,
-                    color: Colors.black,
-                    height: 1.7),
+                  fontSize: NTDimensions.title,
+                  color: Colors.black,
+                  height: 1.7,
+                ),
               ),
             ),
           ),
@@ -168,126 +210,127 @@ class LoopModeSettingsScreen extends StatelessWidget {
             bottom: 32,
           )),
         ],
-      )
-    ];
+      ),
+    );
   }
 
-  List<Widget> _buildLoopModeSettings(
-      BuildContext context, SettingsState state) {
-    return [
-      ThinDivider(),
-      SettingsEditableItem(
-        key: Key("lmwt"),
-        title: 'Waiting time (minutes)',
-        value: state.loopModeWaitingTimeMinSet.toString(),
-        subtitle: sprintf('Between %d min - %d mins'.translated, [
+  Widget _buildWaitingTime(BuildContext context, SettingsState state) {
+    return SettingsEditableItem(
+      key: Key("lmwt"),
+      title: 'Waiting time (minutes)',
+      subtitle: sprintf(
+        'Between %d min - %d mins'.translated,
+        [
           LoopMode.loopModeWaitingTimeMinutesMin,
-          LoopMode.loopModeWaitingTimeMinutesMax
-        ]),
-        validator: (value) {
-          if (_isValueValid(value, LoopMode.loopModeWaitingTimeMinutesMin,
-              LoopMode.loopModeWaitingTimeMinutesMax)) {
-            if (value != null) {
-              _onValidationSucceeded(
-                  LoopModeCheckedFieldType.LOOP_MODE_WAITING_TIME,
-                  int.tryParse(value) ??
-                      LoopMode.loopModeDefaultWaitingTimeMinutes);
-            }
-            return null;
-          } else {
-            _onValidationError(LoopModeCheckedFieldType.LOOP_MODE_WAITING_TIME);
-            return "";
-          }
-        },
-        onFieldSubmitted: (text) {
-          if (_isValueValid(text, LoopMode.loopModeWaitingTimeMinutesMin,
-              LoopMode.loopModeWaitingTimeMinutesMax)) {
-            GetIt.I
-                .get<SettingsCubit>()
-                .onLoopModeWaitingTimeChange(int.tryParse(text));
-          } else {
-            _showErrorMessage(
-                LoopMode.loopModeWaitingTimeMinutesMin,
-                LoopMode.loopModeWaitingTimeMinutesMax,
-                LoopModeCheckedFieldType.LOOP_MODE_WAITING_TIME);
-          }
-        },
+          LoopMode.loopModeWaitingTimeMinutesMax,
+        ],
       ),
-      ThinDivider(),
-      SettingsEditableItem(
-        key: Key("lmd"),
-        title: 'Distance (meters)',
-        value: state.loopModeDistanceMetersSet.toString(),
-        onFieldSubmitted: (text) {
-          if (_isValueValid(text, LoopMode.loopModeDistanceMetersMin,
-              LoopMode.loopModeDistanceMetersMax)) {
-            GetIt.I
-                .get<SettingsCubit>()
-                .onLoopModeDistanceMetersChange(int.tryParse(text));
-          } else {
-            _showErrorMessage(
-                LoopMode.loopModeDistanceMetersMin,
-                LoopMode.loopModeDistanceMetersMax,
-                LoopModeCheckedFieldType.LOOP_MODE_DISTANCE);
+      value: state.loopModeWaitingTimeMinSet.toString(),
+      onFieldSubmitted: (text) {
+        if (_isValueValid(
+          text,
+          LoopMode.loopModeWaitingTimeMinutesMin,
+          LoopMode.loopModeWaitingTimeMinutesMax,
+        )) {
+          GetIt.I
+              .get<SettingsCubit>()
+              .onLoopModeWaitingTimeChange(int.tryParse(text));
+        } else {
+          _showErrorMessage(
+            LoopMode.loopModeWaitingTimeMinutesMin,
+            LoopMode.loopModeWaitingTimeMinutesMax,
+            LoopModeCheckedFieldType.LOOP_MODE_WAITING_TIME,
+          );
+        }
+      },
+      validator: (value) {
+        if (_isValueValid(
+          value,
+          LoopMode.loopModeWaitingTimeMinutesMin,
+          LoopMode.loopModeWaitingTimeMinutesMax,
+        )) {
+          if (value != null) {
+            _onValidationSucceeded(
+              LoopModeCheckedFieldType.LOOP_MODE_WAITING_TIME,
+              int.tryParse(value) ?? LoopMode.loopModeDefaultWaitingTimeMinutes,
+            );
           }
-        },
-        validator: (value) {
-          if (_isValueValid(value, LoopMode.loopModeDistanceMetersMin,
-              LoopMode.loopModeDistanceMetersMax)) {
-            if (value != null) {
-              _onValidationSucceeded(
-                  LoopModeCheckedFieldType.LOOP_MODE_DISTANCE,
-                  int.tryParse(value) ??
-                      LoopMode.loopModeDefaultDistanceMeters);
-            }
-            return null;
-          } else {
-            _onValidationError(LoopModeCheckedFieldType.LOOP_MODE_DISTANCE);
-            return "";
+          return null;
+        } else {
+          _onValidationError(
+            LoopModeCheckedFieldType.LOOP_MODE_WAITING_TIME,
+          );
+          return "";
+        }
+      },
+    );
+  }
+
+  Widget _buildDistance(BuildContext context, SettingsState state) {
+    return SettingsEditableItem(
+      key: Key("lmd"),
+      title: 'Distance (meters)',
+      value: state.loopModeDistanceMetersSet.toString(),
+      onFieldSubmitted: (text) {
+        if (_isValueValid(
+          text,
+          LoopMode.loopModeDistanceMetersMin,
+          LoopMode.loopModeDistanceMetersMax,
+        )) {
+          GetIt.I.get<SettingsCubit>().onLoopModeDistanceMetersChange(
+                int.tryParse(text),
+              );
+        } else {
+          _showErrorMessage(
+            LoopMode.loopModeDistanceMetersMin,
+            LoopMode.loopModeDistanceMetersMax,
+            LoopModeCheckedFieldType.LOOP_MODE_DISTANCE,
+          );
+        }
+      },
+      validator: (value) {
+        if (_isValueValid(
+          value,
+          LoopMode.loopModeDistanceMetersMin,
+          LoopMode.loopModeDistanceMetersMax,
+        )) {
+          if (value != null) {
+            _onValidationSucceeded(
+              LoopModeCheckedFieldType.LOOP_MODE_DISTANCE,
+              int.tryParse(value) ?? LoopMode.loopModeDefaultDistanceMeters,
+            );
           }
-        },
-      ),
-      ThinDivider(),
-      // todo: removed until we do not have implementation for net neutrality tests
-      // SettingsItem(
-      //   title: 'Include Net Neutrality',
-      //   showArrow: false,
-      //   onSwitchChange:
-      //       context.read<SettingsCubit>().onLoopModeNetNeutralityChange,
-      //   switchEnabled: state.loopModeNetNeutralityEnabled ? 1 : 0,
-      // ),
-      Padding(
-        padding: EdgeInsets.only(
-          right: 20,
-          left: 20,
-          top: 20,
-          bottom: 8,
-        ),
-        child: Text(
-          'When loop mode is enabled, new tests are automatically performed after the configured waiting time or when the devices moves more than the configured distance.'
-              .translated,
-          style: TextStyle(fontSize: NTDimensions.textM, color: Colors.black26),
-        ),
-      ),
-    ];
+          return null;
+        } else {
+          _onValidationError(
+            LoopModeCheckedFieldType.LOOP_MODE_DISTANCE,
+          );
+          return "";
+        }
+      },
+    );
   }
 
   Widget _buildButtons(BuildContext context, SettingsState state) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: PrimaryButton(
-          title: "Start test".translated,
-          onPressed: () {
-            // TODO: replace by starting measurement screen with loop mode running when ready
-            GetIt.I.get<SettingsCubit>().clearUiErrors();
-            GetIt.I.get<LoopModeService>().setShouldLoopModeStart(true);
-            Navigator.popUntil(context, ModalRoute.withName(HomeScreen.route));
-          },
-          width: 200,
-          enabled: state.isLoopModeConfiguredCorrectly(),
+    return Container(
+      color: Colors.white,
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: PrimaryButton(
+            title: "Start test".translated,
+            onPressed: () {
+              // TODO: replace by starting measurement screen with loop mode running when ready
+              GetIt.I.get<SettingsCubit>().clearUiErrors();
+              GetIt.I.get<LoopModeService>().setShouldLoopModeStart(true);
+              Navigator.popUntil(
+                  context, ModalRoute.withName(HomeScreen.route));
+            },
+            width: 200,
+            enabled: state.isLoopModeConfiguredCorrectly(),
+          ),
         ),
-      ),
-    ]);
+      ]),
+    );
   }
 }

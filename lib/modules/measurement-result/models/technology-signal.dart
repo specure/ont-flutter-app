@@ -6,12 +6,12 @@ part 'technology-signal.g.dart';
 class TechnologySignal {
   final int signal;
   final String technology;
-  final int timeNs;
+  final int? timeNs;
 
   TechnologySignal({
     required this.signal,
     required this.technology,
-    required this.timeNs,
+    this.timeNs,
   });
 
   factory TechnologySignal.fromJson(Map<String, dynamic> json) =>

@@ -14,8 +14,12 @@ final String _selectedLocaleTag = 'sr-Latn-rs';
 void main() {
   setUp(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
-    when(GetIt.I.get<SharedPreferencesWrapper>().init()).thenAnswer((_) async => null);
-    when(GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag)).thenReturn(_selectedLocaleTag);
+    when(GetIt.I.get<SharedPreferencesWrapper>().init())
+        .thenAnswer((_) async => null);
+    when(GetIt.I
+            .get<SharedPreferencesWrapper>()
+            .getString(StorageKeys.selectedLocaleTag))
+        .thenReturn(_selectedLocaleTag);
   });
 
   group('Test Network speed section widget', () {
@@ -35,6 +39,7 @@ Future _testNetworkSpeedSection(WidgetTester tester, bool withChart) async {
     speedList: withChart ? [1.6, 2.0, 2.5, 3.0] : null,
   );
   await tester.pumpWidget(MaterialApp(home: widget));
+  await tester.pumpAndSettle();
   final speedFinder = find.byWidgetPredicate((widget) =>
       widget is RichText && widget.text.toPlainText() == '2.5 Mbps');
   final chartFinder = find.byType(SfCartesianChart);

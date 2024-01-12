@@ -258,163 +258,191 @@ void main() {
     when(GetIt.I.get<SharedPreferencesWrapper>().init())
         .thenAnswer((_) async => null);
     when(GetIt.I
-        .get<SharedPreferencesWrapper>()
-        .getString(StorageKeys.selectedLocaleTag))
+            .get<SharedPreferencesWrapper>()
+            .getString(StorageKeys.selectedLocaleTag))
         .thenReturn(_selectedLocaleTag);
     when(GetIt.I.get<NavigationService>().goBack())
         .thenAnswer((realInvocation) => {});
   });
 
   testWidgets('shows measurements process and allows to stop it [landscape]',
-      _basicTest);
-
-  testWidgets(
-      'loop test in initialization - landscape', _loopTestInitialization);
-
-  testWidgets('loop test in initialization - portrait', (widgetTester) async {
-    widgetTester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-    addTearDown(widgetTester.binding.window.clearPhysicalSizeTestValue);
-    await _loopTestInitialization(widgetTester);
+      (widgetTester) async {
+    final size = Size(1920, 1200);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _basicTest(widgetTester, size);
   });
 
-  testWidgets(
-      'loop test in progress - landscape', _loopTestSecondTestInProgress);
+  testWidgets('loop test in initialization - landscape', (widgetTester) async {
+    final size = Size(1920, 1200);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopTestInitialization(widgetTester, size);
+  });
+
+  testWidgets('loop test in initialization - portrait', (widgetTester) async {
+    final size = Size(1200, 1920);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopTestInitialization(widgetTester, size);
+  });
+
+  testWidgets('loop test in progress - landscape', (widgetTester) async {
+    final size = Size(1920, 1200);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopTestSecondTestInProgress(widgetTester, size);
+  });
 
   testWidgets('loop test in progress - portrait', (widgetTester) async {
-    widgetTester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-    addTearDown(widgetTester.binding.window.clearPhysicalSizeTestValue);
-    await _loopTestSecondTestInProgress(widgetTester);
+    final size = Size(1200, 1920);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopTestSecondTestInProgress(widgetTester, size);
   });
 
   testWidgets('loop test initialization of 2nd test progress - landscape',
-      _loopTestSecondTestInit);
+      (widgetTester) async {
+    final size = Size(1920, 1200);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopTestSecondTestInit(widgetTester, size);
+  });
 
   testWidgets('loop test initialization of 2nd test progress - portrait',
-          (widgetTester) async {
-        widgetTester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-        addTearDown(widgetTester.binding.window.clearPhysicalSizeTestValue);
-        await _loopTestSecondTestInit(widgetTester);
-      });
+      (widgetTester) async {
+    final size = Size(1200, 1920);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopTestSecondTestInit(widgetTester, size);
+  });
 
   testWidgets('loop test waiting phase after 1 test - landscape',
-      _loopWaitingPhaseAfterFirstTest);
+      (widgetTester) async {
+    final size = Size(1920, 1200);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopWaitingPhaseAfterFirstTest(widgetTester, size);
+  });
 
   testWidgets('loop test waiting phase after failed test - landscape',
-      _loopWaitingPhaseAfterFirstFailedTest);
+      (widgetTester) async {
+    final size = Size(1920, 1200);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopWaitingPhaseAfterFirstFailedTest(widgetTester, size);
+  });
 
   testWidgets('loop test waiting phase after 1 test - portrait',
-          (widgetTester) async {
-        widgetTester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-        addTearDown(widgetTester.binding.window.clearPhysicalSizeTestValue);
-        await _loopWaitingPhaseAfterFirstTest(widgetTester);
-      });
+      (widgetTester) async {
+    final size = Size(1200, 1920);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopWaitingPhaseAfterFirstTest(widgetTester, size);
+  });
 
   testWidgets('loop test waiting phase after failed test - portrait',
-          (widgetTester) async {
-        widgetTester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-        addTearDown(widgetTester.binding.window.clearPhysicalSizeTestValue);
-        await _loopWaitingPhaseAfterFirstFailedTest(widgetTester);
-      });
+      (widgetTester) async {
+    final size = Size(1200, 1920);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _loopWaitingPhaseAfterFirstFailedTest(widgetTester, size);
+  });
 
   testWidgets(
       'shows measurements process and allows to stop it with no jitter and packet loss values [portrait]',
-          (widgetTester) async {
-        widgetTester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-        addTearDown(widgetTester.binding.window.clearPhysicalSizeTestValue);
-        await _basicTestNoJitterAndPacketLoss(widgetTester);
-      });
+      (widgetTester) async {
+    final size = Size(1200, 1920);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _basicTestNoJitterAndPacketLoss(widgetTester, size);
+  });
 
   testWidgets('shows measurements process and allows to stop it [portrait]',
-          (widgetTester) async {
-        widgetTester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-        addTearDown(widgetTester.binding.window.clearPhysicalSizeTestValue);
-        await _basicTest(widgetTester);
-      });
+      (widgetTester) async {
+    final size = Size(1200, 1920);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _basicTest(widgetTester, size);
+  });
 
-  testWidgets('stop loop measurement screen cancelled - waiting phase [portrait]',
-          (widgetTester) async {
-        widgetTester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-        addTearDown(widgetTester.binding.window.clearPhysicalSizeTestValue);
-        await _stopCancellingLoopMeasurementWaitingPhase(widgetTester);
-      });
+  testWidgets(
+      'stop loop measurement screen cancelled - waiting phase [portrait]',
+      (widgetTester) async {
+    final size = Size(1200, 1920);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _stopCancellingLoopMeasurementWaitingPhase(widgetTester, size);
+  });
 
-  testWidgets('stop loop measurement screen cancelled - waiting phase [landscape]',
-          (widgetTester) async {
-        await _stopCancellingLoopMeasurementWaitingPhase(widgetTester);
-      });
+  testWidgets(
+      'stop loop measurement screen cancelled - waiting phase [landscape]',
+      (widgetTester) async {
+    final size = Size(1920, 1200);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _stopCancellingLoopMeasurementWaitingPhase(widgetTester, size);
+  });
 
-  testWidgets('stop loop measurement screen cancelled - execution phase [portrait]',
-          (widgetTester) async {
-        widgetTester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-        addTearDown(widgetTester.binding.window.clearPhysicalSizeTestValue);
-        await _stopCancellingLoopMeasurementExecutionPhase(widgetTester);
-      });
+  testWidgets(
+      'stop loop measurement screen cancelled - execution phase [portrait]',
+      (widgetTester) async {
+    final size = Size(1200, 1920);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _stopCancellingLoopMeasurementExecutionPhase(widgetTester, size);
+  });
 
-  testWidgets('stop loop measurement screen cancelled - execution phase [landscape]',
-          (widgetTester) async {
-        await _stopCancellingLoopMeasurementExecutionPhase(widgetTester);
-      });
+  testWidgets(
+      'stop loop measurement screen cancelled - execution phase [landscape]',
+      (widgetTester) async {
+    final size = Size(1920, 1200);
+    widgetTester.view.physicalSize = size;
+    addTearDown(widgetTester.view.resetPhysicalSize);
+    await _stopCancellingLoopMeasurementExecutionPhase(widgetTester, size);
+  });
 
   testWidgets('when measurement is stopped screen is closed',
-          (widgetTester) async {
-        whenListen(
-            _bloc,
-            Stream.fromIterable([
-              _initState,
-              _initState.copyWith(
-                isContinuing: false,
-                phase: MeasurementPhase.none,
-              ),
-            ]),
-            initialState: _initState);
-        await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
-          create: (_) => _bloc,
-          child: MaterialApp(home: MeasurementScreen()),
-        ));
-        expect(find.byType(MeasurementBody), findsOneWidget);
-        verify(GetIt.I.get<NavigationService>().goBack()).called(1);
-      });
+      (widgetTester) async {
+    whenListen(
+        _bloc,
+        Stream.fromIterable([
+          _initState,
+          _initState.copyWith(
+            isContinuing: false,
+            phase: MeasurementPhase.none,
+          ),
+        ]),
+        initialState: _initState);
+    await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
+      create: (_) => _bloc,
+      child: MaterialApp(home: MeasurementScreen()),
+    ));
+    expect(find.byType(MeasurementBody), findsOneWidget);
+    verify(GetIt.I.get<NavigationService>().goBack()).called(1);
+  });
 }
 
-  Future<void> _stopCancellingLoopMeasurementWaitingPhase(WidgetTester widgetTester) async {
-        whenListen(
-                _bloc,
-                Stream.fromIterable(
-                  [
-                    _loopWaitingPhaseAfterFirstMeasurementInLoop.copyWith(leavingScreenShown: true),
-                  ],
-                ),
-                initialState: _loopWaitingPhaseAfterFirstMeasurementInLoop.copyWith(leavingScreenShown: true));
-            await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
-              create: (_) => _bloc,
-              child: MaterialApp(home: MeasurementScreen()),
-            ));
-            await widgetTester.pumpAndSettle();
-            final blocCalls = MockMeasurementsBlocCalls();
-            TestingServiceLocator.swapLazySingleton<MeasurementsBloc>(() => blocCalls);
-            when(blocCalls.setCloseDialogVisible(true)).thenAnswer((realInvocation) {});
-        expect(find.byType(LoopModeClosingWarning), findsOneWidget);
-        expect(find.byType(AppBar), findsNothing);
-        expect(find.text('Are you sure?'), findsOneWidget);
-        expect(find.text('No, continue'), findsOneWidget);
-        expect(find.text('Yes, abort measurement'), findsOneWidget);
-        expect(find.text('Are you sure you want to stop the loop mode measurement? Unfinished measurements will not be saved to your results.'), findsOneWidget);
-        await widgetTester.tap(find.text('No, continue'));
-        verify(blocCalls.setCloseDialogVisible(false)).called(1);
-}
-
-Future<void> _stopCancellingLoopMeasurementExecutionPhase(WidgetTester widgetTester) async {
+Future<void> _stopCancellingLoopMeasurementWaitingPhase(
+    WidgetTester widgetTester, Size size) async {
   whenListen(
       _bloc,
       Stream.fromIterable(
         [
-          _progressStateWithSecondMeasurementInLoop.copyWith(leavingScreenShown: true),
+          _loopWaitingPhaseAfterFirstMeasurementInLoop.copyWith(
+              leavingScreenShown: true),
         ],
       ),
-      initialState: _progressStateWithSecondMeasurementInLoop.copyWith(leavingScreenShown: true));
+      initialState: _loopWaitingPhaseAfterFirstMeasurementInLoop.copyWith(
+          leavingScreenShown: true));
   await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
     create: (_) => _bloc,
-    child: MaterialApp(home: MeasurementScreen()),
+    child: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: MaterialApp(
+        home: MeasurementScreen(),
+      ),
+    ),
   ));
   await widgetTester.pumpAndSettle();
   final blocCalls = MockMeasurementsBlocCalls();
@@ -425,12 +453,53 @@ Future<void> _stopCancellingLoopMeasurementExecutionPhase(WidgetTester widgetTes
   expect(find.text('Are you sure?'), findsOneWidget);
   expect(find.text('No, continue'), findsOneWidget);
   expect(find.text('Yes, abort measurement'), findsOneWidget);
-  expect(find.text('Are you sure you want to stop the loop mode measurement? Unfinished measurements will not be saved to your results.'), findsOneWidget);
+  expect(
+      find.text(
+          'Are you sure you want to stop the loop mode measurement? Unfinished measurements will not be saved to your results.'),
+      findsOneWidget);
   await widgetTester.tap(find.text('No, continue'));
   verify(blocCalls.setCloseDialogVisible(false)).called(1);
 }
 
-Future<void> _basicTest(WidgetTester widgetTester) async {
+Future<void> _stopCancellingLoopMeasurementExecutionPhase(
+    WidgetTester widgetTester, Size size) async {
+  whenListen(
+      _bloc,
+      Stream.fromIterable(
+        [
+          _progressStateWithSecondMeasurementInLoop.copyWith(
+              leavingScreenShown: true),
+        ],
+      ),
+      initialState: _progressStateWithSecondMeasurementInLoop.copyWith(
+          leavingScreenShown: true));
+  await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
+    create: (_) => _bloc,
+    child: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: MaterialApp(
+        home: MeasurementScreen(),
+      ),
+    ),
+  ));
+  await widgetTester.pumpAndSettle();
+  final blocCalls = MockMeasurementsBlocCalls();
+  TestingServiceLocator.swapLazySingleton<MeasurementsBloc>(() => blocCalls);
+  when(blocCalls.setCloseDialogVisible(true)).thenAnswer((realInvocation) {});
+  expect(find.byType(LoopModeClosingWarning), findsOneWidget);
+  expect(find.byType(AppBar), findsNothing);
+  expect(find.text('Are you sure?'), findsOneWidget);
+  expect(find.text('No, continue'), findsOneWidget);
+  expect(find.text('Yes, abort measurement'), findsOneWidget);
+  expect(
+      find.text(
+          'Are you sure you want to stop the loop mode measurement? Unfinished measurements will not be saved to your results.'),
+      findsOneWidget);
+  await widgetTester.tap(find.text('No, continue'));
+  verify(blocCalls.setCloseDialogVisible(false)).called(1);
+}
+
+Future<void> _basicTest(WidgetTester widgetTester, Size size) async {
   whenListen(
       _bloc,
       Stream.fromIterable(
@@ -442,7 +511,12 @@ Future<void> _basicTest(WidgetTester widgetTester) async {
       initialState: _initState);
   await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
     create: (_) => _bloc,
-    child: MaterialApp(home: MeasurementScreen()),
+    child: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: MaterialApp(
+        home: MeasurementScreen(),
+      ),
+    ),
   ));
   expect(find.byType(MeasurementBody), findsOneWidget);
   expect(find.byType(LinearProgressIndicator), findsOneWidget);
@@ -463,7 +537,8 @@ Future<void> _basicTest(WidgetTester widgetTester) async {
   verify(blocCalls.add(any)).called(1);
 }
 
-Future<void> _basicTestNoJitterAndPacketLoss(WidgetTester widgetTester) async {
+Future<void> _basicTestNoJitterAndPacketLoss(
+    WidgetTester widgetTester, Size size) async {
   whenListen(
       _bloc,
       Stream.fromIterable(
@@ -477,7 +552,12 @@ Future<void> _basicTestNoJitterAndPacketLoss(WidgetTester widgetTester) async {
       initialState: _initStateWithNoJitterAndPacketLoss);
   await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
     create: (_) => _bloc,
-    child: MaterialApp(home: MeasurementScreen()),
+    child: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: MaterialApp(
+        home: MeasurementScreen(),
+      ),
+    ),
   ));
   expect(find.byType(MeasurementBody), findsOneWidget);
   expect(find.byType(LinearProgressIndicator), findsOneWidget);
@@ -498,7 +578,8 @@ Future<void> _basicTestNoJitterAndPacketLoss(WidgetTester widgetTester) async {
   verify(blocCalls.add(any)).called(1);
 }
 
-Future<void> _loopTestSecondTestInProgress(WidgetTester widgetTester) async {
+Future<void> _loopTestSecondTestInProgress(
+    WidgetTester widgetTester, Size size) async {
   whenListen(
       _bloc,
       Stream.fromIterable(
@@ -509,7 +590,12 @@ Future<void> _loopTestSecondTestInProgress(WidgetTester widgetTester) async {
       initialState: _progressStateWithSecondMeasurementInLoop);
   await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
     create: (_) => _bloc,
-    child: MaterialApp(home: MeasurementScreen()),
+    child: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: MaterialApp(
+        home: MeasurementScreen(),
+      ),
+    ),
   ));
   expect(find.byType(MeasurementBody), findsOneWidget);
   expect(find.byType(MeasurementMedianBox), findsOneWidget);
@@ -535,13 +621,17 @@ Future<void> _loopTestSecondTestInProgress(WidgetTester widgetTester) async {
   expect(find.text('Loop Measurement 2 of 5'), findsOneWidget);
   expect(find.byType(LoopModeExecutionWarning), findsOneWidget);
   expect(find.byIcon(Icons.warning_amber_outlined), findsOneWidget);
-  expect(find.text("Due to operating system restrictions, the loop mode will stop if you navigate away from the screen or close the application."), findsOneWidget);
+  expect(
+      find.text(
+          "Due to operating system restrictions, the loop mode will stop if you navigate away from the screen or close the application."),
+      findsOneWidget);
   expect(find.byType(LoopModeButton), findsOneWidget);
   await widgetTester.tap(find.byIcon(Icons.close));
   verify(blocCalls.setCloseDialogVisible(true)).called(1);
 }
 
-Future<void> _loopTestSecondTestInit(WidgetTester widgetTester) async {
+Future<void> _loopTestSecondTestInit(
+    WidgetTester widgetTester, Size size) async {
   whenListen(
       _bloc,
       Stream.fromIterable(
@@ -552,7 +642,12 @@ Future<void> _loopTestSecondTestInit(WidgetTester widgetTester) async {
       initialState: _initStateWithSecondMeasurementInLoop);
   await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
     create: (_) => _bloc,
-    child: MaterialApp(home: MeasurementScreen()),
+    child: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: MaterialApp(
+        home: MeasurementScreen(),
+      ),
+    ),
   ));
   expect(find.byType(MeasurementBody), findsOneWidget);
   expect(find.byType(MeasurementMedianBox), findsNothing);
@@ -580,7 +675,8 @@ Future<void> _loopTestSecondTestInit(WidgetTester widgetTester) async {
   verify(blocCalls.setCloseDialogVisible(true)).called(1);
 }
 
-Future<void> _loopTestInitialization(WidgetTester widgetTester) async {
+Future<void> _loopTestInitialization(
+    WidgetTester widgetTester, Size size) async {
   whenListen(
       _bloc,
       Stream.fromIterable(
@@ -591,7 +687,12 @@ Future<void> _loopTestInitialization(WidgetTester widgetTester) async {
       initialState: _initStateWithInitInLoop);
   await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
     create: (_) => _bloc,
-    child: MaterialApp(home: MeasurementScreen()),
+    child: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: MaterialApp(
+        home: MeasurementScreen(),
+      ),
+    ),
   ));
   expect(find.byType(MeasurementBody), findsOneWidget);
   expect(find.byType(MeasurementMedianBox), findsNothing);
@@ -620,7 +721,8 @@ Future<void> _loopTestInitialization(WidgetTester widgetTester) async {
   verify(blocCalls.setCloseDialogVisible(true)).called(1);
 }
 
-Future<void> _loopWaitingPhaseAfterFirstTest(WidgetTester widgetTester) async {
+Future<void> _loopWaitingPhaseAfterFirstTest(
+    WidgetTester widgetTester, Size size) async {
   whenListen(
       _bloc,
       Stream.fromIterable(
@@ -631,7 +733,12 @@ Future<void> _loopWaitingPhaseAfterFirstTest(WidgetTester widgetTester) async {
       initialState: _loopWaitingPhaseAfterFirstMeasurementInLoop);
   await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
     create: (_) => _bloc,
-    child: MaterialApp(home: MeasurementScreen()),
+    child: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: MaterialApp(
+        home: MeasurementScreen(),
+      ),
+    ),
   ));
   await widgetTester.pumpAndSettle();
   expect(find.byType(MeasurementBody), findsNothing);
@@ -671,7 +778,7 @@ Future<void> _loopWaitingPhaseAfterFirstTest(WidgetTester widgetTester) async {
 }
 
 Future<void> _loopWaitingPhaseAfterFirstFailedTest(
-    WidgetTester widgetTester) async {
+    WidgetTester widgetTester, Size size) async {
   whenListen(
       _bloc,
       Stream.fromIterable(
@@ -680,7 +787,12 @@ Future<void> _loopWaitingPhaseAfterFirstFailedTest(
       initialState: _loopWaitingPhaseAfterFailedFirstMeasurementInLoop);
   await widgetTester.pumpWidget(BlocProvider<MeasurementsBloc>(
     create: (_) => _bloc,
-    child: MaterialApp(home: MeasurementScreen()),
+    child: MediaQuery(
+      data: MediaQueryData(size: size),
+      child: MaterialApp(
+        home: MeasurementScreen(),
+      ),
+    ),
   ));
   await widgetTester.pumpAndSettle();
   expect(find.byType(MeasurementBody), findsNothing);

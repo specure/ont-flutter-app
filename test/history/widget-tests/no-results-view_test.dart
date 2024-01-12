@@ -36,7 +36,7 @@ void main() {
       final picFinder = find.byType(SvgPicture);
       expect(picFinder, findsOneWidget);
       final picProvider = (picFinder.evaluate().single.widget as SvgPicture)
-          .pictureProvider as ExactAssetPicture;
+          .bytesLoader as SvgAssetLoader;
       expect(picProvider.assetName, 'config/.nt/images/empty_image.svg');
       expect(find.text('No results to show.'), findsOneWidget);
     });

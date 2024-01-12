@@ -142,7 +142,12 @@ void main() {
       await tester.findWidgetOfType(NoResultsView, HistoryScreen());
       when(GetIt.I.get<CoreCubit>().goToScreen())
           .thenAnswer((realInvocation) async {});
-      await tester.tap(find.text('Go to the privacy permissions'));
+      final link = find.text('Go to the privacy permissions');
+      expect(link, findsOneWidget);
+      final scrollable = find.byType(Scrollable).last;
+      expect(scrollable, findsOneWidget);
+      await tester.scrollUntilVisible(link, 100, scrollable: scrollable);
+      await tester.tap(link);
       verify(GetIt.I.get<CoreCubit>().goToScreen()).called(1);
     });
 
@@ -159,7 +164,12 @@ void main() {
       await tester.findWidgetOfType(NoResultsView, HistoryScreen());
       when(GetIt.I.get<CoreCubit>().goToScreen())
           .thenAnswer((realInvocation) async {});
-      await tester.tap(find.text('Make your first measurement'));
+      final link = find.text('Make your first measurement');
+      expect(link, findsOneWidget);
+      final scrollable = find.byType(Scrollable).last;
+      expect(scrollable, findsOneWidget);
+      await tester.scrollUntilVisible(link, 100, scrollable: scrollable);
+      await tester.tap(link);
       verify(GetIt.I.get<CoreCubit>().goToScreen()).called(1);
     });
 
@@ -199,7 +209,12 @@ void main() {
       await tester.pumpAndSettle();
       await tester.findWidgetOfType(NoResultsView, HistoryScreen());
       await tester.findWidgetOfType(NetNeutralityView, HistoryScreen());
-      await tester.tap(find.text('Make your first measurement'));
+      final link = find.text('Make your first measurement');
+      expect(link, findsOneWidget);
+      final scrollable = find.byType(Scrollable).last;
+      expect(scrollable, findsOneWidget);
+      await tester.scrollUntilVisible(link, 100, scrollable: scrollable);
+      await tester.tap(link);
       verify(GetIt.I.get<CoreCubit>().goToScreen()).called(1);
     });
 

@@ -18,7 +18,7 @@ class MeasurementResultCubit extends Cubit<MeasurementResultState>
 
   Future init({
     required MeasurementHistoryResults? result,
-    required String testUuid,
+    String? testUuid,
   }) async {
     emit(state.copyWith(loading: true));
     final project = await _cmsService.getProject();
@@ -29,10 +29,11 @@ class MeasurementResultCubit extends Cubit<MeasurementResultState>
       loopResults = result;
     } else {
       fullResults = await _measurementResultService.getResultWithSpeedCurves(
-        testUuid,
-        result: result?.tests.first,
-        errorHandler: this,
-      ) ?? result?.tests.first;
+            testUuid!,
+            result: result?.tests.first,
+            errorHandler: this,
+          ) ??
+          result?.tests.first;
     }
     emit(state.copyWith(
       result: fullResults,

@@ -126,6 +126,7 @@ Future<MeasurementResultState> _setUpStateAndPumpWidget(
       ),
     ),
   );
+  await tester.pumpAndSettle();
   return state;
 }
 
@@ -135,8 +136,12 @@ _setUpStubs() {
   final platform = GetIt.I.get<PlatformWrapper>();
   when(platform.isAndroid).thenReturn(true);
   when(platform.localeName).thenReturn('en_US');
-  when(GetIt.I.get<SharedPreferencesWrapper>().init()).thenAnswer((_) async => null);
-  when(GetIt.I.get<SharedPreferencesWrapper>().getString(StorageKeys.selectedLocaleTag)).thenReturn(_selectedLocaleTag);
+  when(GetIt.I.get<SharedPreferencesWrapper>().init())
+      .thenAnswer((_) async => null);
+  when(GetIt.I
+          .get<SharedPreferencesWrapper>()
+          .getString(StorageKeys.selectedLocaleTag))
+      .thenReturn(_selectedLocaleTag);
 }
 
 MeasurementResultCubit setUpMeasurementResultCubit(

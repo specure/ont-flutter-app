@@ -30,8 +30,11 @@ final _mockObserver = MockNavigatorObserver();
 
 final _widgetTree = BlocProvider<SettingsCubit>(
   create: (context) => GetIt.I.get<SettingsCubit>(),
-  child: MaterialApp(
-      home: LoopModeSettingsScreen(), navigatorObservers: [_mockObserver]),
+  child: MediaQuery(
+    data: MediaQueryData(size: Size(800, 600)),
+    child: MaterialApp(
+        home: LoopModeSettingsScreen(), navigatorObservers: [_mockObserver]),
+  ),
 );
 final String _selectedLocaleTag = 'sr-Latn-rs';
 
@@ -145,41 +148,16 @@ void main() {
           "${LoopMode.loopModeMeasurementCountMax + 1}";
       await tester.enterText(measurementCount, measurementCountText);
       await tester.testTextInput.receiveAction(TextInputAction.done);
-      // TODO: test if snackbar is displayed with error
-      // expect(find.text(measurementCountText), findsOneWidget);
-      // expect(
-      //     find.text(
-      //         sprintf("Exception: Please insert value between %d and %d.", [
-      //           LoopMode.LOOP_MODE_MEASUREMENT_COUNT_MIN,
-      //           LoopMode.LOOP_MODE_MEASUREMENT_COUNT_MAX
-      //         ])),
-      //     findsOneWidget);
 
       final waitingTimeText = "${LoopMode.loopModeWaitingTimeMinutesMax + 1}";
       await tester.enterText(measurementWaitingTime, waitingTimeText);
       await tester.testTextInput.receiveAction(TextInputAction.done);
       expect(find.text(waitingTimeText), findsOneWidget);
-      // TODO: test if snackbar is displayed with error
-      // expect(
-      //     find.text(
-      //         sprintf("Exception: Please insert value between %d and %d.", [
-      //           LoopMode.LOOP_MODE_WAITING_TIME_MINUTES_MIN,
-      //           LoopMode.LOOP_MODE_WAITING_TIME_MINUTES_MAX
-      //         ])),
-      //     findsOneWidget);
 
       final distanceText = "${LoopMode.loopModeDistanceMetersMax + 1}";
       await tester.enterText(measurementDistance, distanceText);
       await tester.testTextInput.receiveAction(TextInputAction.done);
       expect(find.text(distanceText), findsOneWidget);
-      // TODO: test if snackbar is displayed with error
-      // expect(
-      //     find.text(
-      //         sprintf("Exception: Please insert value between %d and %d.", [
-      //           LoopMode.LOOP_MODE_DISTANCE_METERS_MIN,
-      //           LoopMode.LOOP_MODE_DISTANCE_METERS_MAX
-      //         ])),
-      //     findsOneWidget);
     });
   });
 }
