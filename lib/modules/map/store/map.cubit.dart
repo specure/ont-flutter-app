@@ -284,11 +284,13 @@ class MapCubit extends Cubit<MapState> {
   }
 
   void onPeriodBadgeTap() {
+    final monthCountAdjust = periodPickerMonthsList.length < 12 ? 1 : 0;
     emit(state.copyWith(
       currentPeriodPickerYearIndex:
           periodPickerYearsList.indexOf(state.currentPeriod!.year.toString()),
-      currentPeriodPickerMonthIndex:
-          periodPickerMonthsList.length - state.currentPeriod!.month,
+      currentPeriodPickerMonthIndex: periodPickerMonthsList.length -
+          state.currentPeriod!.month +
+          monthCountAdjust,
     ));
     _navigationService.showBottomSheet(
       PeriodPicker(),
