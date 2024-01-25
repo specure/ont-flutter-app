@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:nt_flutter_standalone/core/constants/colors.dart';
 import 'package:nt_flutter_standalone/core/constants/mapbox.dart';
 import 'package:nt_flutter_standalone/core/models/project.dart';
@@ -65,7 +65,7 @@ class MapCubit extends Cubit<MapState> {
       GetIt.I.get<TechnologyApiService>();
   final CMSService _cmsService = GetIt.I.get<CMSService>();
   final DateTimeWrapper _dateTimeWrapper = GetIt.I.get<DateTimeWrapper>();
-  MapboxMapController? _mapController;
+  MaplibreMapController? _mapController;
 
   Timer? _debounce;
 
@@ -170,7 +170,7 @@ class MapCubit extends Cubit<MapState> {
     emit(state.copyWith(providers: providers));
   }
 
-  void onMapCreated(MapboxMapController controller) {
+  void onMapCreated(MaplibreMapController controller) {
     _mapController = controller;
   }
 
@@ -183,12 +183,12 @@ class MapCubit extends Cubit<MapState> {
       return;
     }
     return Future.wait([
-      _mapController!.setLayerVisibility(visibility, 'C-$currentLayerAffix'),
-      _mapController!.setLayerVisibility(visibility, 'M-$currentLayerAffix'),
-      _mapController!.setLayerVisibility(visibility, 'H10-$currentLayerAffix'),
-      _mapController!.setLayerVisibility(visibility, 'H1-$currentLayerAffix'),
-      _mapController!.setLayerVisibility(visibility, 'H01-$currentLayerAffix'),
-      _mapController!.setLayerVisibility(visibility, 'H001-$currentLayerAffix'),
+      _mapController!.setLayerVisibility('C-$currentLayerAffix', visibility),
+      _mapController!.setLayerVisibility('M-$currentLayerAffix', visibility),
+      _mapController!.setLayerVisibility('H10-$currentLayerAffix', visibility),
+      _mapController!.setLayerVisibility('H1-$currentLayerAffix', visibility),
+      _mapController!.setLayerVisibility('H01-$currentLayerAffix', visibility),
+      _mapController!.setLayerVisibility('H001-$currentLayerAffix', visibility),
     ]);
   }
 

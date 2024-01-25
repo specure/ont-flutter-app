@@ -3,12 +3,10 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/api-errors.dart';
 import 'package:nt_flutter_standalone/core/constants/mapbox.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/widgets/error.widget.dart';
@@ -25,7 +23,7 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  MapboxMap? _map;
+  MaplibreMap? _map;
   CoreState? _coreState;
   StreamSubscription? _styleSub;
 
@@ -74,7 +72,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   _setMap(bool isIspActive) {
-    _map = MapboxMap(
+    _map = MaplibreMap(
       onMapCreated: GetIt.I.get<MapCubit>().onMapCreated,
       onStyleLoadedCallback: GetIt.I.get<MapCubit>().onMapStyleLoaded,
       onMapClick: GetIt.I.get<MapCubit>().onMapClick,
@@ -86,7 +84,6 @@ class _MapScreenState extends State<MapScreen> {
       ),
       styleString:
           isIspActive ? MapBoxConsts.ispStyleUrl : MapBoxConsts.styleUrl,
-      accessToken: dotenv.env['MAPBOX_TOKEN']!,
     );
   }
 }

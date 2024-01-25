@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/modules/map/models/map-search.item.dart';
 import 'package:nt_flutter_standalone/modules/map/models/map-search.request.dart';

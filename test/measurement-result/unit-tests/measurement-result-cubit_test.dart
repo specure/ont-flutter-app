@@ -2,7 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/services/cms.service.dart';
@@ -17,18 +17,20 @@ import '../../di/service-locator.dart';
 
 late MeasurementResultCubit _cubit;
 final _testUuid = 'testUuid';
-final _result = MeasurementHistoryResults([MeasurementHistoryResult(
-  testUuid: _testUuid,
-  uploadKbps: 30,
-  downloadKbps: 30,
-  pingMs: 30,
-  measurementDate: 'measurementDate',
-  measurementServerCity: 'Huston',
-)]);
+final _result = MeasurementHistoryResults([
+  MeasurementHistoryResult(
+    testUuid: _testUuid,
+    uploadKbps: 30,
+    downloadKbps: 30,
+    pingMs: 30,
+    measurementDate: 'measurementDate',
+    measurementServerCity: 'Huston',
+  )
+]);
 final _dioError = MockDioError();
 
 @GenerateMocks(
-  [MeasurementResultService, MapboxMapController],
+  [MeasurementResultService, MaplibreMapController],
 )
 void main() {
   setUp(() async {

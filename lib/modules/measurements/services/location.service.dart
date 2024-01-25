@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/address.dart';

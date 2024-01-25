@@ -19,7 +19,7 @@ import 'package:device_info_plus_platform_interface/device_info_plus_platform_in
 import 'package:dio/dio.dart' as _i4;
 import 'package:flutter/material.dart' as _i7;
 import 'package:flutter/services.dart' as _i2;
-import 'package:mapbox_gl/mapbox_gl.dart' as _i6;
+import 'package:maplibre_gl/maplibre_gl.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i40;
 import 'package:nt_flutter_standalone/core/models/bloc-event.dart' as _i29;

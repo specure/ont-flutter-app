@@ -112,15 +112,10 @@ PODS:
     - GoogleUtilities/Logger
   - in_app_review (0.2.0):
     - Flutter
-  - Mapbox-iOS-SDK (6.4.1):
-    - MapboxMobileEvents (~> 0.10.12)
-  - mapbox_gl (0.0.1):
+  - MapLibre (5.14.0-pre3)
+  - maplibre_gl (0.0.1):
     - Flutter
-    - Mapbox-iOS-SDK (~> 6.4.0)
-    - MapboxAnnotationExtension (~> 0.0.1-beta.1)
-  - MapboxAnnotationExtension (0.0.1-beta.2):
-    - Mapbox-iOS-SDK (~> 6.0)
-  - MapboxMobileEvents (0.10.14)
+    - MapLibre (= 5.14.0-pre3)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -138,11 +133,11 @@ PODS:
     - Flutter
   - PromisesObjC (2.3.1)
   - ReachabilitySwift (5.0.0)
-  - Realm (10.45.2):
-    - Realm/Headers (= 10.45.2)
-  - Realm/Headers (10.45.2)
-  - RealmSwift (10.45.2):
-    - Realm (= 10.45.2)
+  - Realm (10.45.3):
+    - Realm/Headers (= 10.45.3)
+  - Realm/Headers (10.45.3)
+  - RealmSwift (10.45.3):
+    - Realm (= 10.45.3)
   - RMBTClient (0.0.1):
     - Alamofire (~> 5.0.0-rc.2)
     - AlamofireObjectMapper
@@ -150,13 +145,13 @@ PODS:
     - GCNetworkReachability (~> 1.3.2)
     - RealmSwift
     - XCGLogger
-  - Sentry/HybridSDK (8.17.2):
-    - SentryPrivate (= 8.17.2)
+  - Sentry/HybridSDK (8.18.0):
+    - SentryPrivate (= 8.18.0)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.17.2)
-  - SentryPrivate (8.17.2)
+    - Sentry/HybridSDK (= 8.18.0)
+  - SentryPrivate (8.18.0)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -184,7 +179,7 @@ DEPENDENCIES:
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
-  - mapbox_gl (from `.symlinks/plugins/mapbox_gl/ios`)
+  - maplibre_gl (from `.symlinks/plugins/maplibre_gl/ios`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -210,9 +205,7 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
-    - Mapbox-iOS-SDK
-    - MapboxAnnotationExtension
-    - MapboxMobileEvents
+    - MapLibre
     - nanopb
     - ObjcExceptionBridging
     - ObjectMapper
@@ -248,8 +241,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   in_app_review:
     :path: ".symlinks/plugins/in_app_review/ios"
-  mapbox_gl:
-    :path: ".symlinks/plugins/mapbox_gl/ios"
+  maplibre_gl:
+    :path: ".symlinks/plugins/maplibre_gl/ios"
   network_info_plus:
     :path: ".symlinks/plugins/network_info_plus/ios"
   package_info_plus:
@@ -294,10 +287,8 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 57c22343ab29bc686febbf7cbb13bad167c2d8fe
   GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   in_app_review: 318597b3a06c22bb46dc454d56828c85f444f99d
-  Mapbox-iOS-SDK: f870f83cbdc7aa4a74afcee143aafb0dae390c82
-  mapbox_gl: 33c5ab6306cbfa72289bb3606d2cd2e8baee9ff0
-  MapboxAnnotationExtension: 4eee6c26349ef6d909f1a23a7eae2d0f7ca5fa7d
-  MapboxMobileEvents: 5a172cc9bbf8ac0e45ba86095cbee685ede248cc
+  MapLibre: 620fc933c1d6029b33738c905c1490d024e5d4ef
+  maplibre_gl: a2efec727dd340e4c65e26d2b03b584f14881fd9
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
@@ -306,15 +297,15 @@ SPEC CHECKSUMS:
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
-  Realm: bc4fc31783a0b3e355edca05f167f6a49c544dc2
-  RealmSwift: 234003b5fdb187c4b439d478662636d62a1f9de0
+  Realm: b277b843c7505c1e30e3a70322a24a09283e62bb
+  RealmSwift: f6690053e81733801e6619eb5b39993ab76f7050
   RMBTClient: 7a3f345c6be5a9b420b60f68efd72c1e7566f1eb
-  Sentry: 64a9f9c3637af913adcf53deced05bbe452d1410
-  sentry_flutter: 57912cf425e09398bdf47f38842a1fcb9836f1be
-  SentryPrivate: 024c6fed507ac39ae98e6d087034160f942920d5
-  shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
+  Sentry: 8984a4ffb2b9bd2894d74fb36e6f5833865bc18e
+  sentry_flutter: c87a0556eeb6cbf7f9f924d30e878bdedf22d364
+  SentryPrivate: 2f0c9ba4c3fc993f70eab6ca95673509561e0085
+  shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
   SwiftLocation: 83e0ea75a1969cee3a1197e2b7095603fc23fde5
-  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
+  url_launcher_ios: bbd758c6e7f9fd7b5b1d4cde34d2b95fcce5e812
   wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47
   wifi_iot: b5aafd6f9b52f8a357383a1deabab45f31cd602d
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b

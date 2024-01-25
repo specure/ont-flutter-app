@@ -1,4 +1,4 @@
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 
 class MapSearchItem {
   final String title;

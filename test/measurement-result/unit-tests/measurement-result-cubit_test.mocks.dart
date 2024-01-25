@@ -5,12 +5,13 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i6;
 import 'dart:math' as _i4;
-import 'dart:typed_data' as _i12;
-import 'dart:ui' as _i11;
+import 'dart:typed_data' as _i13;
+import 'dart:ui' as _i12;
 
 import 'package:dio/dio.dart' as _i2;
-import 'package:mapbox_gl/mapbox_gl.dart' as _i10;
-import 'package:mapbox_gl_platform_interface/mapbox_gl_platform_interface.dart'
+import 'package:flutter/material.dart' as _i11;
+import 'package:maplibre_gl/maplibre_gl.dart' as _i10;
+import 'package:maplibre_gl_platform_interface/maplibre_gl_platform_interface.dart'
     as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i8;
@@ -221,12 +222,12 @@ class MockMeasurementResultService extends _i1.Mock
       ) as _i2.Dio);
 }
 
-/// A class which mocks [MapboxMapController].
+/// A class which mocks [MaplibreMapController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMapboxMapController extends _i1.Mock
-    implements _i10.MapboxMapController {
-  MockMapboxMapController() {
+class MockMaplibreMapController extends _i1.Mock
+    implements _i10.MaplibreMapController {
+  MockMaplibreMapController() {
     _i1.throwOnMissingStub(this);
   }
 
@@ -523,6 +524,23 @@ class MockMapboxMapController extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
+  _i6.Future<void> setLayerProperties(
+    String? layerId,
+    _i10.LayerProperties? properties,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLayerProperties,
+          [
+            layerId,
+            properties,
+          ],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
   _i6.Future<void> addFillLayer(
     String? sourceId,
     String? layerId,
@@ -537,6 +555,39 @@ class MockMapboxMapController extends _i1.Mock
       (super.noSuchMethod(
         Invocation.method(
           #addFillLayer,
+          [
+            sourceId,
+            layerId,
+            properties,
+          ],
+          {
+            #belowLayerId: belowLayerId,
+            #sourceLayer: sourceLayer,
+            #minzoom: minzoom,
+            #maxzoom: maxzoom,
+            #filter: filter,
+            #enableInteraction: enableInteraction,
+          },
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> addFillExtrusionLayer(
+    String? sourceId,
+    String? layerId,
+    _i10.FillExtrusionLayerProperties? properties, {
+    String? belowLayerId,
+    String? sourceLayer,
+    double? minzoom,
+    double? maxzoom,
+    dynamic filter,
+    bool? enableInteraction = true,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addFillExtrusionLayer,
           [
             sourceId,
             layerId,
@@ -647,6 +698,35 @@ class MockMapboxMapController extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
+  _i6.Future<void> addHeatmapLayer(
+    String? sourceId,
+    String? layerId,
+    _i10.HeatmapLayerProperties? properties, {
+    String? belowLayerId,
+    String? sourceLayer,
+    double? minzoom,
+    double? maxzoom,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addHeatmapLayer,
+          [
+            sourceId,
+            layerId,
+            properties,
+          ],
+          {
+            #belowLayerId: belowLayerId,
+            #sourceLayer: sourceLayer,
+            #minzoom: minzoom,
+            #maxzoom: maxzoom,
+          },
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
   _i6.Future<void> updateMyLocationTrackingMode(
           _i3.MyLocationTrackingMode? myLocationTrackingMode) =>
       (super.noSuchMethod(
@@ -670,7 +750,7 @@ class MockMapboxMapController extends _i1.Mock
 
   @override
   _i6.Future<void> updateContentInsets(
-    dynamic insets, [
+    _i11.EdgeInsets? insets, [
     bool? animated = false,
   ]) =>
       (super.noSuchMethod(
@@ -1132,7 +1212,7 @@ class MockMapboxMapController extends _i1.Mock
 
   @override
   _i6.Future<List<dynamic>> queryRenderedFeaturesInRect(
-    _i11.Rect? rect,
+    _i12.Rect? rect,
     List<String>? layerIds,
     String? filter,
   ) =>
@@ -1142,6 +1222,24 @@ class MockMapboxMapController extends _i1.Mock
           [
             rect,
             layerIds,
+            filter,
+          ],
+        ),
+        returnValue: _i6.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i6.Future<List<dynamic>>);
+
+  @override
+  _i6.Future<List<dynamic>> querySourceFeatures(
+    String? sourceId,
+    String? sourceLayerId,
+    List<Object>? filter,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #querySourceFeatures,
+          [
+            sourceId,
+            sourceLayerId,
             filter,
           ],
         ),
@@ -1184,7 +1282,7 @@ class MockMapboxMapController extends _i1.Mock
   @override
   _i6.Future<void> addImage(
     String? name,
-    _i12.Uint8List? bytes, [
+    _i13.Uint8List? bytes, [
     bool? sdf = false,
   ]) =>
       (super.noSuchMethod(
@@ -1247,12 +1345,31 @@ class MockMapboxMapController extends _i1.Mock
   @override
   _i6.Future<void> addImageSource(
     String? imageSourceId,
-    _i12.Uint8List? bytes,
+    _i13.Uint8List? bytes,
     _i3.LatLngQuad? coordinates,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #addImageSource,
+          [
+            imageSourceId,
+            bytes,
+            coordinates,
+          ],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> updateImageSource(
+    String? imageSourceId,
+    _i13.Uint8List? bytes,
+    _i3.LatLngQuad? coordinates,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateImageSource,
           [
             imageSourceId,
             bytes,
@@ -1368,23 +1485,6 @@ class MockMapboxMapController extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<void> setLayerVisibility(
-    bool? visibility,
-    String? imageLayerId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setLayerVisibility,
-          [
-            visibility,
-            imageLayerId,
-          ],
-        ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
-
-  @override
   _i6.Future<void> setFilter(
     String? layerId,
     dynamic filter,
@@ -1400,6 +1500,15 @@ class MockMapboxMapController extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<dynamic> getFilter(String? layerId) => (super.noSuchMethod(
+        Invocation.method(
+          #getFilter,
+          [layerId],
+        ),
+        returnValue: _i6.Future<dynamic>.value(),
+      ) as _i6.Future<dynamic>);
 
   @override
   _i6.Future<_i4.Point<num>> toScreenLocation(_i3.LatLng? latLng) =>
@@ -1472,6 +1581,29 @@ class MockMapboxMapController extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
+  _i6.Future<dynamic> setCameraBounds({
+    required double? west,
+    required double? north,
+    required double? south,
+    required double? east,
+    required int? padding,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setCameraBounds,
+          [],
+          {
+            #west: west,
+            #north: north,
+            #south: south,
+            #east: east,
+            #padding: padding,
+          },
+        ),
+        returnValue: _i6.Future<dynamic>.value(),
+      ) as _i6.Future<dynamic>);
+
+  @override
   _i6.Future<void> addLayer(
     String? sourceId,
     String? layerId,
@@ -1505,6 +1637,41 @@ class MockMapboxMapController extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
+  _i6.Future<void> setLayerVisibility(
+    String? layerId,
+    bool? visible,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLayerVisibility,
+          [
+            layerId,
+            visible,
+          ],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<List<dynamic>> getLayerIds() => (super.noSuchMethod(
+        Invocation.method(
+          #getLayerIds,
+          [],
+        ),
+        returnValue: _i6.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i6.Future<List<dynamic>>);
+
+  @override
+  _i6.Future<List<String>> getSourceIds() => (super.noSuchMethod(
+        Invocation.method(
+          #getSourceIds,
+          [],
+        ),
+        returnValue: _i6.Future<List<String>>.value(<String>[]),
+      ) as _i6.Future<List<String>>);
+
+  @override
   void dispose() => super.noSuchMethod(
         Invocation.method(
           #dispose,
@@ -1514,7 +1681,7 @@ class MockMapboxMapController extends _i1.Mock
       );
 
   @override
-  void addListener(_i11.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i12.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -1523,7 +1690,7 @@ class MockMapboxMapController extends _i1.Mock
       );
 
   @override
-  void removeListener(_i11.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i12.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
