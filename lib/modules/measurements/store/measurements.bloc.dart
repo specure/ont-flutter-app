@@ -224,7 +224,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
       // called only on iOS
       if (!loopModeService.isLoopModeActivated)
         showMeasurementResult(event.payload);
-        _wakelock.disable();
+      _wakelock.disable();
     });
     on<OnMeasurementComplete>((event, emit) async {
       // called only on iOS

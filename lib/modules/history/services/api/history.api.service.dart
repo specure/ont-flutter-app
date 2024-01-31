@@ -24,7 +24,9 @@ class HistoryApiService extends DioService {
           'network_types': networkTypes,
         },
       );
-      history = History.fromJson(response.data['measurements']);
+      if (response.data?['measurements'] != null) {
+        history = History.fromJson(response.data['measurements']);
+      }
     } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);

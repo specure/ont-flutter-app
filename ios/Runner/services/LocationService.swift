@@ -21,18 +21,28 @@ class LocationService: CallHandlerServiceProtocol {
         case "isLocationServiceEnabled":
             result(CLLocationManager.locationServicesEnabled())
         case "getLatestLocation":
-            SwiftLocation.gpsLocation().then {
-                if let location = $0.location, let json = try? JSONSerialization.data(withJSONObject: [
-                    "lat": location.coordinate.latitude,
-                    "long": location.coordinate.longitude
-                ]) {
-                    result(String(data: json, encoding: .utf8))
+            SwiftLocation.gpsLocation(accuracy: .neighborhood).then { [self] filtered in
+                if let location = parseLocation(gpsResult: filtered) {
+                    result(location)
                 } else {
-                    result(nil)
+                    SwiftLocation.gpsLocation().then { [self] unfiltered in
+                        result(parseLocation(gpsResult: unfiltered))
+                    }
                 }
             }
         default:
             result(nil)
+        }
+    }
+    
+    private func parseLocation(gpsResult: Result<CLLocation, LocationError>) -> String? {
+        if let location = gpsResult.location, let json = try? JSONSerialization.data(withJSONObject: [
+            "lat": location.coordinate.latitude,
+            "long": location.coordinate.longitude
+        ]) {
+            return String(data: json, encoding: .utf8)
+        } else {
+            return nil
         }
     }
     

@@ -175,20 +175,35 @@ class MapCubit extends Cubit<MapState> {
   }
 
   void onMapStyleLoaded() {
-    _setCurrentMunicipalityVisibility(true);
+    _showCurrentLayer();
   }
 
-  Future _setCurrentMunicipalityVisibility(bool visibility) async {
+  Future _showCurrentLayer() async {
     if (_mapController == null) {
       return;
     }
+    final allLayers = await _mapController!.getLayerIds();
+    final dataLayers = allLayers.where((el) {
+      final layerId = el as String;
+      return (layerId.startsWith('C-') ||
+              layerId.startsWith('M-') ||
+              layerId.startsWith('H1') ||
+              layerId.startsWith('H0')) &&
+          layerId != 'C-Borders' &&
+          layerId != 'M-Borders';
+    });
+    await Future.wait(
+      dataLayers.map(
+        (layerId) => _mapController!.setLayerVisibility(layerId, false),
+      ),
+    );
     return Future.wait([
-      _mapController!.setLayerVisibility('C-$currentLayerAffix', visibility),
-      _mapController!.setLayerVisibility('M-$currentLayerAffix', visibility),
-      _mapController!.setLayerVisibility('H10-$currentLayerAffix', visibility),
-      _mapController!.setLayerVisibility('H1-$currentLayerAffix', visibility),
-      _mapController!.setLayerVisibility('H01-$currentLayerAffix', visibility),
-      _mapController!.setLayerVisibility('H001-$currentLayerAffix', visibility),
+      _mapController!.setLayerVisibility('C-$currentLayerAffix', true),
+      _mapController!.setLayerVisibility('M-$currentLayerAffix', true),
+      _mapController!.setLayerVisibility('H10-$currentLayerAffix', true),
+      _mapController!.setLayerVisibility('H1-$currentLayerAffix', true),
+      _mapController!.setLayerVisibility('H01-$currentLayerAffix', true),
+      _mapController!.setLayerVisibility('H001-$currentLayerAffix', true),
     ]);
   }
 
@@ -236,17 +251,15 @@ class MapCubit extends Cubit<MapState> {
   }
 
   Future onTechnologyTap(TechnologyItem technology) async {
-    await _setCurrentMunicipalityVisibility(false);
     emit(state.copyWith(
         currentTechnologyIndex: state.technologies.indexOf(technology)));
-    _setCurrentMunicipalityVisibility(true);
+    _showCurrentLayer();
   }
 
   Future onOperatorChange(String operator) async {
-    await _setCurrentMunicipalityVisibility(false);
     emit(state.copyWith(
         currentProviderIndex: state.providers.indexOf(operator)));
-    _setCurrentMunicipalityVisibility(true);
+    _showCurrentLayer();
   }
 
   Future pickPeriod() async {
@@ -261,9 +274,8 @@ class MapCubit extends Cubit<MapState> {
       int.parse(periodPickerYearsList[state.currentPeriodPickerYearIndex]),
       month,
     );
-    await _setCurrentMunicipalityVisibility(false);
     emit(state.copyWith(currentPeriod: date));
-    _setCurrentMunicipalityVisibility(true);
+    _showCurrentLayer();
   }
 
   void onPeriodPickerYearIndexChange(int index) {
@@ -284,13 +296,11 @@ class MapCubit extends Cubit<MapState> {
   }
 
   void onPeriodBadgeTap() {
-    final monthCountAdjust = periodPickerMonthsList.length < 12 ? 1 : 0;
     emit(state.copyWith(
       currentPeriodPickerYearIndex:
           periodPickerYearsList.indexOf(state.currentPeriod!.year.toString()),
-      currentPeriodPickerMonthIndex: periodPickerMonthsList.length -
-          state.currentPeriod!.month +
-          monthCountAdjust,
+      currentPeriodPickerMonthIndex: periodPickerMonthsList
+          .indexOf(DateFormat('MMMM').format(state.currentPeriod!)),
     ));
     _navigationService.showBottomSheet(
       PeriodPicker(),
