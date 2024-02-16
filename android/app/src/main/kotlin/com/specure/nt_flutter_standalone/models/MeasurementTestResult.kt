@@ -16,7 +16,7 @@ data class MeasurementTestResult(
             Pair("client_version", totalTestResult.client_version),
             Pair("test_encryption", totalTestResult.encryption),
             Pair("voip_result_packet_loss_percents", totalTestResult.packetLossPercent),
-            Pair("voip_result_jitter_millis", totalTestResult.jitterMeanNanos / 1000000),
+            Pair("voip_result_jitter_millis", totalTestResult.jitterMeanNanos / 1000000.0),
             Pair("test_bytes_download", totalTestResult.bytes_download),
             Pair("test_bytes_upload", totalTestResult.bytes_upload),
             Pair("test_nsec_download", totalTestResult.nsec_download),

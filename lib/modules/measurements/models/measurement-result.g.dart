@@ -44,7 +44,7 @@ MeasurementResult _$MeasurementResultFromJson(Map<String, dynamic> json) =>
       networkType: json['network_type'] as int?,
       packetLoss:
           (json['voip_result_packet_loss_percents'] as num?)?.toDouble(),
-      jitter: json['voip_result_jitter_millis'] as int?,
+      jitter: (json['voip_result_jitter_millis'] as num?)?.toDouble(),
       time: json['time'] as int? ?? 0,
       platform: json['platform'] as String?,
       dualSim: json['dual_sim'] as bool?,

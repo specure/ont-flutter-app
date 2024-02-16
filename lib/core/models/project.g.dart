@@ -29,6 +29,8 @@ NTProject _$NTProjectFromJson(Map<String, dynamic> json) => NTProject(
           json['enable_app_qoe_result_explanation'] as bool? ?? false,
       enableMapMnoIspSwitch:
           json['enable_map_mno_isp_switch'] as bool? ?? false,
+      pingDuration: (json['ping_duration'] as num?)?.toDouble() ?? 0,
+      pingInterval: (json['ping_interval'] as num?)?.toDouble() ?? 0,
     );
 
 Map<String, dynamic> _$NTProjectToJson(NTProject instance) => <String, dynamic>{
@@ -49,4 +51,6 @@ Map<String, dynamic> _$NTProjectToJson(NTProject instance) => <String, dynamic>{
       'enable_app_qoe_result_explanation':
           instance.enableAppQoeResultExplanation,
       'enable_map_mno_isp_switch': instance.enableMapMnoIspSwitch,
+      'ping_duration': instance.pingDuration,
+      'ping_interval': instance.pingInterval,
     };

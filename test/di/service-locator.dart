@@ -27,6 +27,7 @@ import 'package:nt_flutter_standalone/modules/measurement-result/services/measur
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/geocoding-wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/ping.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart';
@@ -54,6 +55,7 @@ import '../measurement-result/unit-tests/measurement-result-cubit_test.mocks.dar
 import '../measurement-result/widget-tests/results-qos-view-widget_test.mocks.dart';
 import '../measurements/unit-tests/app-review-service_test.mocks.dart';
 import '../measurements/unit-tests/location-service_test.mocks.dart';
+import '../measurements/unit-tests/measurement-service_test.mocks.dart';
 import '../measurements/unit-tests/measurements-api-service_test.mocks.dart';
 import '../measurements/unit-tests/measurements-bloc_test.mocks.dart';
 import '../measurements/unit-tests/network-service_test.mocks.dart';
@@ -125,6 +127,7 @@ class TestingServiceLocator {
     _registerLazySingleton<DateTimeWrapper>(() => MockDateTimeWrapper());
     _registerLazySingleton<UrlLauncherWrapper>(() => MockUrlLauncherWrapper());
     _registerLazySingleton<WakelockWrapper>(() => MockWakelockWrapper());
+    _registerLazySingleton<PingWrapper>(() => MockPingWrapper());
     // End plugin wrappers
 
     //Components

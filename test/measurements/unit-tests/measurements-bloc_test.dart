@@ -355,6 +355,7 @@ void main() {
       act: (bloc) => bloc.add(RestartMeasurement()),
       expect: () => [
         MeasurementsState.finished(MeasurementsState.init()),
+        MeasurementsState.started(MeasurementsState.init()),
         MeasurementsState.started(MeasurementsState.init()
             .copyWith(clientUuid: _measurementResult.uuid)),
       ],
@@ -858,9 +859,7 @@ _setUpStubs() {
   when(GetIt.I.get<AppReviewService>().startAppReview())
       .thenAnswer((_) async => false);
 
-  when(GetIt.I.get<WakelockWrapper>().enable())
-      .thenAnswer((_) {});
+  when(GetIt.I.get<WakelockWrapper>().enable()).thenAnswer((_) {});
 
-  when(GetIt.I.get<WakelockWrapper>().disable())
-      .thenAnswer((_) {});
+  when(GetIt.I.get<WakelockWrapper>().disable()).thenAnswer((_) {});
 }

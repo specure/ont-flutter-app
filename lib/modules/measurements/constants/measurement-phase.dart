@@ -9,7 +9,8 @@ enum MeasurementPhase {
   up,
   jitter,
   packLoss,
-  submittingTestResult
+  submittingTestResult,
+  initLatency
 }
 
 extension MeasurementPhaseExt on MeasurementPhase {
@@ -17,9 +18,11 @@ extension MeasurementPhaseExt on MeasurementPhase {
     switch (this) {
       case MeasurementPhase.fetchingTestParams:
       case MeasurementPhase.init:
-        return 'Initializing';
+        return 'Initializing download';
       case MeasurementPhase.wait:
         return 'Waiting';
+      case MeasurementPhase.initLatency:
+        return 'Initializing';
       case MeasurementPhase.latency:
         return 'Ping';
       case MeasurementPhase.down:
@@ -42,24 +45,24 @@ extension MeasurementPhaseExt on MeasurementPhase {
 
   double get progress {
     switch (this) {
-      case MeasurementPhase.fetchingTestParams:
-        return 0.03;
-      case MeasurementPhase.wait:
-        return 0.06;
-      case MeasurementPhase.init:
-        return 0.1;
+      case MeasurementPhase.initLatency:
+        return 0.02;
       case MeasurementPhase.latency:
+      case MeasurementPhase.jitter:
+      case MeasurementPhase.packLoss:
         return 0.2;
+      case MeasurementPhase.fetchingTestParams:
+        return 0.22;
+      case MeasurementPhase.wait:
+        return 0.29;
+      case MeasurementPhase.init:
+        return 0.3;
       case MeasurementPhase.down:
-        return 0.64;
+        return 0.6;
       case MeasurementPhase.initUp:
-        return 0.64;
+        return 0.7;
       case MeasurementPhase.up:
         return 1;
-      case MeasurementPhase.jitter:
-        return 0.3;
-      case MeasurementPhase.packLoss:
-        return 0.3;
       case MeasurementPhase.submittingTestResult:
         return 1;
       case MeasurementPhase.none:

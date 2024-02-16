@@ -68,7 +68,7 @@ class MeasurementResult {
   @JsonKey(name: 'voip_result_packet_loss_percents')
   double? packetLoss;
   @JsonKey(name: 'voip_result_jitter_millis')
-  int? jitter;
+  double? jitter;
   @JsonKey(name: 'test_num_threads')
   final int testNumThreads;
   @JsonKey(name: 'test_port_remote')
@@ -136,7 +136,7 @@ class MeasurementResult {
     this.telephonyNetworkOperatorName,
     this.telephonyNetworkCountry,
     this.telephonyNetworkIsRoaming,
-    this.loopModeInfo
+    this.loopModeInfo,
   });
 
   MeasurementHistoryResult mapToHistoryResult() {

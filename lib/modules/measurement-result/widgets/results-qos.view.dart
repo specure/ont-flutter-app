@@ -64,7 +64,7 @@ class ResultsQosView extends StatelessWidget {
                             child: TextSection(
                               title: 'Ping',
                               value:
-                                  result?.pingMs.toInt().toString() ?? unknown,
+                                  result?.pingMs.round().toString() ?? unknown,
                               valueUnit: 'ms',
                             ),
                           ),
@@ -76,7 +76,7 @@ class ResultsQosView extends StatelessWidget {
                               return Flexible(
                                 child: TextSection(
                                   title: 'Jitter',
-                                  value: result?.jitterMs?.toInt().toString() ??
+                                  value: result?.jitterMs?.round().toString() ??
                                       unknown,
                                   valueUnit: 'ms',
                                 ),

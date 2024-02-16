@@ -229,8 +229,8 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
     on<OnMeasurementComplete>((event, emit) async {
       // called only on iOS
       if (loopModeService.loopModeDetails.isLoopModeActive) {
-        int jitterUnitsFixed =
-            (state.phaseFinalResults[MeasurementPhase.jitter]?.toInt() ?? -1) ~/
+        double jitterUnitsFixed =
+            (state.phaseFinalResults[MeasurementPhase.jitter]?.toInt() ?? -1) /
                 1000000;
         var localResults = MeasurementResult(
           uuid: "",
@@ -283,6 +283,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
     });
     on<RestartMeasurement>((event, emit) async {
       emit(await stopMeasurement());
+      emit(MeasurementsState.started(state));
       emit(await startMeasurement());
     });
     on<MeasurementPostFinish>((event, emit) async {
@@ -299,6 +300,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
       LoopModeDetails loopModeDetails = event.payload;
       if (loopModeDetails.shouldAnotherTestBeStarted &&
           !loopModeDetails.isTestRunning) {
+        emit(MeasurementsState.started(state));
         emit(await startMeasurement());
       } else if (loopModeDetails.isLoopModeFinished) {
         emit(MeasurementsState.finished(state));
@@ -432,7 +434,16 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
     }
     final uuid = await preferences.clientUuid ??
         await settingsService.saveClientUuidAndSettings(
-            errorHandler: this.errorHandler);
+          errorHandler: this.errorHandler,
+        );
+    try {
+      await measurementService.startPingTest(
+        host: state.currentServer?.webAddress,
+        project: state.project,
+      );
+    } on MeasurementError catch (e) {
+      return state.copyWith(error: e);
+    }
     measurementService.startTest(
       Environment.appSuffix.substring(1),
       clientUUID: uuid,
@@ -445,7 +456,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
     if (platform.isAndroid) {
       await _startRecordingSignalInfo();
     }
-    return MeasurementsState.started(state.copyWith(clientUuid: uuid));
+    return state.copyWith(clientUuid: uuid);
   }
 
   Future _startRecordingSignalInfo() async {

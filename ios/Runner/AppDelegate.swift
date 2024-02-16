@@ -14,7 +14,7 @@ enum EClientSuffix: String {
     static let testStartedMessage = "TEST_STARTED"
     static let testStoppedMessage = "TEST_STOPPED"
     
-    var rmbtClient = RMBTClient(withClient: .nkom)
+    var rmbtClient = RMBTClient(withClient: .flutter)
     let zeroMeasurementSynchronizer = RMBTZeroMeasurementSynchronizer.shared
     let operationQueue = OperationQueue()
     
@@ -129,10 +129,6 @@ enum EClientSuffix: String {
             RMBTConfig.sharedInstance.loopModeInfo = loopModeSettings
         }
         
-        if let enableAppJitterAndPacketLoss = arguments["enableAppJitterAndPacketLoss"] as? Bool, enableAppJitterAndPacketLoss == true {
-            self.rmbtClient = RMBTClient(withClient: .standard)
-        }
-        
         if let locationPermissionGranted = arguments["locationPermissionGranted"] as? Bool {
             RMBTConfig.sharedInstance.locationPermissionGranted = locationPermissionGranted
         }
@@ -143,6 +139,22 @@ enum EClientSuffix: String {
         
         if let telephonyInfo = arguments["telephonyInfo"] as? [String:Any] {
             RMBTConfig.sharedInstance.telephonyInfo = telephonyInfo
+        }
+        
+        if let pingsNs = arguments["pingsNs"] as? [Double] {
+            rmbtClient.externalPings = pingsNs
+        }
+        
+        if let testStartNs = arguments["testStartNs"] as? Double {
+            rmbtClient.externalStartNanos = testStartNs
+        }
+        
+        if let jitterNs = arguments["jitterNs"] as? Double {
+            rmbtClient.externalJitterNanos = jitterNs
+        }
+        
+        if let packetLoss = arguments["packetLoss"] as? Double {
+            rmbtClient.externalPacketLoss = packetLoss
         }
     }
 }

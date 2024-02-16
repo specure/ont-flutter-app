@@ -111,7 +111,7 @@ class MeasurementsState
         loopModeDetails = currentState.loopModeDetails,
         prevPhase = MeasurementPhase.none,
         permissions = currentState.permissions,
-        phase = MeasurementPhase.fetchingTestParams,
+        phase = MeasurementPhase.initLatency,
         phaseProgressResults = {},
         phaseFinalResults = {},
         isInitializing = currentState.isInitializing,

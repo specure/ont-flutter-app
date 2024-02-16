@@ -122,11 +122,14 @@ class MainActivity : FlutterActivity() {
                         call.argument("clientUUID")!!,
                         call.argument("location")!!,
                         call.argument("selectedMeasurementServerId"),
-                        call.argument("enableAppJitterAndPacketLoss"),
                         call.argument("telephonyPermissionGranted"),
                         call.argument("locationPermissionGranted"),
                         call.argument("uuidPermissionGranted"),
                         call.argument("loopModeSettings"),
+                        call.argument<ArrayList<Double>>("pingsNs"),
+                        call.argument<Double>("jitterNs"),
+                        call.argument<Double>("packetLoss"),
+                        call.argument<Double>("testStartNs"),
                     )
                     result.success(TEST_STARTED_MESSAGE)
                 }
@@ -191,9 +194,19 @@ class MainActivity : FlutterActivity() {
         return PermissionState(permissionsChecked, locationPermissionsPermitted, preciseLocationPermissionsPermitted, readPhoneStatePermitted)
     }
 
-    private fun startService(appVersion: String, flavor: String, clientUUID: String, location: Map<String, Any?>, measurementServerId: Int?,
-                             enableAppJitterAndPacketLoss: Boolean?, telephonyPermissionGranted: Boolean?,
-                             locationPermissionGranted: Boolean?, uuidPermissionGranted: Boolean?, loopModeSettings: Map<String, Any?>?
+    private fun startService(appVersion: String,
+                             flavor: String,
+                             clientUUID: String,
+                             location: Map<String, Any?>,
+                             measurementServerId: Int?,
+                             telephonyPermissionGranted: Boolean?,
+                             locationPermissionGranted: Boolean?,
+                             uuidPermissionGranted: Boolean?,
+                             loopModeSettings: Map<String, Any?>?,
+                             externalPings: ArrayList<Double>?,
+                             externalJitter: Double?,
+                             externalPacketLoss: Double?,
+                             externalTestStart: Double?
     ) {
         if (isMeasurementServiceBound) {
             context.unbindService(measurementServiceConnection)
@@ -211,11 +224,14 @@ class MainActivity : FlutterActivity() {
 
         MeasurementService.startTests(
             this@MainActivity.applicationContext, appVersion, flavor, clientUUID, location, measurementServerId,
-            enableAppJitterAndPacketLoss ?: false,
             telephonyPermissionGranted ?: false,
             locationPermissionGranted ?: false,
             uuidPermissionGranted ?: false,
-            parsedLoopModeSettings
+            parsedLoopModeSettings,
+            externalPings?.toDoubleArray() ?: doubleArrayOf(),
+            externalJitter ?: 0.0,
+            externalPacketLoss ?: 0.0,
+            externalTestStart ?: 0.0
         )
         context.bindService(
             MeasurementService.intent(context), measurementServiceConnection, Context.BIND_AUTO_CREATE)

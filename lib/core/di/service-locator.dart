@@ -28,6 +28,7 @@ import 'package:nt_flutter_standalone/modules/measurement-result/store/measureme
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/geocoding-wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/ping.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/services/dns-test.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart';
@@ -73,6 +74,7 @@ class ServiceLocator {
     _registerLazySingleton<DateTimeWrapper>(() => DateTimeWrapper());
     _registerLazySingleton<UrlLauncherWrapper>(() => UrlLauncherWrapper());
     _registerLazySingleton<WakelockWrapper>(() => WakelockWrapper());
+    _registerLazySingleton<PingWrapper>(() => PingWrapper());
     // End plugins and wrappers
 
     //Components

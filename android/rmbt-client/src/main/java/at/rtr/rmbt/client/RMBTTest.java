@@ -56,6 +56,7 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
     private final CyclicBarrier barrier;
     private final AtomicBoolean fallbackToOneThread;
 
+    private final boolean doPing = false;
     private final boolean doDownload = true;
     private final boolean doUpload = true;
 
@@ -377,61 +378,62 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
             }
             /*********************/
 
-            boolean _fallbackToOneThread;
-            setStatus(TestStatus.PING);
-            /***** ping *****/
-            {
-                barrier.await();
+            boolean _fallbackToOneThread = fallbackToOneThread.get();
 
-                startTrafficService(TestStatus.PING);
-
-                _fallbackToOneThread = fallbackToOneThread.get();
-
-                if (_fallbackToOneThread && threadId != 0)
-                    return null;
-
-                final int NUMPINGS = params.getNumPings();
-                long shortestPing = Long.MAX_VALUE;
-                long medianPing = Long.MAX_VALUE;
-                long[] pings = new long[NUMPINGS];
-                final long timeStart = System.nanoTime();
-                if (threadId == 0) // only one thread pings!
+            if (doPing) {
+                setStatus(TestStatus.PING);
+                /***** ping *****/
                 {
-                    for (int i = 0; i < NUMPINGS; i++) {
-                        final Ping ping = ping();
-                        if (ping != null) {
-                            client.updatePingStatus(timeStart, i + 1, System.nanoTime());
+                    barrier.await();
 
-                            pings[i] = ping.server;
-                            if (ping.client < shortestPing)
-                                shortestPing = ping.client;
+                    startTrafficService(TestStatus.PING);
 
-                            client.onPingDataChanged(ping.client, ping.server, ping.timeNs);
-                            testResult.pings.add(ping);
+                    _fallbackToOneThread = fallbackToOneThread.get();
+
+                    if (_fallbackToOneThread && threadId != 0)
+                        return null;
+
+                    final int NUMPINGS = params.getNumPings();
+                    long shortestPing = Long.MAX_VALUE;
+                    long medianPing = Long.MAX_VALUE;
+                    long[] pings = new long[NUMPINGS];
+                    final long timeStart = System.nanoTime();
+                    if (threadId == 0) // only one thread pings!
+                    {
+                        for (int i = 0; i < NUMPINGS; i++) {
+                            final Ping ping = ping();
+                            if (ping != null) {
+                                client.updatePingStatus(timeStart, i + 1, System.nanoTime());
+
+                                pings[i] = ping.server;
+                                if (ping.client < shortestPing)
+                                    shortestPing = ping.client;
+
+                                client.onPingDataChanged(ping.client, ping.server, ping.timeNs);
+                                testResult.pings.add(ping);
+                            }
                         }
-                    }
 
-                    // median
-                    Arrays.sort(pings);
-                    int middle = ((pings.length) / 2);
-                    if (pings.length % 2 == 0) {
-                        long medianA = pings[middle];
-                        long medianB = pings[middle - 1];
-                        medianPing = (medianA + medianB) / 2;
-                    } else {
-                        medianPing = pings[middle + 1];
+                        // median
+                        Arrays.sort(pings);
+                        int middle = ((pings.length) / 2);
+                        if (pings.length % 2 == 0) {
+                            long medianA = pings[middle];
+                            long medianB = pings[middle - 1];
+                            medianPing = (medianA + medianB) / 2;
+                        } else {
+                            medianPing = pings[middle + 1];
+                        }
+                        // display median ping
+                        client.setPing(medianPing);
                     }
-                    // display median ping
-                    client.setPing(medianPing);
+                    testResult.ping_shortest = shortestPing;
+                    testResult.ping_median = medianPing;
+
                 }
-                testResult.ping_shortest = shortestPing;
-                testResult.ping_median = medianPing;
+                /*********************/
 
-            }
-            /*********************/
-
-            /***** jitter and packet loss *****/
-            if (client.isEnabledJitterAndPacketLossTest()) {
+                /***** jitter and packet loss *****/
                 if (threadId == 0) {
                     client.performVoipTest();
                 }
@@ -442,19 +444,20 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
 
             if (doDownload) {
                 final int duration = params.getDuration();
-                //final int duration = 1;
 
-                setStatus(TestStatus.DOWN);
                 /***** download *****/
 
                 if (!_fallbackToOneThread)
                     barrier.await();
 
-                stopTrafficService(TestStatus.PING);
+                if (doPing) {
+                    stopTrafficService(TestStatus.PING);
+                }
                 startTrafficService(TestStatus.DOWN);
 
                 curTransfer.set(0);
                 curTime.set(0);
+                setStatus(TestStatus.DOWN);
 
                 final SingleResult result = new SingleResult();
                 final boolean reinitSocket = download(duration, 0, result);
@@ -484,7 +487,6 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
 
             if (doUpload) {
                 final int duration = params.getDuration();
-                //final int duration = 1;
 
                 setStatus(TestStatus.INIT_UP);
                 /***** short upload *****/
@@ -509,12 +511,11 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
 
                 /***** upload *****/
 
-                setStatus(TestStatus.UP);
-
                 startTrafficService(TestStatus.UP);
 
                 curTransfer.set(0);
                 curTime.set(0);
+                setStatus(TestStatus.UP);
 
                 if (!_fallbackToOneThread)
                     barrier.await();

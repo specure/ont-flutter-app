@@ -12,7 +12,8 @@ import '../../widgets/text-section.dart';
 import '../measurement-result/measurement-result.screen.dart';
 
 abstract class LoopMeasurementResultConfig {
-  LoopMeasurementResultConfig({required this.result, required this.enabledJitterAndPacketLoss});
+  LoopMeasurementResultConfig(
+      {required this.result, required this.enabledJitterAndPacketLoss});
 
   late final MeasurementHistoryResults? result;
   late final bool enabledJitterAndPacketLoss;
@@ -41,9 +42,9 @@ abstract class LoopMeasurementResultConfig {
             decoration: BoxDecoration(
               border: Border(
                   bottom: BorderSide(
-                    color: Colors.black12,
-                    width: 1,
-                  )),
+                color: Colors.black12,
+                width: 1,
+              )),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
@@ -52,16 +53,14 @@ abstract class LoopMeasurementResultConfig {
                   Flexible(
                     child: NetworkSpeedSection(
                       title: 'Download',
-                      speed: formatSpeed(result?.downloadKbps) ??
-                          "-",
+                      speed: formatSpeed(result?.downloadKbps) ?? "-",
                       speedList: null,
                     ),
                   ),
                   Flexible(
                     child: NetworkSpeedSection(
                       title: 'Upload',
-                      speed: formatSpeed(result?.uploadKbps) ??
-                          "-",
+                      speed: formatSpeed(result?.uploadKbps) ?? "-",
                       speedList: null,
                     ),
                   ),
@@ -73,9 +72,9 @@ abstract class LoopMeasurementResultConfig {
             decoration: BoxDecoration(
               border: Border(
                   bottom: BorderSide(
-                    color: Colors.black12,
-                    width: 1,
-                  )),
+                color: Colors.black12,
+                width: 1,
+              )),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
@@ -85,34 +84,34 @@ abstract class LoopMeasurementResultConfig {
                   Flexible(
                     child: TextSection(
                       title: 'Ping',
-                      value: result?.pingMs?.toInt().toString() ??
-                          "-",
+                      value: result?.pingMs?.toInt().toString() ?? "-",
                       valueUnit: 'ms',
                     ),
                   ),
                   ConditionalContent(
-                    conditional:
-                    (result?.jitterMs != null && result?.jitterMs != 0 && enabledJitterAndPacketLoss),
+                    conditional: (result?.jitterMs != null &&
+                        result?.jitterMs != 0 &&
+                        enabledJitterAndPacketLoss),
                     truthyBuilder: () {
                       return Flexible(
                         child: TextSection(
                           title: 'Jitter',
-                          value: result?.jitterMs.toInt().toString() ??
-                              "-",
+                          value: result?.jitterMs?.toInt().toString() ?? "-",
                           valueUnit: 'ms',
                         ),
                       );
                     },
                   ),
                   ConditionalContent(
-                      conditional: (result?.packetLossPercents != null && result?.jitterMs != 0 && enabledJitterAndPacketLoss),
+                      conditional: (result?.packetLossPercents != null &&
+                          result?.jitterMs != 0 &&
+                          enabledJitterAndPacketLoss),
                       truthyBuilder: () {
                         return Flexible(
                           flex: 2,
                           child: TextSection(
                             title: 'Packet loss',
-                            value: formatPercents(
-                               result?.packetLossPercents) ??
+                            value: formatPercents(result?.packetLossPercents) ??
                                 '-',
                             valueUnit: '%',
                           ),
@@ -131,43 +130,47 @@ abstract class LoopMeasurementResultConfig {
     return ConditionalContent(
         conditional: true,
         truthyBuilder: () => Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: HistoryHeader(flexFit: FlexFit.loose),
-            ),
-            Container(
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: result?.tests.length,
-                itemBuilder: (context, index) => GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                        var singleResult = result?.tests[(result?.tests.length ?? 1) - 1 - index];
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: HistoryHeader(flexFit: FlexFit.loose),
+                ),
+                Container(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: result?.tests.length,
+                    itemBuilder: (context, index) => GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        var singleResult = result
+                            ?.tests[(result?.tests.length ?? 1) - 1 - index];
                         if (singleResult != null) {
                           Navigator.pushNamed(
                             context,
                             MeasurementResultScreen.route,
                             arguments: {
-                              MeasurementResultScreen
-                                  .argumentResult: MeasurementHistoryResults([
-                                singleResult
-                              ]),
-                              MeasurementResultScreen.argumentTestUuid: singleResult.testUuid
+                              MeasurementResultScreen.argumentResult:
+                                  MeasurementHistoryResults([singleResult]),
+                              MeasurementResultScreen.argumentTestUuid:
+                                  singleResult.testUuid
                             },
                           );
                         }
                       },
-                    child: HistoryItemWidget(
-                      item: (result?.tests.map((e) => MeasurementHistoryResults([e])).whereType<MeasurementHistoryResults>().toList() as List<MeasurementHistoryResults>)[(result?.tests.length ?? 1) - 1 - index],
-                      flexFit: FlexFit.loose,
+                      child: HistoryItemWidget(
+                        item: (result?.tests
+                                .map((e) => MeasurementHistoryResults([e]))
+                                .whereType<MeasurementHistoryResults>()
+                                .toList() as List<MeasurementHistoryResults>)[
+                            (result?.tests.length ?? 1) - 1 - index],
+                        flexFit: FlexFit.loose,
+                      ),
                     ),
+                  ),
                 ),
-              ),
-            ),
-          ],
-        ));
+              ],
+            ));
   }
 
   String? formatSpeed(double? speed) {

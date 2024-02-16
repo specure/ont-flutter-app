@@ -27,9 +27,9 @@ class MeasurementResultService extends DioService {
       var response = await dio.get('${NTUrls.csGraphsRoute}/$uuid');
       return {
         'download': SpeedCurveItem.fromJsonToList(
-            response.data['speed_curve']['download']),
+            response.data['speed_curve']?['download'] ?? []),
         'upload': SpeedCurveItem.fromJsonToList(
-            response.data['speed_curve']['upload']),
+            response.data['speed_curve']?['upload'] ?? []),
       };
     } on DioException catch (e) {
       print(e);

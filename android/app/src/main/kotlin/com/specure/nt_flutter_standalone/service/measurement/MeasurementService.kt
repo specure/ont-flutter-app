@@ -42,7 +42,10 @@ private const val LOCATION_EXTRA = "location"
 private const val LOOP_MODE_SETTINGS_EXTRA = "loop_mode_settings"
 private const val KEY_MEASUREMENT_SERVER_PREFERRED = "prefer_server"
 private const val MEASUREMENT_SERVER_ID_EXTRA = "selectedMeasurementServerId"
-private const val ENABLED_JITTER_AND_PACKET_LOSS = "enableAppJitterAndPacketLoss"
+private const val PINGS_EXTRA = "externalPings"
+private const val JITTER_EXTRA = "externalJitter"
+private const val PACKET_LOSS_EXTRA = "externalPacketLoss"
+private const val TEST_START_EXTRA = "externalTestStart"
 private const val TELEPHONY_PERMISSION_GRANTED = "telephony_permission_granted"
 private const val LOCATION_PERMISSION_GRANTED = "location_permission_granted"
 private const val UUID_PERMISSION_GRANTED = "uuid_permission_granted"
@@ -68,7 +71,10 @@ class MeasurementService : CustomLifecycleService() {
     private lateinit var flavor: String
     private var geoLocation: LocationModel? = null
     private var measurementServerId: Int = -1
-    private var enableAppJitterAndPacketLoss: Boolean = false
+    private var externalPings: DoubleArray = doubleArrayOf()
+    private var externalJitter: Double = 0.0
+    private var externalPacketLoss: Double = 0.0
+    private var externalTestStart: Double = 0.0
     private var telephonyPermissionGranted: Boolean = false
     private var locationPermissionGranted: Boolean = false
     private var uuidPermissionGranted: Boolean = false
@@ -119,11 +125,14 @@ class MeasurementService : CustomLifecycleService() {
                 put(KEY_LOOP_MODE_ENABLED, true)
                 put(KEY_LOOP_MODE_SETTINGS, JSONObject(Gson().toJson(loopModeConfig, LoopModeSettings::class.java)))
             }
+            put(PINGS_EXTRA, externalPings)
+            put(JITTER_EXTRA, externalJitter)
+            put(PACKET_LOSS_EXTRA, externalPacketLoss)
+            put(TEST_START_EXTRA, externalTestStart)
         },
         flavor,
         this@MeasurementService.applicationContext.cacheDir,
         mutableSetOf<ErrorStatus>(),
-        enableAppJitterAndPacketLoss
     )
 
     private fun TestStatus.isFinalState(skipQoSTest: Boolean) = this == TestStatus.ABORTED ||
@@ -164,7 +173,7 @@ class MeasurementService : CustomLifecycleService() {
             Timber.d("Client test status changed: ${status?.toString()}")
             val phaseFinished = when (status) {
                 TestStatus.PACKET_LOSS_AND_JITTER -> TestStatus.PING
-                TestStatus.DOWN -> if (enableAppJitterAndPacketLoss) {TestStatus.PACKET_LOSS_AND_JITTER} else {TestStatus.PING}
+                TestStatus.DOWN -> TestStatus.INIT
                 TestStatus.INIT_UP -> TestStatus.DOWN
                 TestStatus.SPEEDTEST_END -> TestStatus.UP
                 else -> null
@@ -197,10 +206,13 @@ class MeasurementService : CustomLifecycleService() {
                 loopModeConfig = Gson().fromJson(loopModeConfigJson, LoopModeSettings::class.java)
             }
             measurementServerId = intent.getIntExtra(MEASUREMENT_SERVER_ID_EXTRA, -1)
-            enableAppJitterAndPacketLoss = intent.getBooleanExtra(ENABLED_JITTER_AND_PACKET_LOSS, false)
             telephonyPermissionGranted = intent.getBooleanExtra(TELEPHONY_PERMISSION_GRANTED, false)
             locationPermissionGranted = intent.getBooleanExtra(LOCATION_PERMISSION_GRANTED, false)
             uuidPermissionGranted = intent.getBooleanExtra(UUID_PERMISSION_GRANTED, false)
+            externalPings = intent.getDoubleArrayExtra(PINGS_EXTRA) ?: doubleArrayOf()
+            externalJitter = intent.getDoubleExtra(JITTER_EXTRA, 0.0)
+            externalPacketLoss = intent.getDoubleExtra(PACKET_LOSS_EXTRA, 0.0)
+            externalTestStart = intent.getDoubleExtra(TEST_START_EXTRA, 0.0)
             println("Measurement Server id: $measurementServerId")
             showForegroundNotificationForAndroidO()
             when (intent.action) {
@@ -435,11 +447,14 @@ class MeasurementService : CustomLifecycleService() {
             clientUUID: String,
             location: Map<String, Any?>,
             measurementServerId: Int?,
-            enableAppJitterAndPacketLoss: Boolean,
             telephonyPermissionGranted: Boolean,
             locationPermissionGranted: Boolean,
             uuidPermissionGranted: Boolean,
             loopModeSettings: LoopModeSettings?,
+            externalPings: DoubleArray,
+            externalJitter: Double,
+            externalPacketLoss: Double,
+            externalTestStart: Double,
         ) {
             val intent = intent(context)
             val locationModel =
@@ -454,10 +469,13 @@ class MeasurementService : CustomLifecycleService() {
                 intent.putExtra(LOOP_MODE_SETTINGS_EXTRA, Gson().toJson(it).toString())
             }
             intent.putExtra(MEASUREMENT_SERVER_ID_EXTRA, measurementServerId)
-            intent.putExtra(ENABLED_JITTER_AND_PACKET_LOSS, enableAppJitterAndPacketLoss)
             intent.putExtra(TELEPHONY_PERMISSION_GRANTED, telephonyPermissionGranted)
             intent.putExtra(LOCATION_PERMISSION_GRANTED, locationPermissionGranted)
             intent.putExtra(UUID_PERMISSION_GRANTED, uuidPermissionGranted)
+            intent.putExtra(PINGS_EXTRA, externalPings)
+            intent.putExtra(JITTER_EXTRA, externalJitter)
+            intent.putExtra(PACKET_LOSS_EXTRA, externalPacketLoss)
+            intent.putExtra(TEST_START_EXTRA, externalTestStart)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {

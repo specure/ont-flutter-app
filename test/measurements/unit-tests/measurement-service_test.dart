@@ -1,19 +1,23 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_icmp_ping/flutter_icmp_ping.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/environment.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/models/project.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
+import 'package:nt_flutter_standalone/modules/measurements/models/measurement-error.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/measurement.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
+import 'package:nt_flutter_standalone/modules/measurements/wrappers/ping.wrapper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../core/unit-tests/dio-service_test.mocks.dart';
@@ -28,7 +32,7 @@ final _version = '4.0.0';
 final _packageInfo = PackageInfo(
     appName: '', packageName: '', version: _version, buildNumber: '');
 
-@GenerateMocks([MethodChannel])
+@GenerateMocks([MethodChannel, PingWrapper])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() {
@@ -77,6 +81,10 @@ void main() {
         'telephonyPermissionGranted': true,
         'locationPermissionGranted': true,
         'uuidPermissionGranted': true,
+        'pingsNs': [],
+        'testStartNs': 0.0,
+        'packetLoss': 0.0,
+        'jitterNs': 0.0
       })).thenAnswer((_) async => testStartedMessage);
       expect(
         await _measurementService.startTest(
@@ -99,6 +107,10 @@ void main() {
         'telephonyPermissionGranted': true,
         'locationPermissionGranted': true,
         'uuidPermissionGranted': true,
+        'pingsNs': [],
+        'testStartNs': 0.0,
+        'packetLoss': 0.0,
+        'jitterNs': 0.0
       })).thenAnswer((_) async => throw PlatformException(code: '0'));
       expect(
         await _measurementService.startTest(
@@ -313,5 +325,103 @@ void main() {
         isA<MeasurementPostFinish>(),
       );
     });
+
+    test('starts ping test', () async {
+      _measurementService = MeasurementService(channel: _methodChannel);
+      final host = 'example.com';
+      final project = NTProject(pingDuration: 1, pingInterval: 0.5);
+      when(GetIt.I
+              .get<PingWrapper>()
+              .getIstance(host, count: 7, intervalS: 0.5))
+          .thenReturn(null);
+      await _measurementService.startPingTest(host: host, project: project);
+      verify(_bloc.add(any)).called(1);
+      expect(
+        _measurementService.lastDispatchedEvent,
+        isA<StartMeasurementPhase>(),
+      );
+    });
+
+    test('handles ping summary event', () async {
+      _setUpPingPhase();
+      final callback = _measurementService.handlePingEvent(
+        count: 0,
+        progressCount: 0,
+        progressPercent: 0,
+        pings: [PingResponse(time: Duration(milliseconds: 0))],
+      );
+      final event = PingData(
+        summary: PingSummary(
+          transmitted: 5,
+          received: 5,
+        ),
+      );
+      callback(event);
+      verify(_bloc.add(any)).called(4);
+    });
+
+    test('handles ping response event', () async {
+      _setUpPingPhase();
+      final List<PingResponse> pings = [];
+      final callback = _measurementService.handlePingEvent(
+        count: 5,
+        progressCount: 0,
+        progressPercent: 0,
+        pings: pings,
+      );
+      final event = PingData(
+        response: PingResponse(time: Duration(milliseconds: 10)),
+        summary: null,
+      );
+      callback(event);
+      verify(_bloc.add(any)).called(1);
+      expect(pings.length, 1);
+      expect(_measurementService.lastDispatchedEvent, isA<SetPhaseResult>());
+    });
+
+    test('ignores ping error event', () async {
+      _setUpPingPhase();
+      final List<PingResponse> pings = [];
+      final callback = _measurementService.handlePingEvent(
+        count: 5,
+        progressCount: 0,
+        progressPercent: 0,
+        pings: pings,
+      );
+      final event = PingData(
+        error: PingError.requestTimedOut,
+        summary: null,
+      );
+      callback(event);
+      verify(_bloc.add(any)).called(1);
+      expect(pings.length, 0);
+      expect(_measurementService.lastDispatchedEvent, isA<SetPhaseResult>());
+    });
+
+    test('throws error if pings are empty', () async {
+      _setUpPingPhase();
+      final List<PingResponse> pings = [];
+      final callback = _measurementService.handlePingEvent(
+        count: 0,
+        progressCount: 0,
+        progressPercent: 0,
+        pings: pings,
+      );
+      final event = PingData(
+        response: PingResponse(time: Duration(milliseconds: 10)),
+        summary: null,
+      );
+      try {
+        callback(event);
+      } catch (e) {
+        expect(e.toString(), MeasurementError.pingFailed.toString());
+      }
+    });
   });
+}
+
+_setUpPingPhase() {
+  _measurementService = MeasurementService(channel: _methodChannel);
+  _measurementService.lastDispatchedEvent = StartMeasurement();
+  _measurementService.lastPhase = MeasurementPhase.fetchingTestParams;
 }

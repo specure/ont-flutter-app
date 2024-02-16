@@ -1,6 +1,8 @@
 import 'package:nt_flutter_standalone/core/extensions/string.ext.dart';
 
 class MeasurementError implements Exception {
+  static MeasurementError get pingFailed => MeasurementError("Ping failed");
+
   late final String message;
 
   MeasurementError([String? message]) {

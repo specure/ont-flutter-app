@@ -20,6 +20,7 @@ import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -30,6 +31,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +86,10 @@ public class RMBTClient implements RMBTClientCallback {
     private final long durationInitNano = 2500000000L; // TODO
     private final long durationUpNano;
     private final long durationDownNano;
-    private final boolean enabledJitterAndPacketLoss;
+    private final double externalJitter;
+    private final double externalPacketLoss;
+    private final double[] externalPings;
+    private final double externalTestStart;
 
     private final AtomicLong pingNano = new AtomicLong(-1);
     private final AtomicLong downBitPerSec = new AtomicLong(-1);
@@ -170,14 +175,23 @@ public class RMBTClient implements RMBTClientCallback {
 
 
     RMBTClient(final RMBTTestParameter params, final ControlServerConnection controlConnection) {
-        this(params, controlConnection, null, false);
+        this(params, controlConnection, null, new double[]{}, 0, 0, 0);
     }
 
-    RMBTClient(final RMBTTestParameter params, final ControlServerConnection controlConnection, File cacheDir, boolean enabledJitterAndPacketLoss) {
+    RMBTClient(final RMBTTestParameter params, final ControlServerConnection controlConnection,
+               File cacheDir,
+               double[] externalPings,
+               double externalJitter,
+               double externalPacketLoss,
+               double externalTestStart
+    ) {
         this.params = params;
         this.controlConnection = controlConnection;
         this.cacheDir = cacheDir;
-        this.enabledJitterAndPacketLoss = enabledJitterAndPacketLoss;
+        this.externalJitter = externalJitter;
+        this.externalPacketLoss = externalPacketLoss;
+        this.externalPings = externalPings;
+        this.externalTestStart = externalTestStart;
         this.jitterTestDurationNanos.set(10000000000L); // set default value
         planInactivityCheck();
 
@@ -215,7 +229,7 @@ public class RMBTClient implements RMBTClientCallback {
                                          final String clientName, final String clientVersion, final RMBTTestParameter overrideParams,
                                          final JSONObject additionalValues, final String headerValue, final File cacheDir) {
         return getInstance(host, pathPrefix, port, encryption, geoInfo, uuid, clientType,
-                clientName, clientVersion, overrideParams, additionalValues, headerValue, cacheDir, null, false);
+                clientName, clientVersion, overrideParams, additionalValues, headerValue, cacheDir, null);
     }
 
     private void planInactivityCheck() {
@@ -251,8 +265,7 @@ public class RMBTClient implements RMBTClientCallback {
              final String host, final String pathPrefix, final int port,
              final boolean encryption, final ArrayList<String> geoInfo, final String uuid, final String clientType,
              final String clientName, final String clientVersion, final RMBTTestParameter overrideParams,
-             final JSONObject additionalValues, final String headerValue, final File cacheDir, final Set<ErrorStatus> errorSet,
-             boolean enabledJitterAndPacketLoss
+             final JSONObject additionalValues, final String headerValue, final File cacheDir, final Set<ErrorStatus> errorSet
     ) {
         final ControlServerConnection controlConnection = new ControlServerConnection();
 
@@ -282,11 +295,29 @@ public class RMBTClient implements RMBTClientCallback {
 
         final RMBTTestParameter params = controlConnection.getTestParameter(overrideParams);
 
-        return new RMBTClient(params, controlConnection, cacheDir, enabledJitterAndPacketLoss);
-    }
+        double[] pings = new double[]{};
+        double jitter = 0;
+        double packetLoss = 0;
+        double testStart = 0;
 
-    public boolean isEnabledJitterAndPacketLossTest() {
-        return enabledJitterAndPacketLoss;
+        try {
+            pings = (double[]) additionalValues.get("externalPings");
+            jitter = (double) additionalValues.get("externalJitter");
+            packetLoss = (double) additionalValues.get("externalPacketLoss");
+            testStart = (double) additionalValues.get("externalTestStart");
+        } catch (JSONException e) {
+            Timber.e("External values parsing error. " + e);
+        }
+
+        return new RMBTClient(
+                params,
+                controlConnection,
+                cacheDir,
+                pings,
+                jitter,
+                packetLoss,
+                testStart
+        );
     }
 
     public static RMBTClient getInstance(final RMBTTestParameter params) {
@@ -581,7 +612,22 @@ public class RMBTClient implements RMBTClientCallback {
 
                 result.num_threads = realNumThreads;
 
-                result.ping_shortest = shortestPing;
+                result.pings.clear();
+                long timeNs = (long) externalTestStart;
+                for (double externalPing : externalPings) {
+                    long ping = Math.round(externalPing);
+                    timeNs+=ping;
+                    result.pings.add(
+                            new Ping(ping, ping, timeNs)
+                    );
+                }
+                Arrays.sort(externalPings);
+                result.ping_shortest = Math.round(externalPings[0]);
+                int middle = externalPings.length / 2;
+                double avg = Math.round((externalPings[middle - 1] + externalPings[middle]) / 2);
+                result.ping_median = Math.round((externalPings.length % 2 == 0 ? avg : externalPings[middle]));
+                result.jitterMeanNanos = externalJitter;
+                result.packetLossPercent = externalPacketLoss;
 
                 result.speed_download = result.getDownloadSpeedBitPerSec() / 1e3;
                 result.speed_upload = result.getUploadSpeedBitPerSec() / 1e3;
@@ -849,12 +895,6 @@ public class RMBTClient implements RMBTClientCallback {
 
             case PING:
                 iResult.progress = getPingProgress();
-                // getting final result values
-                if (enabledJitterAndPacketLoss) {
-                    iResult.jitter = jitter.get();
-                    iResult.packetLossUp = packetLossUp.get();
-                    iResult.packetLossDown = packetLossDown.get();
-                }
                 break;
 
             case DOWN:

@@ -57,9 +57,7 @@ class _MeasurementProgressBarState extends State<MeasurementProgressBar>
 
   _updateProgressTween(MeasurementsState? state) {
     _controller.reset();
-    if (state != null &&
-        state.phase != MeasurementPhase.none &&
-        state.phase != MeasurementPhase.fetchingTestParams) {
+    if (state != null && state.phase != MeasurementPhase.none) {
       double beginProgress = state.prevPhase.progress;
       double endProgress = state.phase.progress;
       // When opened from background:
