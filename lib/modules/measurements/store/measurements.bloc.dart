@@ -38,6 +38,7 @@ import 'package:nt_flutter_standalone/modules/measurements/store/measurements.ev
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/app.review.service.dart';
 import 'package:nt_flutter_standalone/modules/settings/services/settings.service.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../history/screens/history.screen.dart';
 import '../models/loop-mode-details.dart';
@@ -260,6 +261,9 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
       _appReviewService.startAppReview();
     });
     on<SetError>((event, emit) async {
+      if (event.payload is MeasurementError) {
+        Sentry.captureException(event.payload);
+      }
       if (loopModeService.isLoopModeActivated) {
         loopModeService.onTestFinished(null);
       } else {
@@ -442,6 +446,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
         project: state.project,
       );
     } on MeasurementError catch (e) {
+      Sentry.captureException(e);
       return state.copyWith(error: e);
     }
     measurementService.startTest(
