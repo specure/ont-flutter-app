@@ -15,7 +15,8 @@ MeasurementServer _$MeasurementServerFromJson(Map<String, dynamic> json) =>
       city: json['city'] as String?,
       distance: (json['distance'] as num?)?.toDouble(),
       serverTypeDetails: (json['serverTypeDetails'] as List<dynamic>?)
-          ?.map((e) => e as Map<String, dynamic>)
+          ?.map((e) =>
+              MeasurementServerTypeDetails.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -28,4 +29,22 @@ Map<String, dynamic> _$MeasurementServerToJson(MeasurementServer instance) =>
       'city': instance.city,
       'distance': instance.distance,
       'serverTypeDetails': instance.serverTypeDetails,
+    };
+
+MeasurementServerTypeDetails _$MeasurementServerTypeDetailsFromJson(
+        Map<String, dynamic> json) =>
+    MeasurementServerTypeDetails(
+      serverType: json['serverType'] as String? ?? 'RMBTws',
+      port: json['port'] as int? ?? 8080,
+      portSsl: json['portSsl'] as int? ?? 443,
+      encrypted: json['encrypted'] as bool? ?? true,
+    );
+
+Map<String, dynamic> _$MeasurementServerTypeDetailsToJson(
+        MeasurementServerTypeDetails instance) =>
+    <String, dynamic>{
+      'serverType': instance.serverType,
+      'port': instance.port,
+      'portSsl': instance.portSsl,
+      'encrypted': instance.encrypted,
     };

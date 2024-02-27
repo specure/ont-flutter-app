@@ -35,7 +35,12 @@ class SettingsService extends DioService {
     data.removeWhere((key, value) => value == null);
     try {
       var response = await dio.post(NTUrls.csSettingsRoute, data: data);
-      return response.data['settings'][0]['uuid'];
+      if (response.data is Map<String, dynamic> &&
+          (response.data as Map<String, dynamic>).isNotEmpty) {
+        return response.data['settings']?[0]?['uuid'];
+      } else {
+        return null;
+      }
     } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);

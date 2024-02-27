@@ -117,8 +117,15 @@ enum EClientSuffix: String {
             RMBTLocationTracker.sharedTracker.predefinedGeoLocation = GeoLocation(map: map)
         }
         
-        if let measurementServerId = arguments["selectedMeasurementServerId"] as? NSNumber {
-            RMBTConfig.sharedInstance.measurementServer = MeasurementServerInfoResponse.Servers(id: measurementServerId)
+        if let ms = arguments["measurementServer"] as? [String:Any] {
+            RMBTConfig.sharedInstance.measurementServer = TargetMeasurementServer(JSON: [
+                "is_encrypted": ms["encrypted"] as Any,
+                "port": ms["port"] as Any,
+                "address": ms["webAddress"] as Any,
+                "name": ms["name"] as Any,
+                "id": ms["id"] as Any,
+                "serverType": ms["serverType"] as Any
+            ])
         }
         
         if var loopModeSettings = arguments["loopModeSettings"] as? [String:Any] {

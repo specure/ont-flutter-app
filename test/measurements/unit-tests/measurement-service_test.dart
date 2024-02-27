@@ -12,6 +12,7 @@ import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-error.dart';
+import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/measurement.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
@@ -31,6 +32,7 @@ final _bloc = MockMeasurementsBlocCalls();
 final _version = '4.0.0';
 final _packageInfo = PackageInfo(
     appName: '', packageName: '', version: _version, buildNumber: '');
+final _measurementServer = MeasurementServer(id: 1);
 
 @GenerateMocks([MethodChannel, PingWrapper])
 void main() {
@@ -70,27 +72,13 @@ void main() {
 
   group('Start/Stop measurement test', () {
     test('starts measurement test', () async {
-      when(_methodChannel.invokeMethod('startTest', {
-        'appVersion': '${_packageInfo.version} (${_packageInfo.buildNumber})',
-        'clientUUID': 'clientUUID',
-        'flavor': Environment.appSuffix,
-        'location': {},
-        'selectedMeasurementServerId': 1,
-        'loopModeSettings': null,
-        'enableAppJitterAndPacketLoss': false,
-        'telephonyPermissionGranted': true,
-        'locationPermissionGranted': true,
-        'uuidPermissionGranted': true,
-        'pingsNs': [],
-        'testStartNs': 0.0,
-        'packetLoss': 0.0,
-        'jitterNs': 0.0
-      })).thenAnswer((_) async => testStartedMessage);
+      when(_methodChannel.invokeMethod('startTest', any))
+          .thenAnswer((_) async => testStartedMessage);
       expect(
         await _measurementService.startTest(
           Environment.appSuffix,
           clientUUID: 'clientUUID',
-          measurementServerId: 1,
+          measurementServer: _measurementServer,
         ),
         testStartedMessage,
       );
@@ -101,9 +89,8 @@ void main() {
         'clientUUID': 'clientUUID',
         'flavor': Environment.appSuffix,
         'location': {},
-        'selectedMeasurementServerId': null,
+        'measurementServer': null,
         'loopModeSettings': null,
-        'enableAppJitterAndPacketLoss': false,
         'telephonyPermissionGranted': true,
         'locationPermissionGranted': true,
         'uuidPermissionGranted': true,

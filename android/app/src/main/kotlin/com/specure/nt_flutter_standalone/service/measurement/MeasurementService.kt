@@ -25,6 +25,7 @@ import com.specure.nt_flutter_standalone.models.LoopModeSettings
 import com.specure.nt_flutter_standalone.models.MeasurementState
 import com.specure.nt_flutter_standalone.models.MeasurementTestResult
 import com.specure.nt_flutter_standalone.models.SignalMeasurementType
+import com.specure.nt_flutter_standalone.models.TargetMeasurementServer
 import com.specure.nt_flutter_standalone.service.CustomLifecycleService
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -41,7 +42,7 @@ private const val FLAVOR_EXTRA = "flavor"
 private const val LOCATION_EXTRA = "location"
 private const val LOOP_MODE_SETTINGS_EXTRA = "loop_mode_settings"
 private const val KEY_MEASUREMENT_SERVER_PREFERRED = "prefer_server"
-private const val MEASUREMENT_SERVER_ID_EXTRA = "selectedMeasurementServerId"
+private const val MEASUREMENT_SERVER_EXTRA = "measurementServer"
 private const val PINGS_EXTRA = "externalPings"
 private const val JITTER_EXTRA = "externalJitter"
 private const val PACKET_LOSS_EXTRA = "externalPacketLoss"
@@ -70,7 +71,7 @@ class MeasurementService : CustomLifecycleService() {
     private lateinit var clientUUID: String
     private lateinit var flavor: String
     private var geoLocation: LocationModel? = null
-    private var measurementServerId: Int = -1
+    private var measurementServer: TargetMeasurementServer? = null
     private var externalPings: DoubleArray = doubleArrayOf()
     private var externalJitter: Double = 0.0
     private var externalPacketLoss: Double = 0.0
@@ -113,9 +114,15 @@ class MeasurementService : CustomLifecycleService() {
         null,
         JSONObject().apply {
             put(KEY_MEASUREMENT_TYPE, SignalMeasurementType.REGULAR.signalTypeName)
-            if (measurementServerId >= 0) {
-                put(KEY_MEASUREMENT_SERVER_PREFERRED, measurementServerId)
+            if (measurementServer != null && measurementServer!!.id >= 0) {
+                put(KEY_MEASUREMENT_SERVER_PREFERRED, measurementServer!!.id)
                 put("user_server_selection", true)
+                put(
+                    MEASUREMENT_SERVER_EXTRA,
+                    JSONObject(
+                        Gson().toJson(measurementServer, TargetMeasurementServer::class.java),
+                    ),
+                )
             }
             put(TELEPHONY_PERMISSION_GRANTED, telephonyPermissionGranted)
             put(LOCATION_PERMISSION_GRANTED, locationPermissionGranted)
@@ -201,11 +208,14 @@ class MeasurementService : CustomLifecycleService() {
             clientUUID = intent.getStringExtra(CLIENT_UUID_EXTRA) ?: ""
             flavor = intent.getStringExtra(FLAVOR_EXTRA) ?: "nt"
             geoLocation = intent.getParcelableExtra(LOCATION_EXTRA)
-            var loopModeConfigJson = intent.getStringExtra(LOOP_MODE_SETTINGS_EXTRA)
+            val loopModeConfigJson = intent.getStringExtra(LOOP_MODE_SETTINGS_EXTRA)
             if (loopModeConfigJson != null) {
                 loopModeConfig = Gson().fromJson(loopModeConfigJson, LoopModeSettings::class.java)
             }
-            measurementServerId = intent.getIntExtra(MEASUREMENT_SERVER_ID_EXTRA, -1)
+            val measurementServerJson = intent.getStringExtra(MEASUREMENT_SERVER_EXTRA)
+            if (measurementServerJson != null) {
+                measurementServer = Gson().fromJson(measurementServerJson, TargetMeasurementServer::class.java)
+            }
             telephonyPermissionGranted = intent.getBooleanExtra(TELEPHONY_PERMISSION_GRANTED, false)
             locationPermissionGranted = intent.getBooleanExtra(LOCATION_PERMISSION_GRANTED, false)
             uuidPermissionGranted = intent.getBooleanExtra(UUID_PERMISSION_GRANTED, false)
@@ -213,7 +223,7 @@ class MeasurementService : CustomLifecycleService() {
             externalJitter = intent.getDoubleExtra(JITTER_EXTRA, 0.0)
             externalPacketLoss = intent.getDoubleExtra(PACKET_LOSS_EXTRA, 0.0)
             externalTestStart = intent.getDoubleExtra(TEST_START_EXTRA, 0.0)
-            println("Measurement Server id: $measurementServerId")
+            println("Measurement Server id: ${measurementServer?.id}")
             showForegroundNotificationForAndroidO()
             when (intent.action) {
                 ACTION_START_TEST -> startTest()
@@ -446,7 +456,7 @@ class MeasurementService : CustomLifecycleService() {
             flavor: String,
             clientUUID: String,
             location: Map<String, Any?>,
-            measurementServerId: Int?,
+            measurementServer: TargetMeasurementServer?,
             telephonyPermissionGranted: Boolean,
             locationPermissionGranted: Boolean,
             uuidPermissionGranted: Boolean,
@@ -468,7 +478,9 @@ class MeasurementService : CustomLifecycleService() {
             loopModeSettings?.let {
                 intent.putExtra(LOOP_MODE_SETTINGS_EXTRA, Gson().toJson(it).toString())
             }
-            intent.putExtra(MEASUREMENT_SERVER_ID_EXTRA, measurementServerId)
+            measurementServer?.let {
+                intent.putExtra(MEASUREMENT_SERVER_EXTRA, Gson().toJson(it).toString())
+            }
             intent.putExtra(TELEPHONY_PERMISSION_GRANTED, telephonyPermissionGranted)
             intent.putExtra(LOCATION_PERMISSION_GRANTED, locationPermissionGranted)
             intent.putExtra(UUID_PERMISSION_GRANTED, uuidPermissionGranted)

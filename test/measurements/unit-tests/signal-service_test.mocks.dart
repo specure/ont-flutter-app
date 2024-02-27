@@ -5,13 +5,14 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:connectivity_plus/connectivity_plus.dart' as _i14;
+import 'package:connectivity_plus/connectivity_plus.dart' as _i15;
 import 'package:dio/dio.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i11;
+import 'package:mockito/src/dummies.dart' as _i12;
 import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i6;
+import 'package:nt_flutter_standalone/core/models/project.dart' as _i9;
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart'
-    as _i15;
+    as _i16;
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart'
     as _i8;
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-result.dart'
@@ -19,15 +20,15 @@ import 'package:nt_flutter_standalone/modules/measurements/models/measurement-re
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart'
     as _i7;
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart'
-    as _i13;
+    as _i14;
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart'
     as _i3;
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart'
-    as _i10;
+    as _i11;
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart'
-    as _i12;
+    as _i13;
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart'
-    as _i9;
+    as _i10;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -104,6 +105,7 @@ class MockMeasurementsApiService extends _i1.Mock
       getMeasurementServersForCurrentFlavor({
     _i8.LocationModel? location,
     _i6.ErrorHandler? errorHandler,
+    _i9.NTProject? project,
   }) =>
           (super.noSuchMethod(
             Invocation.method(
@@ -112,6 +114,7 @@ class MockMeasurementsApiService extends _i1.Mock
               {
                 #location: location,
                 #errorHandler: errorHandler,
+                #project: project,
               },
             ),
             returnValue: _i4.Future<List<_i7.MeasurementServer>>.value(
@@ -138,7 +141,7 @@ class MockMeasurementsApiService extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockWifiForIoTPluginWrapper extends _i1.Mock
-    implements _i9.WifiForIoTPluginWrapper {
+    implements _i10.WifiForIoTPluginWrapper {
   MockWifiForIoTPluginWrapper() {
     _i1.throwOnMissingStub(this);
   }
@@ -175,7 +178,7 @@ class MockWifiForIoTPluginWrapper extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockCarrierInfoWrapper extends _i1.Mock
-    implements _i10.CarrierInfoWrapper {
+    implements _i11.CarrierInfoWrapper {
   MockCarrierInfoWrapper() {
     _i1.throwOnMissingStub(this);
   }
@@ -186,7 +189,7 @@ class MockCarrierInfoWrapper extends _i1.Mock
           #getNetworkGeneration,
           [],
         ),
-        returnValue: _i4.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i12.dummyValue<String>(
           this,
           Invocation.method(
             #getNetworkGeneration,
@@ -201,7 +204,7 @@ class MockCarrierInfoWrapper extends _i1.Mock
           #getRadioType,
           [],
         ),
-        returnValue: _i4.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i12.dummyValue<String>(
           this,
           Invocation.method(
             #getRadioType,
@@ -216,7 +219,7 @@ class MockCarrierInfoWrapper extends _i1.Mock
           #getNativeCarrierName,
           [],
         ),
-        returnValue: _i4.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i12.dummyValue<String>(
           this,
           Invocation.method(
             #getNativeCarrierName,
@@ -231,7 +234,7 @@ class MockCarrierInfoWrapper extends _i1.Mock
           #getCarrierName,
           [],
         ),
-        returnValue: _i4.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i12.dummyValue<String>(
           this,
           Invocation.method(
             #getCarrierName,
@@ -253,7 +256,7 @@ class MockCarrierInfoWrapper extends _i1.Mock
 /// A class which mocks [CellInfoWrapper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCellInfoWrapper extends _i1.Mock implements _i12.CellInfoWrapper {
+class MockCellInfoWrapper extends _i1.Mock implements _i13.CellInfoWrapper {
   MockCellInfoWrapper() {
     _i1.throwOnMissingStub(this);
   }
@@ -280,7 +283,7 @@ class MockCellInfoWrapper extends _i1.Mock implements _i12.CellInfoWrapper {
 /// A class which mocks [IPInfoService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockIPInfoService extends _i1.Mock implements _i13.IPInfoService {
+class MockIPInfoService extends _i1.Mock implements _i14.IPInfoService {
   MockIPInfoService() {
     _i1.throwOnMissingStub(this);
   }
@@ -310,13 +313,13 @@ class MockIPInfoService extends _i1.Mock implements _i13.IPInfoService {
       );
 
   @override
-  _i4.Future<String> getPublicAddress(_i13.IPVersion? version) =>
+  _i4.Future<String> getPublicAddress(_i14.IPVersion? version) =>
       (super.noSuchMethod(
         Invocation.method(
           #getPublicAddress,
           [version],
         ),
-        returnValue: _i4.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i12.dummyValue<String>(
           this,
           Invocation.method(
             #getPublicAddress,
@@ -326,13 +329,13 @@ class MockIPInfoService extends _i1.Mock implements _i13.IPInfoService {
       ) as _i4.Future<String>);
 
   @override
-  _i4.Future<String> getPrivateAddress(_i13.IPVersion? version) =>
+  _i4.Future<String> getPrivateAddress(_i14.IPVersion? version) =>
       (super.noSuchMethod(
         Invocation.method(
           #getPrivateAddress,
           [version],
         ),
-        returnValue: _i4.Future<String>.value(_i11.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i12.dummyValue<String>(
           this,
           Invocation.method(
             #getPrivateAddress,
@@ -360,34 +363,34 @@ class MockIPInfoService extends _i1.Mock implements _i13.IPInfoService {
 /// A class which mocks [Connectivity].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConnectivity extends _i1.Mock implements _i14.Connectivity {
+class MockConnectivity extends _i1.Mock implements _i15.Connectivity {
   MockConnectivity() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Stream<_i14.ConnectivityResult> get onConnectivityChanged =>
+  _i4.Stream<_i15.ConnectivityResult> get onConnectivityChanged =>
       (super.noSuchMethod(
         Invocation.getter(#onConnectivityChanged),
-        returnValue: _i4.Stream<_i14.ConnectivityResult>.empty(),
-      ) as _i4.Stream<_i14.ConnectivityResult>);
+        returnValue: _i4.Stream<_i15.ConnectivityResult>.empty(),
+      ) as _i4.Stream<_i15.ConnectivityResult>);
 
   @override
-  _i4.Future<_i14.ConnectivityResult> checkConnectivity() =>
+  _i4.Future<_i15.ConnectivityResult> checkConnectivity() =>
       (super.noSuchMethod(
         Invocation.method(
           #checkConnectivity,
           [],
         ),
-        returnValue: _i4.Future<_i14.ConnectivityResult>.value(
-            _i14.ConnectivityResult.bluetooth),
-      ) as _i4.Future<_i14.ConnectivityResult>);
+        returnValue: _i4.Future<_i15.ConnectivityResult>.value(
+            _i15.ConnectivityResult.bluetooth),
+      ) as _i4.Future<_i15.ConnectivityResult>);
 }
 
 /// A class which mocks [PlatformWrapper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformWrapper extends _i1.Mock implements _i15.PlatformWrapper {
+class MockPlatformWrapper extends _i1.Mock implements _i16.PlatformWrapper {
   MockPlatformWrapper() {
     _i1.throwOnMissingStub(this);
   }
@@ -407,7 +410,7 @@ class MockPlatformWrapper extends _i1.Mock implements _i15.PlatformWrapper {
   @override
   String get localeName => (super.noSuchMethod(
         Invocation.getter(#localeName),
-        returnValue: _i11.dummyValue<String>(
+        returnValue: _i12.dummyValue<String>(
           this,
           Invocation.getter(#localeName),
         ),

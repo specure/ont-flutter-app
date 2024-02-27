@@ -31,6 +31,8 @@ class NTProject extends Equatable {
   final bool enableAppQoeResultExplanation;
   @JsonKey(name: 'enable_map_mno_isp_switch')
   final bool enableMapMnoIspSwitch;
+  @JsonKey(name: 'enable_app_rmbt_server')
+  final bool enableAppRmbtServer;
   @JsonKey(name: 'ping_duration')
   final double pingDuration;
   @JsonKey(name: 'ping_interval')
@@ -50,6 +52,7 @@ class NTProject extends Equatable {
     this.enableAppQosResultExplanation = false,
     this.enableAppQoeResultExplanation = false,
     this.enableMapMnoIspSwitch = false,
+    this.enableAppRmbtServer = false,
     this.pingDuration = 0,
     this.pingInterval = 0,
   });
@@ -73,6 +76,7 @@ class NTProject extends Equatable {
         enableAppQosResultExplanation,
         enableAppQoeResultExplanation,
         enableMapMnoIspSwitch,
+        enableAppRmbtServer,
         pingDuration,
         pingInterval,
       ];

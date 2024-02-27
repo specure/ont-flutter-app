@@ -17,6 +17,7 @@ import 'package:nt_flutter_standalone/modules/measurement-result/models/location
 import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-error.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-result.dart';
+import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
@@ -54,9 +55,9 @@ class MeasurementService {
     String flavor, {
     String? clientUUID,
     LocationModel? location,
-    int? measurementServerId,
+    MeasurementServer? measurementServer,
     LoopModeSettings? loopModeSettings,
-    enableAppJitterAndPacketLoss = false,
+    NTProject? project,
   }) async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
@@ -65,9 +66,10 @@ class MeasurementService {
         'clientUUID': clientUUID,
         'flavor': flavor,
         'location': location != null ? location.toJson() : {},
-        'selectedMeasurementServerId': measurementServerId,
+        'measurementServer': measurementServer?.toTargetMeasurementServer(
+          serverType: project?.enableAppRmbtServer == true ? "RMBT" : "RMBTws",
+        ),
         'loopModeSettings': loopModeSettings?.toJson(),
-        'enableAppJitterAndPacketLoss': enableAppJitterAndPacketLoss,
         'telephonyPermissionGranted':
             _prefs.getBool(StorageKeys.phoneStatePermissionsGranted),
         'locationPermissionGranted':

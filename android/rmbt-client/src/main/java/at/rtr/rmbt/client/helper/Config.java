@@ -61,6 +61,6 @@ public abstract interface Config
 
     public static final String SERVER_TYPE_QOS = "QoS";
     public static final String SERVER_TYPE_RMBT = "RMBT";
-    public static final String SERVER_TYPE_RMBT_HTTP = "RMBThttp";
+    public static final String SERVER_TYPE_RMBT_HTTP = "RMBTws";
 
 }

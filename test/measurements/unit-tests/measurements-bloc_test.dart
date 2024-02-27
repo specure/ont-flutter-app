@@ -817,21 +817,19 @@ _setUpStubs() {
       .thenAnswer((_) async {});
 
   when(GetIt.I.get<MeasurementService>().startTest(
-          Environment.appSuffix.substring(1),
-          clientUUID: _measurementResult.uuid,
-          location: null,
-          measurementServerId: null,
-          loopModeSettings: null,
-          enableAppJitterAndPacketLoss: null))
-      .thenAnswer((_) async => testStartedMessage);
+        Environment.appSuffix.substring(1),
+        clientUUID: _measurementResult.uuid,
+        location: null,
+        measurementServer: null,
+        loopModeSettings: null,
+      )).thenAnswer((_) async => testStartedMessage);
   when(GetIt.I.get<MeasurementService>().startTest(
-          Environment.appSuffix.substring(1),
-          clientUUID: null,
-          location: null,
-          measurementServerId: null,
-          loopModeSettings: null,
-          enableAppJitterAndPacketLoss: null))
-      .thenAnswer((_) async => testStartedMessage);
+        Environment.appSuffix.substring(1),
+        clientUUID: null,
+        location: null,
+        measurementServer: null,
+        loopModeSettings: null,
+      )).thenAnswer((_) async => testStartedMessage);
   when(GetIt.I.get<MeasurementService>().stopTest())
       .thenAnswer((_) async => testStoppedMessage);
 

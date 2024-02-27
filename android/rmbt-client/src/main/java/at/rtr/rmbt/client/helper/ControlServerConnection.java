@@ -322,10 +322,12 @@ public class ControlServerConnection {
 
                     testTime = System.currentTimeMillis() + 1000 * response.getLong("test_wait");
 
-                    testHost = response.getString("test_server_address");
-                    testPort = response.getInt("test_server_port");
-                    serverType = response.optString("test_server_type", Config.SERVER_TYPE_RMBT);
-                    testEncryption = response.getBoolean("test_server_encryption");
+                    JSONObject msJson = additionalValues.getJSONObject("measurementServer");
+                    testHost = msJson.getString("address");
+                    testPort = msJson.getInt("port");
+                    serverType = msJson.getString("serverType");
+                    testEncryption = msJson.getBoolean("encrypted");
+
                     serverName = response.optString("test_server_name", null);
                     provider = response.optString("provider", null);
 

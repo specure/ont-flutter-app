@@ -27,8 +27,12 @@ class TechnologyApiService extends DioService {
 
   List<String> _parseResponse(Response<dynamic> response) {
     try {
-      List<dynamic> list = response.data['statsByProvider'];
-      return list.map((item) => item['providerName'] as String).toList();
+      if (response.data is Map && (response.data as Map).isNotEmpty) {
+        List<dynamic> list = response.data['statsByProvider'];
+        return list.map((item) => item['providerName'] as String).toList();
+      } else {
+        return [];
+      }
     } catch (e) {
       print(e);
       return [];

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
+import 'package:nt_flutter_standalone/core/models/project.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-result.dart';
@@ -25,6 +26,7 @@ class MeasurementsApiService extends DioService {
   Future<List<MeasurementServer>> getMeasurementServersForCurrentFlavor({
     LocationModel? location,
     ErrorHandler? errorHandler,
+    NTProject? project,
   }) async {
     try {
       final queryParameters = location != null
@@ -37,7 +39,13 @@ class MeasurementsApiService extends DioService {
         NTUrls.csMeasurementServerRoute,
         queryParameters: queryParameters,
       );
-      return MeasurementServer.fromJsonToList(response.data);
+      final serverType =
+          project?.enableAppRmbtServer == true ? "RMBT" : "RMBTws";
+      if (response.data is List && (response.data as List).isNotEmpty) {
+        return MeasurementServer.fromJsonToList(response.data, serverType);
+      } else {
+        return [];
+      }
     } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);

@@ -5,11 +5,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i6;
 import 'dart:math' as _i4;
-import 'dart:typed_data' as _i13;
-import 'dart:ui' as _i12;
+import 'dart:typed_data' as _i12;
+import 'dart:ui' as _i11;
 
 import 'package:dio/dio.dart' as _i2;
-import 'package:flutter/material.dart' as _i11;
 import 'package:maplibre_gl/maplibre_gl.dart' as _i10;
 import 'package:maplibre_gl_platform_interface/maplibre_gl_platform_interface.dart'
     as _i3;
@@ -750,7 +749,7 @@ class MockMaplibreMapController extends _i1.Mock
 
   @override
   _i6.Future<void> updateContentInsets(
-    _i11.EdgeInsets? insets, [
+    dynamic insets, [
     bool? animated = false,
   ]) =>
       (super.noSuchMethod(
@@ -1212,7 +1211,7 @@ class MockMaplibreMapController extends _i1.Mock
 
   @override
   _i6.Future<List<dynamic>> queryRenderedFeaturesInRect(
-    _i12.Rect? rect,
+    _i11.Rect? rect,
     List<String>? layerIds,
     String? filter,
   ) =>
@@ -1282,7 +1281,7 @@ class MockMaplibreMapController extends _i1.Mock
   @override
   _i6.Future<void> addImage(
     String? name,
-    _i13.Uint8List? bytes, [
+    _i12.Uint8List? bytes, [
     bool? sdf = false,
   ]) =>
       (super.noSuchMethod(
@@ -1345,7 +1344,7 @@ class MockMaplibreMapController extends _i1.Mock
   @override
   _i6.Future<void> addImageSource(
     String? imageSourceId,
-    _i13.Uint8List? bytes,
+    _i12.Uint8List? bytes,
     _i3.LatLngQuad? coordinates,
   ) =>
       (super.noSuchMethod(
@@ -1364,7 +1363,7 @@ class MockMaplibreMapController extends _i1.Mock
   @override
   _i6.Future<void> updateImageSource(
     String? imageSourceId,
-    _i13.Uint8List? bytes,
+    _i12.Uint8List? bytes,
     _i3.LatLngQuad? coordinates,
   ) =>
       (super.noSuchMethod(
@@ -1681,7 +1680,7 @@ class MockMaplibreMapController extends _i1.Mock
       );
 
   @override
-  void addListener(_i12.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i11.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -1690,7 +1689,7 @@ class MockMaplibreMapController extends _i1.Mock
       );
 
   @override
-  void removeListener(_i12.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i11.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],

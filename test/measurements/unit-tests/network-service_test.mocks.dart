@@ -8,14 +8,15 @@ import 'dart:async' as _i11;
 import 'package:connectivity_plus/connectivity_plus.dart' as _i7;
 import 'package:dio/dio.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i16;
+import 'package:mockito/src/dummies.dart' as _i17;
 import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i13;
+import 'package:nt_flutter_standalone/core/models/project.dart' as _i16;
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart'
     as _i4;
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart'
     as _i15;
 import 'package:nt_flutter_standalone/modules/measurements/models/cell-info.dart'
-    as _i20;
+    as _i21;
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-result.dart'
     as _i12;
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart'
@@ -23,15 +24,15 @@ import 'package:nt_flutter_standalone/modules/measurements/models/measurement-se
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart'
     as _i9;
 import 'package:nt_flutter_standalone/modules/measurements/models/signal-info.dart'
-    as _i19;
+    as _i20;
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart'
-    as _i17;
+    as _i18;
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart'
     as _i10;
 import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart'
     as _i5;
 import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart'
-    as _i18;
+    as _i19;
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart'
     as _i6;
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart'
@@ -190,6 +191,7 @@ class MockMeasurementsApiService extends _i1.Mock
       getMeasurementServersForCurrentFlavor({
     _i15.LocationModel? location,
     _i13.ErrorHandler? errorHandler,
+    _i16.NTProject? project,
   }) =>
           (super.noSuchMethod(
             Invocation.method(
@@ -198,6 +200,7 @@ class MockMeasurementsApiService extends _i1.Mock
               {
                 #location: location,
                 #errorHandler: errorHandler,
+                #project: project,
               },
             ),
             returnValue: _i11.Future<List<_i14.MeasurementServer>>.value(
@@ -272,7 +275,7 @@ class MockCarrierInfoWrapper extends _i1.Mock
           #getNetworkGeneration,
           [],
         ),
-        returnValue: _i11.Future<String>.value(_i16.dummyValue<String>(
+        returnValue: _i11.Future<String>.value(_i17.dummyValue<String>(
           this,
           Invocation.method(
             #getNetworkGeneration,
@@ -287,7 +290,7 @@ class MockCarrierInfoWrapper extends _i1.Mock
           #getRadioType,
           [],
         ),
-        returnValue: _i11.Future<String>.value(_i16.dummyValue<String>(
+        returnValue: _i11.Future<String>.value(_i17.dummyValue<String>(
           this,
           Invocation.method(
             #getRadioType,
@@ -302,7 +305,7 @@ class MockCarrierInfoWrapper extends _i1.Mock
           #getNativeCarrierName,
           [],
         ),
-        returnValue: _i11.Future<String>.value(_i16.dummyValue<String>(
+        returnValue: _i11.Future<String>.value(_i17.dummyValue<String>(
           this,
           Invocation.method(
             #getNativeCarrierName,
@@ -317,7 +320,7 @@ class MockCarrierInfoWrapper extends _i1.Mock
           #getCarrierName,
           [],
         ),
-        returnValue: _i11.Future<String>.value(_i16.dummyValue<String>(
+        returnValue: _i11.Future<String>.value(_i17.dummyValue<String>(
           this,
           Invocation.method(
             #getCarrierName,
@@ -366,7 +369,7 @@ class MockCellInfoWrapper extends _i1.Mock implements _i3.CellInfoWrapper {
 /// A class which mocks [IPInfoService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockIPInfoService extends _i1.Mock implements _i17.IPInfoService {
+class MockIPInfoService extends _i1.Mock implements _i18.IPInfoService {
   MockIPInfoService() {
     _i1.throwOnMissingStub(this);
   }
@@ -396,13 +399,13 @@ class MockIPInfoService extends _i1.Mock implements _i17.IPInfoService {
       );
 
   @override
-  _i11.Future<String> getPublicAddress(_i17.IPVersion? version) =>
+  _i11.Future<String> getPublicAddress(_i18.IPVersion? version) =>
       (super.noSuchMethod(
         Invocation.method(
           #getPublicAddress,
           [version],
         ),
-        returnValue: _i11.Future<String>.value(_i16.dummyValue<String>(
+        returnValue: _i11.Future<String>.value(_i17.dummyValue<String>(
           this,
           Invocation.method(
             #getPublicAddress,
@@ -412,13 +415,13 @@ class MockIPInfoService extends _i1.Mock implements _i17.IPInfoService {
       ) as _i11.Future<String>);
 
   @override
-  _i11.Future<String> getPrivateAddress(_i17.IPVersion? version) =>
+  _i11.Future<String> getPrivateAddress(_i18.IPVersion? version) =>
       (super.noSuchMethod(
         Invocation.method(
           #getPrivateAddress,
           [version],
         ),
-        returnValue: _i11.Future<String>.value(_i16.dummyValue<String>(
+        returnValue: _i11.Future<String>.value(_i17.dummyValue<String>(
           this,
           Invocation.method(
             #getPrivateAddress,
@@ -473,7 +476,7 @@ class MockConnectivity extends _i1.Mock implements _i7.Connectivity {
 /// A class which mocks [SignalService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSignalService extends _i1.Mock implements _i18.SignalService {
+class MockSignalService extends _i1.Mock implements _i19.SignalService {
   MockSignalService() {
     _i1.throwOnMissingStub(this);
   }
@@ -550,32 +553,32 @@ class MockSignalService extends _i1.Mock implements _i18.SignalService {
       ) as _i11.Future<_i9.NetworkInfoDetails>);
 
   @override
-  _i11.Future<List<_i19.SignalInfo>?>? getCurrentSignalInfo(int? startTime) =>
+  _i11.Future<List<_i20.SignalInfo>?>? getCurrentSignalInfo(int? startTime) =>
       (super.noSuchMethod(Invocation.method(
         #getCurrentSignalInfo,
         [startTime],
-      )) as _i11.Future<List<_i19.SignalInfo>?>?);
+      )) as _i11.Future<List<_i20.SignalInfo>?>?);
 
   @override
-  _i11.Future<_i20.CellInfoModel?> getPrimaryCellInfo() => (super.noSuchMethod(
+  _i11.Future<_i21.CellInfoModel?> getPrimaryCellInfo() => (super.noSuchMethod(
         Invocation.method(
           #getPrimaryCellInfo,
           [],
         ),
-        returnValue: _i11.Future<_i20.CellInfoModel?>.value(),
-      ) as _i11.Future<_i20.CellInfoModel?>);
+        returnValue: _i11.Future<_i21.CellInfoModel?>.value(),
+      ) as _i11.Future<_i21.CellInfoModel?>);
 
   @override
-  _i11.Future<List<_i19.SignalInfo>> getPrimaryDataSignalInfo(
-          _i18.CellType? cellType) =>
+  _i11.Future<List<_i20.SignalInfo>> getPrimaryDataSignalInfo(
+          _i19.CellType? cellType) =>
       (super.noSuchMethod(
         Invocation.method(
           #getPrimaryDataSignalInfo,
           [cellType],
         ),
         returnValue:
-            _i11.Future<List<_i19.SignalInfo>>.value(<_i19.SignalInfo>[]),
-      ) as _i11.Future<List<_i19.SignalInfo>>);
+            _i11.Future<List<_i20.SignalInfo>>.value(<_i20.SignalInfo>[]),
+      ) as _i11.Future<List<_i20.SignalInfo>>);
 }
 
 /// A class which mocks [PlatformWrapper].
@@ -601,7 +604,7 @@ class MockPlatformWrapper extends _i1.Mock implements _i4.PlatformWrapper {
   @override
   String get localeName => (super.noSuchMethod(
         Invocation.getter(#localeName),
-        returnValue: _i16.dummyValue<String>(
+        returnValue: _i17.dummyValue<String>(
           this,
           Invocation.getter(#localeName),
         ),

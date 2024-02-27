@@ -44,6 +44,12 @@ class MapState {
     int? currentPeriodPickerMonthIndex,
     DateTime? defaultPeriod,
   }) {
+    var currentTechnologies = technologies ?? this.technologies;
+    var technologyIndex = currentTechnologyIndex ?? this.currentTechnologyIndex;
+    technologyIndex = _ensureIsInRange(technologyIndex, currentTechnologies.length - 1);
+    var currentProviders = providers ?? this.providers;
+    var providerIndex = currentProviderIndex ?? this.currentProviderIndex;
+    providerIndex = _ensureIsInRange(providerIndex, currentProviders.length - 1);
     return MapState(
       providers: providers ?? this.providers,
       technologies: technologies ?? this.technologies,
@@ -52,9 +58,8 @@ class MapState {
       isTechnologyBarExpanded:
           isTechnologyBarExpanded ?? this.isTechnologyBarExpanded,
       searchResults: searchResults ?? this.searchResults,
-      currentTechnologyIndex:
-          currentTechnologyIndex ?? this.currentTechnologyIndex,
-      currentProviderIndex: currentProviderIndex ?? this.currentProviderIndex,
+      currentTechnologyIndex: technologyIndex,
+      currentProviderIndex: providerIndex,
       currentPeriod: currentPeriod ?? this.currentPeriod,
       currentPeriodPickerYearIndex:
           currentPeriodPickerYearIndex ?? this.currentPeriodPickerYearIndex,
@@ -62,5 +67,9 @@ class MapState {
           currentPeriodPickerMonthIndex ?? this.currentPeriodPickerMonthIndex,
       defaultPeriod: defaultPeriod ?? this.defaultPeriod,
     );
+  }
+
+  int _ensureIsInRange(int index, maxIndex) {
+    return index < 0 || index > maxIndex ? 0 : index;
   }
 }

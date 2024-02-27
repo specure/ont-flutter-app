@@ -12,7 +12,11 @@ class MeasurementResultService extends DioService {
       {ErrorHandler? errorHandler}) async {
     try {
       var response = await dio.get('${NTUrls.csResultsRoute}/$uuid');
-      return MeasurementHistoryResult.fromJson(response.data);
+      if (response.data is Map<String, dynamic> && (response.data as Map<String, dynamic>).isNotEmpty) {
+          return MeasurementHistoryResult.fromJson(response.data);
+      } else {
+          return null;
+      }
     } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);

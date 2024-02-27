@@ -125,6 +125,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
         measurementsApiService.getMeasurementServersForCurrentFlavor(
           location: state.currentLocation,
           errorHandler: this.errorHandler,
+          project: state.project,
         )
       ]);
       final List<MeasurementServer> servers = info[1];
@@ -143,6 +144,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
           await measurementsApiService.getMeasurementServersForCurrentFlavor(
         location: event.payload ?? state.currentLocation,
         errorHandler: this.errorHandler,
+        project: state.project,
       );
       if (loopModeService.isLoopModeActivated) {
         loopModeService.updateLocation(event.payload);
@@ -453,10 +455,10 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
       Environment.appSuffix.substring(1),
       clientUUID: uuid,
       location: _lastLocation,
-      measurementServerId: state.currentServer?.id,
+      measurementServer: state.currentServer,
       loopModeSettings: loopModeService.loopModeDetails
           .toLoopModeSettings(loopModeService.isLoopModeActivated),
-      enableAppJitterAndPacketLoss: state.project?.enableAppJitterAndPacketLoss,
+      project: state.project,
     );
     if (platform.isAndroid) {
       await _startRecordingSignalInfo();

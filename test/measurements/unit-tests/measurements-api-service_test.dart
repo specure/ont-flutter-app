@@ -103,7 +103,7 @@ _setUpStubs() {
                 'webAddress': 'server1.example.net',
                 'distance': 456789,
                 'serverTypeDetails': [
-                  {'serverType': 'RMBTws'}
+                  {'serverType': 'RMBT'}
                 ]
               },
               {
@@ -113,7 +113,7 @@ _setUpStubs() {
                 'webAddress': 'server2.example.net',
                 'distance': 123456,
                 'serverTypeDetails': [
-                  {'serverType': 'RMBT'}
+                  {'serverType': 'RMBTws'}
                 ]
               },
               {
@@ -123,7 +123,7 @@ _setUpStubs() {
                 'webAddress': 'server3.example.net',
                 'distance': 1000,
                 'serverTypeDetails': [
-                  {'serverType': 'RMBT'}
+                  {'serverType': 'RMBTws'}
                 ]
               },
             ],

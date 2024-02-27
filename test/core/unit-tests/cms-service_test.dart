@@ -48,6 +48,7 @@ final List<Map<String, dynamic>> _projects = [
     'enable_app_qos_result_explanation': false,
     'enable_app_qoe_result_explanation': false,
     'enable_map_mno_isp_switch': false,
+    'enable_app_rmbt_server': false,
     'ping_duration': 0.0,
     'ping_interval': 0.0
   }

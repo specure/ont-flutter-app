@@ -8,6 +8,7 @@ import 'package:nt_flutter_standalone/core/constants/environment.dart';
 import 'package:nt_flutter_standalone/core/wrappers/internet-address.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 abstract class DioService {
   final Dio dio = GetIt.I.get<Dio>();
@@ -82,6 +83,19 @@ class ErrorInterceptor extends Interceptor {
   ErrorInterceptor({this.testing = false});
 
   @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    if (response.statusCode != null && response.statusCode! >= 400) {
+      throw DioException.badResponse(
+        statusCode: response.statusCode!,
+        requestOptions: response.requestOptions,
+        response: response,
+      );
+    } else {
+      super.onResponse(response, handler);
+    }
+  }
+
+  @override
   Future<void> onError(
       DioException err, ErrorInterceptorHandler handler) async {
     newErr = err;
@@ -96,6 +110,9 @@ class ErrorInterceptor extends Interceptor {
               GetNetworkInfo(connectivity: ConnectivityResult.none),
             );
       }
+    } else {
+      Sentry.captureException(err);
+      newErr = err.copyWith(message: ApiErrors.internalServerError);
     }
     if (!testing) super.onError(newErr!, handler);
   }

@@ -11,6 +11,7 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.*
 import androidx.annotation.RequiresApi
+import at.rtr.rmbt.client.helper.Config
 import at.rtr.rmbt.client.helper.IntermediateResult
 import at.rtr.rmbt.client.helper.TestStatus
 import at.rtr.rmbt.client.v2.task.result.QoSTestResultEnum
@@ -121,7 +122,7 @@ class MainActivity : FlutterActivity() {
                         call.argument("flavor")!!,
                         call.argument("clientUUID")!!,
                         call.argument("location")!!,
-                        call.argument("selectedMeasurementServerId"),
+                        call.argument("measurementServer"),
                         call.argument("telephonyPermissionGranted"),
                         call.argument("locationPermissionGranted"),
                         call.argument("uuidPermissionGranted"),
@@ -198,7 +199,7 @@ class MainActivity : FlutterActivity() {
                              flavor: String,
                              clientUUID: String,
                              location: Map<String, Any?>,
-                             measurementServerId: Int?,
+                             measurementServer: Map<String, Any?>?,
                              telephonyPermissionGranted: Boolean?,
                              locationPermissionGranted: Boolean?,
                              uuidPermissionGranted: Boolean?,
@@ -212,7 +213,17 @@ class MainActivity : FlutterActivity() {
             context.unbindService(measurementServiceConnection)
         }
 
-        var parsedLoopModeSettings = loopModeSettings?.let { settings ->
+        val parsedMS = measurementServer?.let { ms ->
+            TargetMeasurementServer(
+                ms["encrypted"] as Boolean,
+                ms["port"] as Int,
+                ms["webAddress"] as String,
+                ms["id"] as Int,
+                ms["serverType"] as String
+            )
+        }
+
+        val parsedLoopModeSettings = loopModeSettings?.let { settings ->
             LoopModeSettings(
                 settings["max_delay"] as Int,
                 settings["max_movement"] as Int,
@@ -223,7 +234,7 @@ class MainActivity : FlutterActivity() {
         }
 
         MeasurementService.startTests(
-            this@MainActivity.applicationContext, appVersion, flavor, clientUUID, location, measurementServerId,
+            this@MainActivity.applicationContext, appVersion, flavor, clientUUID, location, parsedMS,
             telephonyPermissionGranted ?: false,
             locationPermissionGranted ?: false,
             uuidPermissionGranted ?: false,
