@@ -14,8 +14,9 @@ class IPInfoService extends DioService {
     try {
       final host = Environment.controlServerUrl
           .replaceFirst('.net', 'v${version.toInt()}.net');
-      final response = await http
-          .post(Uri(scheme: "https", host: host, path: NTUrls.csIpRoute));
+      final response = await http.post(
+        Uri(scheme: "http", host: host, path: NTUrls.csIpRoute),
+      );
       final parsed = jsonDecode(response.body) as Map;
       return parsed['ip'];
     } catch (_) {
