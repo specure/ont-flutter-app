@@ -283,7 +283,7 @@ SPEC CHECKSUMS:
   FirebaseCore: 5743c5785c074a794d35f2fff7ecc254a91e08b1
   FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_icmp_ping: 2b159955eee0c487c766ad83fec224ae35e7c935
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   GCNetworkReachability: 2a7dd53d362220326b3e38df68c91b3ef84418d1
