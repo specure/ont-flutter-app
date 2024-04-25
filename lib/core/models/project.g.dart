@@ -32,6 +32,7 @@ NTProject _$NTProjectFromJson(Map<String, dynamic> json) => NTProject(
       enableAppRmbtServer: json['enable_app_rmbt_server'] as bool? ?? false,
       pingDuration: (json['ping_duration'] as num?)?.toDouble() ?? 0,
       pingInterval: (json['ping_interval'] as num?)?.toDouble() ?? 0,
+      measurementRetries: json['measurement_retries'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$NTProjectToJson(NTProject instance) => <String, dynamic>{
@@ -55,4 +56,5 @@ Map<String, dynamic> _$NTProjectToJson(NTProject instance) => <String, dynamic>{
       'enable_app_rmbt_server': instance.enableAppRmbtServer,
       'ping_duration': instance.pingDuration,
       'ping_interval': instance.pingInterval,
+      'measurement_retries': instance.measurementRetries,
     };

@@ -30,10 +30,6 @@ class RemoveObsoleteInfo extends BlocEvent {
   RemoveObsoleteInfo() : super(null);
 }
 
-class ShowMeasurementResult extends BlocEvent<String> {
-  ShowMeasurementResult(String uuid) : super(uuid);
-}
-
 class StartMeasurement extends BlocEvent {
   StartMeasurement() : super(null);
 }
@@ -43,8 +39,8 @@ class StartMeasurementPhase extends BlocEvent<MeasurementPhase> {
 }
 
 class SetPhaseFinalResult
-    extends BlocEvent<MapEntry<MeasurementPhase, double>> {
-  SetPhaseFinalResult(MeasurementPhase phase, double result)
+    extends BlocEvent<MapEntry<MeasurementPhase, double?>> {
+  SetPhaseFinalResult(MeasurementPhase phase, double? result)
       : super(MapEntry(phase, result));
 }
 
@@ -56,12 +52,12 @@ class StopMeasurement extends BlocEvent {
   StopMeasurement() : super(null);
 }
 
-class CompleteMeasurement extends BlocEvent {
-  CompleteMeasurement(MeasurementResult result) : super(result);
+class CompleteAndroidMeasurement extends BlocEvent<MeasurementResult> {
+  CompleteAndroidMeasurement(MeasurementResult result) : super(result);
 }
 
-class OnMeasurementComplete extends BlocEvent {
-  OnMeasurementComplete(String testUuid) : super(testUuid);
+class CompleteIOSMeasurement extends BlocEvent<String> {
+  CompleteIOSMeasurement(String testUuid) : super(testUuid);
 }
 
 class SetPermissions extends BlocEvent<PermissionsMap> {
@@ -116,6 +112,5 @@ class LocationServiceStateChanged extends BlocEvent<bool> {
 }
 
 class CloseDialogVisibilityChanged extends BlocEvent<bool> {
-  CloseDialogVisibilityChanged(bool visible)
-      : super(visible);
+  CloseDialogVisibilityChanged(bool visible) : super(visible);
 }

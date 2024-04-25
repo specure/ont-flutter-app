@@ -3,26 +3,24 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i17;
-import 'dart:io' as _i18;
+import 'dart:async' as _i16;
+import 'dart:io' as _i17;
 
-import 'package:device_info_plus/device_info_plus.dart' as _i12;
-import 'package:flutter_bloc/flutter_bloc.dart' as _i23;
+import 'package:dio/dio.dart' as _i14;
+import 'package:flutter_bloc/flutter_bloc.dart' as _i21;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:nt_flutter_standalone/core/models/bloc-event.dart' as _i22;
-import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i20;
+import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i19;
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart'
     as _i10;
 import 'package:nt_flutter_standalone/core/wrappers/internet-address.wrapper.dart'
-    as _i16;
+    as _i15;
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart'
     as _i11;
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart'
-    as _i13;
-import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart'
-    as _i21;
-import 'package:nt_flutter_standalone/modules/measurements/models/permissions-map.dart'
-    as _i15;
+    as _i12;
+import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart'
+    as _i20;
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart'
     as _i7;
 import 'package:nt_flutter_standalone/modules/measurements/services/loop.mode.service.dart'
@@ -38,9 +36,9 @@ import 'package:nt_flutter_standalone/modules/measurements/services/permissions.
 import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart'
     as _i9;
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart'
-    as _i19;
+    as _i18;
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart'
-    as _i14;
+    as _i13;
 import 'package:nt_flutter_standalone/modules/settings/services/settings.service.dart'
     as _i6;
 
@@ -166,9 +164,9 @@ class _FakePlatformWrapper_9 extends _i1.SmartFake
         );
 }
 
-class _FakeDeviceInfoPlugin_10 extends _i1.SmartFake
-    implements _i12.DeviceInfoPlugin {
-  _FakeDeviceInfoPlugin_10(
+class _FakeSharedPreferencesWrapper_10 extends _i1.SmartFake
+    implements _i12.SharedPreferencesWrapper {
+  _FakeSharedPreferencesWrapper_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -177,9 +175,9 @@ class _FakeDeviceInfoPlugin_10 extends _i1.SmartFake
         );
 }
 
-class _FakeSharedPreferencesWrapper_11 extends _i1.SmartFake
-    implements _i13.SharedPreferencesWrapper {
-  _FakeSharedPreferencesWrapper_11(
+class _FakeMeasurementsState_11 extends _i1.SmartFake
+    implements _i13.MeasurementsState {
+  _FakeMeasurementsState_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -188,9 +186,9 @@ class _FakeSharedPreferencesWrapper_11 extends _i1.SmartFake
         );
 }
 
-class _FakeMeasurementsState_12 extends _i1.SmartFake
-    implements _i14.MeasurementsState {
-  _FakeMeasurementsState_12(
+class _FakeRequestOptions_12 extends _i1.SmartFake
+    implements _i14.RequestOptions {
+  _FakeRequestOptions_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -199,9 +197,18 @@ class _FakeMeasurementsState_12 extends _i1.SmartFake
         );
 }
 
-class _FakePermissionsMap_13 extends _i1.SmartFake
-    implements _i15.PermissionsMap {
-  _FakePermissionsMap_13(
+class _FakeStackTrace_13 extends _i1.SmartFake implements StackTrace {
+  _FakeStackTrace_13(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeDioException_14 extends _i1.SmartFake implements _i14.DioException {
+  _FakeDioException_14(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -214,15 +221,15 @@ class _FakePermissionsMap_13 extends _i1.SmartFake
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockInternetAddressWrapper extends _i1.Mock
-    implements _i16.InternetAddressWrapper {
+    implements _i15.InternetAddressWrapper {
   MockInternetAddressWrapper() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i17.Future<List<_i18.InternetAddress>> lookup(
+  _i16.Future<List<_i17.InternetAddress>> lookup(
     String? host, {
-    _i18.InternetAddressType? type = _i18.InternetAddressType.any,
+    _i17.InternetAddressType? type = _i17.InternetAddressType.any,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -230,16 +237,16 @@ class MockInternetAddressWrapper extends _i1.Mock
           [host],
           {#type: type},
         ),
-        returnValue: _i17.Future<List<_i18.InternetAddress>>.value(
-            <_i18.InternetAddress>[]),
-      ) as _i17.Future<List<_i18.InternetAddress>>);
+        returnValue: _i16.Future<List<_i17.InternetAddress>>.value(
+            <_i17.InternetAddress>[]),
+      ) as _i16.Future<List<_i17.InternetAddress>>);
 }
 
 /// A class which mocks [MeasurementsBloc].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockMeasurementsBlocCalls extends _i1.Mock
-    implements _i19.MeasurementsBloc {
+    implements _i18.MeasurementsBloc {
   @override
   _i2.MeasurementService get measurementService => (super.noSuchMethod(
         Invocation.getter(#measurementService),
@@ -371,33 +378,20 @@ class MockMeasurementsBlocCalls extends _i1.Mock
       ) as _i11.PlatformWrapper);
 
   @override
-  _i12.DeviceInfoPlugin get deviceInfoPlugin => (super.noSuchMethod(
-        Invocation.getter(#deviceInfoPlugin),
-        returnValue: _FakeDeviceInfoPlugin_10(
-          this,
-          Invocation.getter(#deviceInfoPlugin),
-        ),
-        returnValueForMissingStub: _FakeDeviceInfoPlugin_10(
-          this,
-          Invocation.getter(#deviceInfoPlugin),
-        ),
-      ) as _i12.DeviceInfoPlugin);
-
-  @override
-  _i13.SharedPreferencesWrapper get preferences => (super.noSuchMethod(
+  _i12.SharedPreferencesWrapper get preferences => (super.noSuchMethod(
         Invocation.getter(#preferences),
-        returnValue: _FakeSharedPreferencesWrapper_11(
+        returnValue: _FakeSharedPreferencesWrapper_10(
           this,
           Invocation.getter(#preferences),
         ),
-        returnValueForMissingStub: _FakeSharedPreferencesWrapper_11(
+        returnValueForMissingStub: _FakeSharedPreferencesWrapper_10(
           this,
           Invocation.getter(#preferences),
         ),
-      ) as _i13.SharedPreferencesWrapper);
+      ) as _i12.SharedPreferencesWrapper);
 
   @override
-  set errorHandler(_i20.ErrorHandler? _errorHandler) => super.noSuchMethod(
+  set errorHandler(_i19.ErrorHandler? _errorHandler) => super.noSuchMethod(
         Invocation.setter(
           #errorHandler,
           _errorHandler,
@@ -428,24 +422,40 @@ class MockMeasurementsBlocCalls extends _i1.Mock
       );
 
   @override
-  _i14.MeasurementsState get state => (super.noSuchMethod(
-        Invocation.getter(#state),
-        returnValue: _FakeMeasurementsState_12(
-          this,
-          Invocation.getter(#state),
-        ),
-        returnValueForMissingStub: _FakeMeasurementsState_12(
-          this,
-          Invocation.getter(#state),
-        ),
-      ) as _i14.MeasurementsState);
+  bool get testing => (super.noSuchMethod(
+        Invocation.getter(#testing),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
 
   @override
-  _i17.Stream<_i14.MeasurementsState> get stream => (super.noSuchMethod(
+  set testing(bool? _testing) => super.noSuchMethod(
+        Invocation.setter(
+          #testing,
+          _testing,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i13.MeasurementsState get state => (super.noSuchMethod(
+        Invocation.getter(#state),
+        returnValue: _FakeMeasurementsState_11(
+          this,
+          Invocation.getter(#state),
+        ),
+        returnValueForMissingStub: _FakeMeasurementsState_11(
+          this,
+          Invocation.getter(#state),
+        ),
+      ) as _i13.MeasurementsState);
+
+  @override
+  _i16.Stream<_i13.MeasurementsState> get stream => (super.noSuchMethod(
         Invocation.getter(#stream),
-        returnValue: _i17.Stream<_i14.MeasurementsState>.empty(),
-        returnValueForMissingStub: _i17.Stream<_i14.MeasurementsState>.empty(),
-      ) as _i17.Stream<_i14.MeasurementsState>);
+        returnValue: _i16.Stream<_i13.MeasurementsState>.empty(),
+        returnValueForMissingStub: _i16.Stream<_i13.MeasurementsState>.empty(),
+      ) as _i16.Stream<_i13.MeasurementsState>);
 
   @override
   bool get isClosed => (super.noSuchMethod(
@@ -455,59 +465,35 @@ class MockMeasurementsBlocCalls extends _i1.Mock
       ) as bool);
 
   @override
-  _i17.Future<dynamic> showMeasurementResult(String? measurementUuid) =>
+  _i16.Future<void> startMeasurement({
+    required int? retryCount,
+    required _i20.MeasurementServer? currentServer,
+    required _i21.Emitter<_i13.MeasurementsState>? emit,
+    dynamic switchingServer = false,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #showMeasurementResult,
-          [measurementUuid],
-        ),
-        returnValue: _i17.Future<dynamic>.value(),
-        returnValueForMissingStub: _i17.Future<dynamic>.value(),
-      ) as _i17.Future<dynamic>);
-
-  @override
-  _i17.Future<_i21.NetworkInfoDetails?> getNetworkInfo() => (super.noSuchMethod(
-        Invocation.method(
-          #getNetworkInfo,
-          [],
-        ),
-        returnValue: _i17.Future<_i21.NetworkInfoDetails?>.value(),
-        returnValueForMissingStub:
-            _i17.Future<_i21.NetworkInfoDetails?>.value(),
-      ) as _i17.Future<_i21.NetworkInfoDetails?>);
-
-  @override
-  _i17.Future<_i14.MeasurementsState> startMeasurement() => (super.noSuchMethod(
         Invocation.method(
           #startMeasurement,
           [],
+          {
+            #retryCount: retryCount,
+            #currentServer: currentServer,
+            #emit: emit,
+            #switchingServer: switchingServer,
+          },
         ),
-        returnValue:
-            _i17.Future<_i14.MeasurementsState>.value(_FakeMeasurementsState_12(
-          this,
-          Invocation.method(
-            #startMeasurement,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i17.Future<_i14.MeasurementsState>.value(_FakeMeasurementsState_12(
-          this,
-          Invocation.method(
-            #startMeasurement,
-            [],
-          ),
-        )),
-      ) as _i17.Future<_i14.MeasurementsState>);
+        returnValue: _i16.Future<void>.value(),
+        returnValueForMissingStub: _i16.Future<void>.value(),
+      ) as _i16.Future<void>);
 
   @override
-  _i17.Future<_i14.MeasurementsState> stopMeasurement() => (super.noSuchMethod(
+  _i16.Future<_i13.MeasurementsState> stopMeasurement() => (super.noSuchMethod(
         Invocation.method(
           #stopMeasurement,
           [],
         ),
         returnValue:
-            _i17.Future<_i14.MeasurementsState>.value(_FakeMeasurementsState_12(
+            _i16.Future<_i13.MeasurementsState>.value(_FakeMeasurementsState_11(
           this,
           Invocation.method(
             #stopMeasurement,
@@ -515,38 +501,25 @@ class MockMeasurementsBlocCalls extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i17.Future<_i14.MeasurementsState>.value(_FakeMeasurementsState_12(
+            _i16.Future<_i13.MeasurementsState>.value(_FakeMeasurementsState_11(
           this,
           Invocation.method(
             #stopMeasurement,
             [],
           ),
         )),
-      ) as _i17.Future<_i14.MeasurementsState>);
+      ) as _i16.Future<_i13.MeasurementsState>);
 
   @override
-  _i17.Future<_i15.PermissionsMap> checkPermissions() => (super.noSuchMethod(
+  _i16.Future<dynamic> showMeasurementResult(String? measurementUuid) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #checkPermissions,
-          [],
+          #showMeasurementResult,
+          [measurementUuid],
         ),
-        returnValue:
-            _i17.Future<_i15.PermissionsMap>.value(_FakePermissionsMap_13(
-          this,
-          Invocation.method(
-            #checkPermissions,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i17.Future<_i15.PermissionsMap>.value(_FakePermissionsMap_13(
-          this,
-          Invocation.method(
-            #checkPermissions,
-            [],
-          ),
-        )),
-      ) as _i17.Future<_i15.PermissionsMap>);
+        returnValue: _i16.Future<dynamic>.value(),
+        returnValueForMissingStub: _i16.Future<dynamic>.value(),
+      ) as _i16.Future<dynamic>);
 
   @override
   dynamic setCloseDialogVisible(bool? visible) => super.noSuchMethod(
@@ -558,14 +531,14 @@ class MockMeasurementsBlocCalls extends _i1.Mock
       );
 
   @override
-  _i17.Future<void> close() => (super.noSuchMethod(
+  _i16.Future<void> close() => (super.noSuchMethod(
         Invocation.method(
           #close,
           [],
         ),
-        returnValue: _i17.Future<void>.value(),
-        returnValueForMissingStub: _i17.Future<void>.value(),
-      ) as _i17.Future<void>);
+        returnValue: _i16.Future<void>.value(),
+        returnValueForMissingStub: _i16.Future<void>.value(),
+      ) as _i16.Future<void>);
 
   @override
   void add(_i22.BlocEvent<dynamic>? event) => super.noSuchMethod(
@@ -586,7 +559,7 @@ class MockMeasurementsBlocCalls extends _i1.Mock
       );
 
   @override
-  void emit(_i14.MeasurementsState? state) => super.noSuchMethod(
+  void emit(_i13.MeasurementsState? state) => super.noSuchMethod(
         Invocation.method(
           #emit,
           [state],
@@ -596,8 +569,8 @@ class MockMeasurementsBlocCalls extends _i1.Mock
 
   @override
   void on<E extends _i22.BlocEvent<dynamic>>(
-    _i23.EventHandler<E, _i14.MeasurementsState>? handler, {
-    _i23.EventTransformer<E>? transformer,
+    _i21.EventHandler<E, _i13.MeasurementsState>? handler, {
+    _i21.EventTransformer<E>? transformer,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -610,7 +583,7 @@ class MockMeasurementsBlocCalls extends _i1.Mock
 
   @override
   void onTransition(
-          _i23.Transition<_i22.BlocEvent<dynamic>, _i14.MeasurementsState>?
+          _i21.Transition<_i22.BlocEvent<dynamic>, _i13.MeasurementsState>?
               transition) =>
       super.noSuchMethod(
         Invocation.method(
@@ -621,7 +594,7 @@ class MockMeasurementsBlocCalls extends _i1.Mock
       );
 
   @override
-  void onChange(_i23.Change<_i14.MeasurementsState>? change) =>
+  void onChange(_i21.Change<_i13.MeasurementsState>? change) =>
       super.noSuchMethod(
         Invocation.method(
           #onChange,
@@ -661,4 +634,96 @@ class MockMeasurementsBlocCalls extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+}
+
+/// A class which mocks [DioException].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDioError extends _i1.Mock implements _i14.DioException {
+  @override
+  _i14.RequestOptions get requestOptions => (super.noSuchMethod(
+        Invocation.getter(#requestOptions),
+        returnValue: _FakeRequestOptions_12(
+          this,
+          Invocation.getter(#requestOptions),
+        ),
+        returnValueForMissingStub: _FakeRequestOptions_12(
+          this,
+          Invocation.getter(#requestOptions),
+        ),
+      ) as _i14.RequestOptions);
+
+  @override
+  _i14.DioExceptionType get type => (super.noSuchMethod(
+        Invocation.getter(#type),
+        returnValue: _i14.DioExceptionType.connectionTimeout,
+        returnValueForMissingStub: _i14.DioExceptionType.connectionTimeout,
+      ) as _i14.DioExceptionType);
+
+  @override
+  StackTrace get stackTrace => (super.noSuchMethod(
+        Invocation.getter(#stackTrace),
+        returnValue: _FakeStackTrace_13(
+          this,
+          Invocation.getter(#stackTrace),
+        ),
+        returnValueForMissingStub: _FakeStackTrace_13(
+          this,
+          Invocation.getter(#stackTrace),
+        ),
+      ) as StackTrace);
+
+  @override
+  _i14.DioException copyWith({
+    _i14.RequestOptions? requestOptions,
+    _i14.Response<dynamic>? response,
+    _i14.DioExceptionType? type,
+    Object? error,
+    StackTrace? stackTrace,
+    String? message,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #copyWith,
+          [],
+          {
+            #requestOptions: requestOptions,
+            #response: response,
+            #type: type,
+            #error: error,
+            #stackTrace: stackTrace,
+            #message: message,
+          },
+        ),
+        returnValue: _FakeDioException_14(
+          this,
+          Invocation.method(
+            #copyWith,
+            [],
+            {
+              #requestOptions: requestOptions,
+              #response: response,
+              #type: type,
+              #error: error,
+              #stackTrace: stackTrace,
+              #message: message,
+            },
+          ),
+        ),
+        returnValueForMissingStub: _FakeDioException_14(
+          this,
+          Invocation.method(
+            #copyWith,
+            [],
+            {
+              #requestOptions: requestOptions,
+              #response: response,
+              #type: type,
+              #error: error,
+              #stackTrace: stackTrace,
+              #message: message,
+            },
+          ),
+        ),
+      ) as _i14.DioException);
 }

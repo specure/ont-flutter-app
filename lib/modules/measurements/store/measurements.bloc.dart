@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/api-errors.dart';
@@ -11,22 +11,16 @@ import 'package:nt_flutter_standalone/core/extensions/loopModeDetails.ext.dart';
 import 'package:nt_flutter_standalone/core/models/bloc-event.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/services/cms.service.dart';
-import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
 import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/wakelock.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
-import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/screens/measurement-result/measurement-result.screen.dart';
 import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-error.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-result.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/permissions-map.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/radio-info.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/signal-info.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/loop.mode.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/measurement.service.dart';
@@ -34,6 +28,9 @@ import 'package:nt_flutter_standalone/modules/measurements/services/measurements
 import 'package:nt_flutter_standalone/modules/measurements/services/network.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/handlers/connectivity-changes-handler.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/handlers/error-handler.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/handlers/loop-measurement-changes-handler.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/app.review.service.dart';
@@ -62,7 +59,6 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
   final SignalService signalService = GetIt.I.get<SignalService>();
   final NavigationService navigationService = GetIt.I.get<NavigationService>();
   final PlatformWrapper platform = GetIt.I.get<PlatformWrapper>();
-  final DeviceInfoPlugin deviceInfoPlugin = GetIt.I.get<DeviceInfoPlugin>();
   final SharedPreferencesWrapper preferences =
       GetIt.I.get<SharedPreferencesWrapper>();
   final CMSService _cmsService = GetIt.I.get<CMSService>();
@@ -70,29 +66,28 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
   ErrorHandler? errorHandler;
   ConnectivityChangesHandler? connectivityChangesHandler;
   LoopModeChangesHandler? loopModeChangesHandler;
-
-  LocationModel? _lastLocation;
-
-  int? _measurementStartTimestamp;
-  Timer? _signalsMeasurementTimer;
   Timer? _signalsHomeScreenTimer;
   RadioInfo? _radioInfo;
-
   StreamSubscription? _connectivitySubscription;
+  bool testing;
 
   MeasurementsBloc({
     ErrorHandler? errorHandler,
     ConnectivityChangesHandler? connectivityChangesHandler,
+    this.testing = false,
   }) : super(MeasurementsState.init()) {
     this.errorHandler = errorHandler ?? MeasurementBlocErrorHandler();
     this.connectivityChangesHandler = connectivityChangesHandler ??
         MeasurementBlocConnectivityChangesHandler();
     this.loopModeChangesHandler = loopModeChangesHandler ??
         MeasurementBlocLoopMeasurementChangesHandler();
+
+// ANCHOR Initialize
+
     on<Initialize>((event, emit) async {
       emit(state.copyWith(
         isInitializing: true,
-        permissions: await checkPermissions(),
+        permissions: await permissionsService.initAndGet(),
         locationServicesEnabled: await locationService.isLocationServiceEnabled,
         loopModeDetails: loopModeService.loopModeDetails,
       ));
@@ -105,23 +100,41 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
         project: remoteSettings[0],
         clientUuid: remoteSettings[1],
       ));
-      final List<dynamic> localSettings =
-          await Future.wait([getNetworkInfo(), _setUpSubscriptions()]);
+      final List<dynamic> localSettings = await Future.wait([
+        networkService.getNetworkInfo(
+          state: state,
+          setState: (networkDetails) {
+            add(SignalUpdate(networkDetails: networkDetails));
+          },
+        ),
+        _watchNetwork()
+      ]);
       emit(state.copyWith(
         networkInfoDetails: localSettings[0],
         isInitializing: false,
       ));
     });
+
+// ANCHOR SignalUpdate
+
     on<SignalUpdate>((event, emit) async {
       emit(state.copyWith(networkInfoDetails: event.payload));
     });
+
+// ANCHOR GetNetworkInfo
+
     on<GetNetworkInfo>((event, emit) async {
       emit(state.copyWith(connectivity: event.payload));
       if (event.payload == ConnectivityResult.none) {
         return;
       }
       final List<dynamic> info = await Future.wait([
-        getNetworkInfo(),
+        networkService.getNetworkInfo(
+          state: state,
+          setState: (networkDetails) {
+            add(SignalUpdate(networkDetails: networkDetails));
+          },
+        ),
         measurementsApiService.getMeasurementServersForCurrentFlavor(
           location: state.currentLocation,
           errorHandler: this.errorHandler,
@@ -139,6 +152,9 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
         currentServer: currentServer,
       ));
     });
+
+// ANCHOR SetLocationInfo
+
     on<SetLocationInfo>((event, emit) async {
       final servers =
           await measurementsApiService.getMeasurementServersForCurrentFlavor(
@@ -159,32 +175,57 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
         currentServer: currentServer,
       ));
     });
+
+// ANCHOR RemoveObsoleteInfo
+
     on<RemoveObsoleteInfo>((event, emit) async {
       emit(MeasurementsState.removeObsoleteInformation(state));
     });
+
+// ANCHOR StartMeasurement
+
     on<StartMeasurement>((event, emit) async {
       // this happens before setMeasurementScreenOpen event - called only first time when we open the screen
       _wakelock.enable();
       await loopModeService.initializeNewLoopMode(state.currentLocation);
-      emit(MeasurementsState.started(state));
-      emit(await startMeasurement());
+      emit(MeasurementsState.started(state).copyWith(triedServersIds: {}));
+      await startMeasurement(
+        retryCount: max(0, state.project?.measurementRetries ?? 0),
+        currentServer: state.currentServer!,
+        emit: emit,
+      );
     });
+
+// ANCHOR StartMeasurementPhase
+
     on<StartMeasurementPhase>((event, emit) {
       emit(MeasurementsState.startingPhase(state, event.payload));
     });
+
+// ANCHOR SetPhaseResult
+
     on<SetPhaseResult>((event, emit) {
       emit(MeasurementsState.withProgressForPhase(state, event.payload));
     });
+
+// ANCHOR SetPhaseFinalResult
+
     on<SetPhaseFinalResult>((event, emit) {
       // this is called many times, not only once with final results
       emit(MeasurementsState.withResultsForPhase(state, event.payload));
     });
+
+// ANCHOR StopMeasurement
+
     on<StopMeasurement>((event, emit) async {
       if (loopModeService.isLoopModeActivated) {
         loopModeService.onTestFinished(null);
       }
       emit(await stopMeasurement());
     });
+
+// ANCHOR SetPermissions
+
     on<SetPermissions>((event, emit) {
       preferences.setBool(
         StorageKeys.locationPermissionsGranted,
@@ -206,31 +247,45 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
         add(Initialize());
       }
     });
+
+// ANCHOR SetMeasurmentScreenOpen
+
     on<SetMeasurmentScreenOpen>((event, emit) {
       if (loopModeService.isLoopModeActivated) {
         loopModeService.listenToLoopModeChanges(loopModeChangesHandler);
       }
       emit(state.copyWith(isMeasurementScreenOpen: event.payload));
     });
-    on<CompleteMeasurement>((event, emit) async {
-      // called only on Android
+
+// ANCHOR CompleteAndroidMeasurement
+
+    on<CompleteAndroidMeasurement>((event, emit) async {
+      final result = event.payload;
+      await result.fillRemainingMetadata(
+        state,
+        radioInfo: _radioInfo,
+        testing: testing,
+      );
+      result.loopModeInfo = loopModeService.loopModeDetails
+          .toLoopModeSettings(loopModeService.isLoopModeActivated);
       emit(MeasurementsState.startingPhase(
           state, MeasurementPhase.submittingTestResult));
-      await _completeMeasurement(event.payload);
+      final response = await measurementsApiService
+          .sendMeasurementResults(result, errorHandler: this.errorHandler);
+      if (response == null) {
+        return;
+      }
+      _onMeasurementComplete(event.payload.testToken.split("_")[0]);
       if (loopModeService.isLoopModeActivated) {
         loopModeService.onTestFinished(event.payload);
       } else {
         _appReviewService.startAppReview();
       }
     });
-    on<ShowMeasurementResult>((event, emit) async {
-      // called only on iOS
-      if (!loopModeService.isLoopModeActivated)
-        showMeasurementResult(event.payload);
-      _wakelock.disable();
-    });
-    on<OnMeasurementComplete>((event, emit) async {
-      // called only on iOS
+
+// ANCHOR CompleteIOSMeasurement
+
+    on<CompleteIOSMeasurement>((event, emit) async {
       if (loopModeService.loopModeDetails.isLoopModeActive) {
         double jitterUnitsFixed =
             (state.phaseFinalResults[MeasurementPhase.jitter]?.toInt() ?? -1) /
@@ -262,36 +317,68 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
       _onMeasurementComplete(event.payload);
       _appReviewService.startAppReview();
     });
+
+// ANCHOR SetError
+
     on<SetError>((event, emit) async {
       if (event.payload is MeasurementError) {
         Sentry.captureException(event.payload);
-      }
-      if (loopModeService.isLoopModeActivated) {
-        loopModeService.onTestFinished(null);
-      } else {
-        if (event.payload is MeasurementError &&
-            event.payload.toString() != ApiErrors.noInternetConnection) {
-          // double-check if error is due to missing Internet connection
-          final servers = await measurementsApiService
-              .getMeasurementServersForCurrentFlavor();
-          if (servers.isNotEmpty) {
-            emit(state.copyWith(error: event.payload));
-          } else {
-            emit(state.copyWith(error: noConnectionError));
+
+        if (state.retryCount > 0 && state.currentServer != null) {
+          final nextServer = state.nextServer;
+          if (nextServer != null) {
+            emit(state.copyWith(message: "Switching measurement server"));
+            await startMeasurement(
+              retryCount: state.retryCount - 1,
+              currentServer: nextServer,
+              emit: emit,
+              switchingServer: true,
+            );
+            return;
           }
-        } else {
-          emit(state.copyWith(error: event.payload));
         }
       }
+
+      if (loopModeService.isLoopModeActivated) {
+        loopModeService.onTestFinished(null);
+        return;
+      }
+
+      if (event.payload is MeasurementError &&
+          event.payload.toString() != ApiErrors.noInternetConnection) {
+        // double-check if error is due to missing Internet connection
+        final servers = await measurementsApiService
+            .getMeasurementServersForCurrentFlavor();
+        if (servers.isNotEmpty) {
+          emit(state.copyWith(error: event.payload));
+        } else {
+          emit(state.copyWith(error: noConnectionError));
+        }
+      } else {
+        emit(state.copyWith(error: event.payload));
+      }
     });
+
+// ANCHOR SetCurrentServer
+
     on<SetCurrentServer>((event, emit) {
       emit(state.copyWith(currentServer: event.payload));
     });
+
+// ANCHOR RestartMeasurement
+
     on<RestartMeasurement>((event, emit) async {
       emit(await stopMeasurement());
       emit(MeasurementsState.started(state));
-      emit(await startMeasurement());
+      await startMeasurement(
+        retryCount: max(0, state.project?.measurementRetries ?? 0),
+        currentServer: state.currentServer!,
+        emit: emit,
+      );
     });
+
+// ANCHOR MeasurementPostFinish
+
     on<MeasurementPostFinish>((event, emit) async {
       var isLoopModeRunning =
           loopModeService.loopModeDetails.isLoopModeActive &&
@@ -301,69 +388,68 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
         emit(MeasurementsState.finished(state));
       }
     });
+
+// ANCHOR LoopModeDetailsChanged
+
     on<LoopModeDetailsChanged>((event, emit) async {
       emit(state.copyWith(loopModeDetails: event.payload));
       LoopModeDetails loopModeDetails = event.payload;
       if (loopModeDetails.shouldAnotherTestBeStarted &&
           !loopModeDetails.isTestRunning) {
         emit(MeasurementsState.started(state));
-        emit(await startMeasurement());
+        await startMeasurement(
+          retryCount: max(0, state.project?.measurementRetries ?? 0),
+          currentServer: state.currentServer!,
+          emit: emit,
+        );
       } else if (loopModeDetails.isLoopModeFinished) {
         emit(MeasurementsState.finished(state));
         GetIt.I.get<CoreCubit>().goToScreen<HistoryScreen>();
         _wakelock.disable();
       }
     });
+
+// ANCHOR CheckIfLoopModeShouldStart
+
     on<CheckIfLoopModeShouldStart>((event, emit) {
       if (loopModeService.loopModeDetails.shouldLoopModeBeStarted) {
         add(StartMeasurement());
       }
     });
+
+// ANCHOR HomeScreenLeft
+
     on<HomeScreenLeft>((event, emit) {
       _signalsHomeScreenTimer?.cancel();
     });
+
+// ANCHOR MeasurementLoopUuidObtained
+
     on<MeasurementLoopUuidObtained>((event, emit) async {
       emit(state.copyWith(
           loopModeDetails: loopModeService.loopModeDetails
               .copyWith(loopUuid: event.payload)));
       await loopModeService.setLoopUuid(event.payload);
     });
+
+// ANCHOR LocationServiceStateChanged
+
     on<LocationServiceStateChanged>((event, emit) {
       if (state.locationServicesEnabled != event.payload) {
         emit(state.copyWith(locationServicesEnabled: event.payload));
       }
     });
+
+// ANCHOR CloseDialogVisibilityChanged
+
     on<CloseDialogVisibilityChanged>((event, emit) {
       emit(state.copyWith(leavingScreenShown: event.payload));
     });
   }
 
-  Future<void> _setUpSubscriptions() async {
-    await _setUpConnectivitySubscription();
-    await _refreshInfo();
-    if (_signalsHomeScreenTimer?.isActive != true) {
-      _signalsHomeScreenTimer =
-          Timer.periodic(const Duration(seconds: 5), (timer) async {
-        await _refreshInfo();
-      });
-    }
-  }
+// ANCHOR _watchNetwork
 
-  Future<void> _refreshInfo() async {
-    final isLocationServiceEnabled =
-        await locationService.isLocationServiceEnabled;
-    if (platform.isAndroid) {
-      add(LocationServiceStateChanged(isLocationServiceEnabled));
-    }
-    await getNetworkInfo();
-    if (!isLocationServiceEnabled) {
-      add(RemoveObsoleteInfo());
-    } else {
-      await _updateLocation();
-    }
-  }
-
-  Future<void> _setUpConnectivitySubscription() async {
+  Future<void> _watchNetwork() async {
     try {
       _connectivitySubscription?.cancel();
       _connectivitySubscription =
@@ -373,7 +459,116 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
     } catch (e) {
       print(e);
     }
+    await _updateLocationAndSignal();
+    if (_signalsHomeScreenTimer?.isActive != true) {
+      _signalsHomeScreenTimer =
+          Timer.periodic(const Duration(seconds: 5), (timer) async {
+        await _updateLocationAndSignal();
+      });
+    }
   }
+
+// ANCHOR _updateLocationAndSignal
+
+  Future<void> _updateLocationAndSignal() async {
+    final isLocationServiceEnabled =
+        await locationService.isLocationServiceEnabled;
+    if (platform.isAndroid) {
+      add(LocationServiceStateChanged(isLocationServiceEnabled));
+    }
+    if (!isLocationServiceEnabled) {
+      add(RemoveObsoleteInfo());
+    } else {
+      await locationService.updateLocation(
+        state: state,
+        setState: (location) {
+          add(SetLocationInfo(location));
+        },
+      );
+    }
+    await networkService.getNetworkInfo(
+      state: state,
+      setState: (networkDetails) {
+        add(SignalUpdate(networkDetails: networkDetails));
+      },
+    );
+  }
+
+// ANCHOR startMeasurement
+
+  Future<void> startMeasurement({
+    required int retryCount,
+    required MeasurementServer currentServer,
+    required Emitter<MeasurementsState> emit,
+    switchingServer = false,
+  }) async {
+    final uuid = await preferences.clientUuid ??
+        await settingsService.saveClientUuidAndSettings(
+          errorHandler: this.errorHandler,
+        );
+    final newState = state.copyWith(
+      retryCount: retryCount,
+      currentServer: currentServer,
+      triedServersIds: {...state.triedServersIds, currentServer.id},
+      clientUuid: uuid,
+      prevPhase: MeasurementPhase.none,
+      phase: MeasurementPhase.initLatency,
+    );
+    emit(newState);
+    if (loopModeService.isLoopModeActivated && !switchingServer) {
+      loopModeService.onTestStarted();
+    }
+    try {
+      await measurementService.startPingTest(
+        host: currentServer.webAddress,
+        project: state.project,
+      );
+    } on MeasurementError catch (e) {
+      add(SetError(e));
+      return;
+    }
+    measurementService.startTest(
+      Environment.appSuffix.substring(1),
+      clientUUID: uuid,
+      location: state.currentLocation,
+      measurementServer: currentServer,
+      loopModeSettings: loopModeService.loopModeDetails
+          .toLoopModeSettings(loopModeService.isLoopModeActivated),
+      project: state.project,
+    );
+    if (platform.isAndroid && !switchingServer) {
+      await signalService.startRecordingSignalInfo(
+        state: state,
+        setState: (radioInfo) {
+          _radioInfo = radioInfo;
+          print("_radioInfo: $_radioInfo");
+        },
+      );
+    }
+  }
+
+// ANCHOR stopMeasurement
+
+  Future<MeasurementsState> stopMeasurement() async {
+    await measurementService.stopTest();
+    if (loopModeService.isLoopModeActivated) {
+      loopModeService.stopLoopTest(true);
+    }
+    return MeasurementsState.finished(state);
+  }
+
+// ANCHOR _onMeasurementComplete
+
+  void _onMeasurementComplete(String testUuid) {
+    signalService.stopRecordingSignalInfo();
+    // todo add displaying result according loop uuid or redo
+    if (!loopModeService.isLoopModeActivated) {
+      _wakelock.disable();
+      showMeasurementResult(testUuid);
+    }
+  }
+
+// ANCHOR showMeasurementResult
 
   Future showMeasurementResult(String measurementUuid) async {
     var loopModeIsActive = loopModeService.loopModeDetails.isLoopModeActive;
@@ -393,224 +588,18 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
     add(MeasurementPostFinish());
   }
 
-  Future<NetworkInfoDetails?> getNetworkInfo() async {
-    var locationServiceEnabled = await locationService.isLocationServiceEnabled;
-    if (!state.permissions.locationPermissionsGranted ||
-        !locationServiceEnabled) {
-      var networkInfoDetails = await networkService.getBasicNetworkDetails();
-      return networkInfoDetails;
-    }
-    var networkInfoDetails = await networkService.getAllNetworkDetails();
-    add(SignalUpdate(networkDetails: networkInfoDetails));
-    return networkInfoDetails;
-  }
-
-  Future<void> _updateLocation() async {
-    if (!state.permissions.locationPermissionsGranted) {
-      return;
-    }
-    final locationServiceEnabled =
-        await locationService.isLocationServiceEnabled;
-    if (!locationServiceEnabled) {
-      return;
-    }
-    final currentLocation = await locationService.latestLocation;
-    if (currentLocation == null || !_isLocationDifferent(currentLocation)) {
-      return;
-    }
-    try {
-      _lastLocation = await locationService.getAddressByLocation(
-          currentLocation.latitude!, currentLocation.longitude!);
-      add(SetLocationInfo(_lastLocation));
-    } catch (_) {}
-  }
-
-  bool _isLocationDifferent(LocationModel newLocation) {
-    if (_lastLocation == null) {
-      return true;
-    }
-    final latDiff = (newLocation.latitude! - _lastLocation!.latitude!).abs();
-    final lonDiff = (newLocation.longitude! - _lastLocation!.longitude!).abs();
-    return latDiff > 0.005 || lonDiff > 0.005;
-  }
-
-  Future<MeasurementsState> startMeasurement() async {
-    if (loopModeService.isLoopModeActivated) {
-      loopModeService.onTestStarted();
-    }
-    final uuid = await preferences.clientUuid ??
-        await settingsService.saveClientUuidAndSettings(
-          errorHandler: this.errorHandler,
-        );
-    try {
-      await measurementService.startPingTest(
-        host: state.currentServer?.webAddress,
-        project: state.project,
-      );
-    } on MeasurementError catch (e) {
-      Sentry.captureException(e);
-      return state.copyWith(error: e);
-    }
-    measurementService.startTest(
-      Environment.appSuffix.substring(1),
-      clientUUID: uuid,
-      location: _lastLocation,
-      measurementServer: state.currentServer,
-      loopModeSettings: loopModeService.loopModeDetails
-          .toLoopModeSettings(loopModeService.isLoopModeActivated),
-      project: state.project,
-    );
-    if (platform.isAndroid) {
-      await _startRecordingSignalInfo();
-    }
-    return state.copyWith(clientUuid: uuid);
-  }
-
-  Future _startRecordingSignalInfo() async {
-    final isSignalPermissionGranted =
-        await permissionsService.isSignalPermissionGranted;
-    if (!state.permissions.locationPermissionsGranted ||
-        !state.permissions.phoneStatePermissionsGranted ||
-        !isSignalPermissionGranted) {
-      return;
-    }
-    final primaryCell = await signalService.getPrimaryCellInfo();
-    _radioInfo = RadioInfo(
-      cells: primaryCell != null ? [primaryCell] : [],
-      signals: [],
-    );
-    _measurementStartTimestamp = DateTime.now().millisecondsSinceEpoch;
-    _signalsMeasurementTimer?.cancel();
-    _signalsMeasurementTimer =
-        Timer.periodic(Duration(seconds: 1), (timer) async {
-      final signalInfo =
-          await signalService.getCurrentSignalInfo(_measurementStartTimestamp!);
-      if (signalInfo != null) {
-        _radioInfo!.signals.addAll(signalInfo);
-      }
-    });
-  }
-
-  Future<MeasurementsState> stopMeasurement() async {
-    await measurementService.stopTest();
-    if (loopModeService.isLoopModeActivated) {
-      loopModeService.stopLoopTest(true);
-    }
-    return MeasurementsState.finished(state);
-  }
-
-  Future<PermissionsMap> checkPermissions() async {
-    permissionsService.initialize();
-    return permissionsService.permissionsMap;
-  }
-
-  void _onMeasurementComplete(String testUuid) {
-    _signalsMeasurementTimer?.cancel();
-    // todo add displaying result according loop uuid or redo
-    if (!loopModeService.isLoopModeActivated) {
-      _wakelock.disable();
-      showMeasurementResult(testUuid);
-    }
-  }
-
-  Future _completeMeasurement(MeasurementResult result) async {
-    // called on Android only
-    await _fillRemainingMetadataForResult(result);
-    result.loopModeInfo = loopModeService.loopModeDetails
-        .toLoopModeSettings(loopModeService.isLoopModeActivated);
-    await measurementsApiService.sendMeasurementResults(result,
-        errorHandler: this.errorHandler);
-    _onMeasurementComplete(result.testToken.split("_")[0]);
-  }
-
-  Future _fillRemainingMetadataForResult(MeasurementResult result) async {
-    // called on Android only
-    result.networkType = serverNetworkTypes[state.networkInfoDetails.type];
-    result.dualSim = state.networkInfoDetails.isDualSim;
-    result.clientLanguage =
-        GetIt.I.get<LocalizationService>().currentLocale.languageCode;
-    result.radioInfo = RadioInfo(
-      cells: _radioInfo?.cells ?? [],
-      signals: _setTimeNsLastForSignals(_radioInfo?.signals ?? []),
-    );
-    result.telephonyNetworkSimOperator =
-        state.networkInfoDetails.telephonyNetworkSimOperator;
-    result.telephonyNetworkSimOperatorName =
-        state.networkInfoDetails.telephonyNetworkSimOperatorName;
-    result.telephonyNetworkSimCountry =
-        state.networkInfoDetails.telephonyNetworkSimCountry;
-    result.telephonyNetworkOperator =
-        state.networkInfoDetails.telephonyNetworkOperator;
-    result.telephonyNetworkOperatorName =
-        state.networkInfoDetails.telephonyNetworkOperatorName;
-    result.telephonyNetworkCountry =
-        state.networkInfoDetails.telephonyNetworkCountry;
-    result.telephonyNetworkIsRoaming =
-        state.networkInfoDetails.telephonyNetworkIsRoaming;
-    if (platform.isAndroid) {
-      var androidInfo = await deviceInfoPlugin.androidInfo;
-      result.platform = 'Android';
-      result.device = androidInfo.device;
-      result.model = androidInfo.model;
-      result.apiLevel = androidInfo.version.sdkInt.toString();
-      result.osVersion =
-          '${androidInfo.version.release} (${androidInfo.version.incremental})';
-      result.product = androidInfo.brand;
-    } else if (platform.isIOS) {
-      var iosInfo = await deviceInfoPlugin.iosInfo;
-      result.platform = 'iOS';
-      result.device = iosInfo.name;
-      result.model = iosInfo.model;
-      result.osVersion = iosInfo.systemVersion;
-      result.product = iosInfo.name;
-    }
-  }
-
-  List<SignalInfo> _setTimeNsLastForSignals(List<SignalInfo> signals) {
-    return signals
-        .map((signal) => signal.copyWithTimeNs(
-              timeNsLast: _radioInfo!.signals.last.timeNs,
-            ))
-        .toList();
-  }
+// ANCHOR setCloseDialogVisible
 
   setCloseDialogVisible(bool visible) {
     GetIt.I.get<MeasurementsBloc>().add(CloseDialogVisibilityChanged(visible));
   }
+
+// ANCHOR close
 
   @override
   Future<void> close() async {
     _connectivitySubscription?.cancel();
     _connectivitySubscription = null;
     return super.close();
-  }
-}
-
-class MeasurementBlocErrorHandler implements ErrorHandler {
-  @override
-  process(Exception? error) {
-    if (error != null) {
-      GetIt.I.get<MeasurementsBloc>().add(SetError(error));
-    }
-  }
-}
-
-class MeasurementBlocConnectivityChangesHandler
-    implements ConnectivityChangesHandler {
-  @override
-  process(ConnectivityResult connectivity) {
-    GetIt.I
-        .get<MeasurementsBloc>()
-        .add(GetNetworkInfo(connectivity: connectivity));
-  }
-}
-
-class MeasurementBlocLoopMeasurementChangesHandler
-    implements LoopModeChangesHandler {
-  @override
-  onLoopModeDetailsChanged(LoopModeDetails loopModeDetails) {
-    GetIt.I
-        .get<MeasurementsBloc>()
-        .add(LoopModeDetailsChanged(loopModeDetails));
   }
 }

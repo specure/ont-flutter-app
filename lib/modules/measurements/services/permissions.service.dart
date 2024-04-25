@@ -68,6 +68,11 @@ class PermissionsService {
     return permissions[0] || permissions[1];
   }
 
+  Future<PermissionsMap> initAndGet() async {
+    initialize();
+    return permissionsMap;
+  }
+
   Future _platformCallHandler(MethodCall call) async {
     print("${call.method}: ${call.arguments}");
     try {
@@ -87,7 +92,8 @@ class PermissionsService {
                 locationPermissionsGranted: locationPermissionsGranted ?? true,
                 preciseLocationPermissionsGranted:
                     preciseLocationPermissionsGranted ?? true);
-            _preferences.setBool(StorageKeys.preciseLocationPermissionsGranted, preciseLocationPermissionsGranted ?? true);
+            _preferences.setBool(StorageKeys.preciseLocationPermissionsGranted,
+                preciseLocationPermissionsGranted ?? true);
           } else {
             permissionsMap = PermissionsMap(
                 readPhoneStatePermissionsGranted:

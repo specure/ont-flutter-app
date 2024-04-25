@@ -12,27 +12,31 @@ import 'package:mockito/src/dummies.dart' as _i17;
 import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i13;
 import 'package:nt_flutter_standalone/core/models/project.dart' as _i16;
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart'
-    as _i4;
+    as _i5;
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart'
     as _i15;
 import 'package:nt_flutter_standalone/modules/measurements/models/cell-info.dart'
-    as _i21;
+    as _i23;
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-result.dart'
     as _i12;
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart'
     as _i14;
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart'
     as _i9;
+import 'package:nt_flutter_standalone/modules/measurements/models/radio-info.dart'
+    as _i21;
 import 'package:nt_flutter_standalone/modules/measurements/models/signal-info.dart'
-    as _i20;
+    as _i22;
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart'
     as _i18;
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart'
     as _i10;
 import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart'
-    as _i5;
+    as _i4;
 import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart'
     as _i19;
+import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart'
+    as _i20;
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart'
     as _i6;
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart'
@@ -74,9 +78,9 @@ class _FakeCellInfoWrapper_1 extends _i1.SmartFake
         );
 }
 
-class _FakePlatformWrapper_2 extends _i1.SmartFake
-    implements _i4.PlatformWrapper {
-  _FakePlatformWrapper_2(
+class _FakePermissionsService_2 extends _i1.SmartFake
+    implements _i4.PermissionsService {
+  _FakePermissionsService_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -85,9 +89,9 @@ class _FakePlatformWrapper_2 extends _i1.SmartFake
         );
 }
 
-class _FakePermissionsService_3 extends _i1.SmartFake
-    implements _i5.PermissionsService {
-  _FakePermissionsService_3(
+class _FakePlatformWrapper_3 extends _i1.SmartFake
+    implements _i5.PlatformWrapper {
+  _FakePlatformWrapper_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -173,7 +177,7 @@ class MockMeasurementsApiService extends _i1.Mock
       );
 
   @override
-  _i11.Future<dynamic> sendMeasurementResults(
+  _i11.Future<_i2.Response<dynamic>?> sendMeasurementResults(
     _i12.MeasurementResult? result, {
     _i13.ErrorHandler? errorHandler,
   }) =>
@@ -183,8 +187,8 @@ class MockMeasurementsApiService extends _i1.Mock
           [result],
           {#errorHandler: errorHandler},
         ),
-        returnValue: _i11.Future<dynamic>.value(),
-      ) as _i11.Future<dynamic>);
+        returnValue: _i11.Future<_i2.Response<dynamic>?>.value(),
+      ) as _i11.Future<_i2.Response<dynamic>?>);
 
   @override
   _i11.Future<List<_i14.MeasurementServer>>
@@ -491,22 +495,31 @@ class MockSignalService extends _i1.Mock implements _i19.SignalService {
       ) as _i3.CellInfoWrapper);
 
   @override
-  _i4.PlatformWrapper get platform => (super.noSuchMethod(
+  _i4.PermissionsService get permissionsService => (super.noSuchMethod(
+        Invocation.getter(#permissionsService),
+        returnValue: _FakePermissionsService_2(
+          this,
+          Invocation.getter(#permissionsService),
+        ),
+      ) as _i4.PermissionsService);
+
+  @override
+  _i5.PlatformWrapper get platform => (super.noSuchMethod(
         Invocation.getter(#platform),
-        returnValue: _FakePlatformWrapper_2(
+        returnValue: _FakePlatformWrapper_3(
           this,
           Invocation.getter(#platform),
         ),
-      ) as _i4.PlatformWrapper);
+      ) as _i5.PlatformWrapper);
 
   @override
-  _i5.PermissionsService get permission => (super.noSuchMethod(
+  _i4.PermissionsService get permission => (super.noSuchMethod(
         Invocation.getter(#permission),
-        returnValue: _FakePermissionsService_3(
+        returnValue: _FakePermissionsService_2(
           this,
           Invocation.getter(#permission),
         ),
-      ) as _i5.PermissionsService);
+      ) as _i4.PermissionsService);
 
   @override
   _i6.CarrierInfoWrapper get carrierPlugin => (super.noSuchMethod(
@@ -536,6 +549,32 @@ class MockSignalService extends _i1.Mock implements _i19.SignalService {
       ) as _i8.WifiForIoTPluginWrapper);
 
   @override
+  _i11.Future<dynamic> startRecordingSignalInfo({
+    required _i20.MeasurementsState? state,
+    required dynamic Function(_i21.RadioInfo)? setState,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #startRecordingSignalInfo,
+          [],
+          {
+            #state: state,
+            #setState: setState,
+          },
+        ),
+        returnValue: _i11.Future<dynamic>.value(),
+      ) as _i11.Future<dynamic>);
+
+  @override
+  void stopRecordingSignalInfo() => super.noSuchMethod(
+        Invocation.method(
+          #stopRecordingSignalInfo,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   _i11.Future<_i9.NetworkInfoDetails> getCurrentMobileNetworkDetails() =>
       (super.noSuchMethod(
         Invocation.method(
@@ -553,23 +592,23 @@ class MockSignalService extends _i1.Mock implements _i19.SignalService {
       ) as _i11.Future<_i9.NetworkInfoDetails>);
 
   @override
-  _i11.Future<List<_i20.SignalInfo>?>? getCurrentSignalInfo(int? startTime) =>
+  _i11.Future<List<_i22.SignalInfo>?>? getCurrentSignalInfo(int? startTime) =>
       (super.noSuchMethod(Invocation.method(
         #getCurrentSignalInfo,
         [startTime],
-      )) as _i11.Future<List<_i20.SignalInfo>?>?);
+      )) as _i11.Future<List<_i22.SignalInfo>?>?);
 
   @override
-  _i11.Future<_i21.CellInfoModel?> getPrimaryCellInfo() => (super.noSuchMethod(
+  _i11.Future<_i23.CellInfoModel?> getPrimaryCellInfo() => (super.noSuchMethod(
         Invocation.method(
           #getPrimaryCellInfo,
           [],
         ),
-        returnValue: _i11.Future<_i21.CellInfoModel?>.value(),
-      ) as _i11.Future<_i21.CellInfoModel?>);
+        returnValue: _i11.Future<_i23.CellInfoModel?>.value(),
+      ) as _i11.Future<_i23.CellInfoModel?>);
 
   @override
-  _i11.Future<List<_i20.SignalInfo>> getPrimaryDataSignalInfo(
+  _i11.Future<List<_i22.SignalInfo>> getPrimaryDataSignalInfo(
           _i19.CellType? cellType) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -577,14 +616,14 @@ class MockSignalService extends _i1.Mock implements _i19.SignalService {
           [cellType],
         ),
         returnValue:
-            _i11.Future<List<_i20.SignalInfo>>.value(<_i20.SignalInfo>[]),
-      ) as _i11.Future<List<_i20.SignalInfo>>);
+            _i11.Future<List<_i22.SignalInfo>>.value(<_i22.SignalInfo>[]),
+      ) as _i11.Future<List<_i22.SignalInfo>>);
 }
 
 /// A class which mocks [PlatformWrapper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformWrapper extends _i1.Mock implements _i4.PlatformWrapper {
+class MockPlatformWrapper extends _i1.Mock implements _i5.PlatformWrapper {
   MockPlatformWrapper() {
     _i1.throwOnMissingStub(this);
   }

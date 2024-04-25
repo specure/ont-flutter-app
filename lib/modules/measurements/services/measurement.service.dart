@@ -41,8 +41,8 @@ class MeasurementService {
   final _platform = GetIt.I.get<PlatformWrapper>();
   List<double> _pingsNs = [];
   double _testStartNs = 0;
-  double _packLoss = 0;
-  double _jitterNs = 0;
+  double? _packLoss = 0;
+  double? _jitterNs = 0;
   StreamSubscription? _pingStream;
 
   MeasurementService({
@@ -106,7 +106,6 @@ class MeasurementService {
 
   Future<String?> stopTest() async {
     try {
-      _resetPing();
       final message = await channel.invokeMethod('stopTest');
       return message;
     } on PlatformException catch (err) {
@@ -116,12 +115,12 @@ class MeasurementService {
   }
 
   Future<void> startPingTest({String? host, NTProject? project}) async {
-    _resetPing();
+    _resetAllPhasesResults();
     final bloc = GetIt.I.get<MeasurementsBloc>();
-    lastPhase = MeasurementPhase.latency;
-    lastDispatchedEvent = StartMeasurementPhase(MeasurementPhase.latency);
     // To add visual initialization
     await Future.delayed(Duration(milliseconds: 600), () {
+      lastPhase = MeasurementPhase.latency;
+      lastDispatchedEvent = StartMeasurementPhase(MeasurementPhase.latency);
       bloc.add(lastDispatchedEvent!);
     });
     if (host == null || host.isEmpty) {
@@ -195,13 +194,13 @@ class MeasurementService {
           }
           break;
         case "measurementComplete":
-          lastDispatchedEvent = CompleteMeasurement(
+          lastDispatchedEvent = CompleteAndroidMeasurement(
               MeasurementResult.fromPlatformChannelArguments(call.arguments));
           bloc.add(lastDispatchedEvent!);
           break;
         case "measurementResultSubmitted":
           lastDispatchedEvent =
-              OnMeasurementComplete(call.arguments ?? unknown);
+              CompleteIOSMeasurement(call.arguments ?? unknown);
           bloc.add(lastDispatchedEvent!);
           break;
         case "measurementDidFail":
@@ -209,7 +208,11 @@ class MeasurementService {
               bloc.state.connectivity == ConnectivityResult.none
                   ? ApiErrors.noInternetConnection
                   : call.arguments;
-          lastDispatchedEvent = SetError(MeasurementError(error));
+          final newEvent = SetError(MeasurementError(error));
+          if (newEvent.toString() == lastDispatchedEvent.toString()) {
+            break;
+          }
+          lastDispatchedEvent = newEvent;
           bloc.add(lastDispatchedEvent!);
           break;
         case "measurementPostFinish":
@@ -246,7 +249,7 @@ class MeasurementService {
   double _getPackLoss(List<PingResponse> pings, int count, PingData? event) {
     final transmitted = event?.summary?.transmitted ?? count;
     final received = event?.summary?.received ?? min(pings.length, count);
-    return (1 - received / transmitted) * 100;
+    return ((1 - received / transmitted) * 10).roundToDouble() * 10;
   }
 
   double _getJitter(List<double> pings) {
@@ -257,12 +260,18 @@ class MeasurementService {
     return pingDiffs / (pings.length - 1);
   }
 
-  void _resetPing() {
+  void _resetAllPhasesResults() {
     _pingStream?.cancel();
     _pingsNs = [];
-    _jitterNs = 0;
-    _packLoss = 0;
+    _jitterNs = null;
+    _packLoss = null;
     _testStartNs = 0;
+    final bloc = GetIt.I.get<MeasurementsBloc>();
+    bloc.add(SetPhaseFinalResult(MeasurementPhase.latency, null));
+    bloc.add(SetPhaseFinalResult(MeasurementPhase.packLoss, null));
+    bloc.add(SetPhaseFinalResult(MeasurementPhase.jitter, null));
+    bloc.add(SetPhaseFinalResult(MeasurementPhase.down, null));
+    bloc.add(SetPhaseFinalResult(MeasurementPhase.up, null));
   }
 
   handlePingEvent({

@@ -22,6 +22,10 @@ final _bloc = MockMeasurementsBlocCalls();
     as: #MockMeasurementsBlocCalls,
     onMissingStub: OnMissingStub.returnDefault,
   ),
+  MockSpec<DioException>(
+    as: #MockDioError,
+    onMissingStub: OnMissingStub.returnDefault,
+  ),
 ])
 void main() {
   setUp(() {

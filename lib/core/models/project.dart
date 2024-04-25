@@ -37,6 +37,8 @@ class NTProject extends Equatable {
   final double pingDuration;
   @JsonKey(name: 'ping_interval')
   final double pingInterval;
+  @JsonKey(name: 'measurement_retries')
+  final int measurementRetries;
 
   NTProject({
     this.mapboxActualDate,
@@ -55,6 +57,7 @@ class NTProject extends Equatable {
     this.enableAppRmbtServer = false,
     this.pingDuration = 0,
     this.pingInterval = 0,
+    this.measurementRetries = 0,
   });
 
   Map<String, dynamic> toJson() => _$NTProjectToJson(this);
@@ -79,5 +82,6 @@ class NTProject extends Equatable {
         enableAppRmbtServer,
         pingDuration,
         pingInterval,
+        measurementRetries,
       ];
 }

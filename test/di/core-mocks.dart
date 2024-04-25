@@ -1,14 +1,15 @@
 import 'dart:collection';
 
-import 'package:dio/dio.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/locales.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
-import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/handlers/loop-measurement-changes-handler.dart';
 import 'package:nt_flutter_standalone/modules/settings/models/language.dart';
+
+export '../core/unit-tests/dio-service_test.mocks.dart';
 
 class MockNTLocales extends Mock implements NTLocales {
   @override
@@ -26,17 +27,6 @@ class MockNTLocales extends Mock implements NTLocales {
           countryCode: 'DE',
         )
       });
-}
-
-class MockDioError extends Mock implements DioException {
-  @override
-  String get message =>
-      (super.noSuchMethod(Invocation.getter(#message), returnValue: '')
-          as String);
-
-  @override
-  DioExceptionType get type => (super.noSuchMethod(Invocation.getter(#message),
-      returnValue: DioExceptionType.unknown) as DioExceptionType);
 }
 
 class MockErrorHandler extends Mock implements ErrorHandler {}

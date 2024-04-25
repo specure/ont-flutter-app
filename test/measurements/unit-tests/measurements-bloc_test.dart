@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
@@ -36,6 +37,9 @@ import 'package:nt_flutter_standalone/modules/measurements/services/measurement.
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/network.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart';
+import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/handlers/connectivity-changes-handler.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/handlers/error-handler.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
@@ -162,21 +166,7 @@ void main() {
           locationServicesEnabled: true,
         ),
         _initStateWithPermissions.copyWith(
-          isInitializing: true,
           networkInfoDetails: _networkInfoDetails,
-          clientUuid: "uuid",
-          locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
-          clientUuid: "uuid",
-          locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
-          currentLocation: _locationModel,
-          currentServer: _measurementServers.first,
-          servers: _measurementServers,
           clientUuid: "uuid",
           locationServicesEnabled: true,
         ),
@@ -209,46 +199,11 @@ void main() {
           locationServicesEnabled: true,
         ),
         _initStateWithPermissions.copyWith(
-          isInitializing: true,
           networkInfoDetails: _networkInfoDetails,
-          clientUuid: "uuid",
-          locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
-          clientUuid: "uuid",
-          locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
-          currentLocation: _locationModel,
-          currentServer: _measurementServers.first,
-          servers: _measurementServers,
           clientUuid: "uuid",
           locationServicesEnabled: true,
         ),
       ],
-    );
-    blocTest<MeasurementsBloc, MeasurementsState>(
-      'Refresh info without location services enabled - unknown network',
-      build: () {
-        when(GetIt.I.get<LocationService>().isLocationServiceEnabled)
-            .thenAnswer((_) async => false);
-        return _measurementsBloc;
-      },
-      act: (bloc) => bloc.add(Initialize()),
-      skip: 2,
-      expect: () => [
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails.copyWith(name: unknown),
-          currentLocation: null,
-          clientUuid: "uuid",
-        ),
-      ],
-      tearDown: () {
-        when(GetIt.I.get<LocationService>().isLocationServiceEnabled)
-            .thenAnswer((_) async => true);
-      },
     );
     blocTest<MeasurementsBloc, MeasurementsState>(
       'GetNetworkInfo event',
@@ -339,26 +294,53 @@ void main() {
         )
       ],
     );
-    blocTest<MeasurementsBloc, MeasurementsState>(
-      'StartMeasurement event',
-      build: () => _measurementsBloc,
-      act: (bloc) => bloc.add(StartMeasurement()),
-      expect: () => [
-        MeasurementsState.started(MeasurementsState.init()),
-        MeasurementsState.started(MeasurementsState.init())
-            .copyWith(clientUuid: _measurementResult.uuid),
-      ],
-    );
+    blocTest<MeasurementsBloc, MeasurementsState>('StartMeasurement event',
+        build: () => _measurementsBloc,
+        act: (bloc) {
+          bloc.add(SetCurrentServer(_measurementServers[0]));
+          bloc.add(StartMeasurement());
+        },
+        expect: () {
+          final initState = MeasurementsState.init().copyWith(
+            currentServer: _measurementServers[0],
+          );
+          return [
+            initState,
+            MeasurementsState.started(initState),
+            MeasurementsState.started(
+              initState.copyWith(
+                triedServersIds: {
+                  _measurementServers[0].id,
+                },
+                clientUuid: _measurementResult.uuid,
+              ),
+            ),
+          ];
+        });
     blocTest<MeasurementsBloc, MeasurementsState>(
       'RestartMeasurement event',
       build: () => _measurementsBloc,
-      act: (bloc) => bloc.add(RestartMeasurement()),
-      expect: () => [
-        MeasurementsState.finished(MeasurementsState.init()),
-        MeasurementsState.started(MeasurementsState.init()),
-        MeasurementsState.started(MeasurementsState.init()
-            .copyWith(clientUuid: _measurementResult.uuid)),
-      ],
+      act: (bloc) {
+        bloc.add(SetCurrentServer(_measurementServers[0]));
+        bloc.add(RestartMeasurement());
+      },
+      expect: () {
+        final initState = MeasurementsState.init().copyWith(
+          currentServer: _measurementServers[0],
+        );
+        final finishedState = MeasurementsState.finished(initState);
+        final startedState = MeasurementsState.started(initState);
+        return [
+          finishedState,
+          startedState,
+          startedState.copyWith(
+            clientUuid: _measurementResult.uuid,
+            triedServersIds: {
+              _measurementServers[0].id,
+            },
+          ),
+        ];
+      },
     );
     blocTest<MeasurementsBloc, MeasurementsState>(
       'StartMeasurementPhase event',
@@ -442,21 +424,7 @@ void main() {
       skip: 3,
       expect: () => [
         _initStateWithPermissions.copyWith(
-          isInitializing: true,
           networkInfoDetails: _networkInfoDetails,
-          clientUuid: "uuid",
-          locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
-          clientUuid: "uuid",
-          locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
-          currentLocation: _locationModel,
-          currentServer: _measurementServers.first,
-          servers: _measurementServers,
           clientUuid: "uuid",
           locationServicesEnabled: true,
         ),
@@ -473,7 +441,7 @@ void main() {
     blocTest<MeasurementsBloc, MeasurementsState>(
       'CompleteMeasurement event',
       build: () => _measurementsBloc,
-      act: (bloc) => bloc.add(CompleteMeasurement(_measurementResult)),
+      act: (bloc) => bloc.add(CompleteAndroidMeasurement(_measurementResult)),
       expect: () => [
         MeasurementsState.startingPhase(
             MeasurementsState.init(), MeasurementPhase.submittingTestResult)
@@ -486,20 +454,9 @@ void main() {
       },
     );
     blocTest<MeasurementsBloc, MeasurementsState>(
-      'ShowMeasurementResult event',
-      build: () => _measurementsBloc,
-      act: (bloc) => bloc.add(ShowMeasurementResult('test')),
-      verify: (bloc) {
-        verifyNever(GetIt.I.get<NavigationService>().pushReplacementRoute(
-              MeasurementResultScreen.route,
-              _measurementResultScreenArguments,
-            ));
-      },
-    );
-    blocTest<MeasurementsBloc, MeasurementsState>(
       'OnMeasurementComplete event',
       build: () => _measurementsBloc,
-      act: (bloc) => bloc.add(OnMeasurementComplete('test')),
+      act: (bloc) => bloc.add(CompleteIOSMeasurement('test')),
       verify: (bloc) {
         verifyNever(GetIt.I.get<NavigationService>().pushReplacementRoute(
               MeasurementResultScreen.route,
@@ -516,13 +473,20 @@ void main() {
             .thenAnswer((realInvocation) async => null);
         return _measurementsBloc;
       },
-      act: (bloc) => bloc.add(StartMeasurement()),
+      act: (bloc) {
+        bloc.add(SetCurrentServer(_measurementServers[0]));
+        bloc.add(StartMeasurement());
+      },
       expect: () {
-        final initState = MeasurementsState.init();
+        final initState = MeasurementsState.init().copyWith(
+          currentServer: _measurementServers[0],
+        );
         final startedState = MeasurementsState.started(initState);
-        final startedStateWithUuid =
-            startedState.copyWith(clientUuid: _measurementResult.uuid);
-        return [startedState, startedStateWithUuid];
+        final startedStateWithUuid = startedState.copyWith(
+          clientUuid: _measurementResult.uuid,
+          triedServersIds: {_measurementServers[0].id},
+        );
+        return [initState, startedState, startedStateWithUuid];
       },
     );
     blocTest<MeasurementsBloc, MeasurementsState>(
@@ -554,7 +518,7 @@ void main() {
         ),
         MeasurementsState.init().copyWith(
           connectivity: ConnectivityResult.wifi,
-          networkInfoDetails: NetworkInfoDetails(type: wifi),
+          networkInfoDetails: _networkInfoDetails,
           currentServer: _measurementServers.first,
           servers: _measurementServers,
         ),
@@ -606,13 +570,13 @@ void main() {
         ),
         MeasurementsState.init().copyWith(
           connectivity: ConnectivityResult.wifi,
-          networkInfoDetails: NetworkInfoDetails(type: wifi),
+          networkInfoDetails: _networkInfoDetails,
           servers: _measurementServers,
           currentServer: _measurementServers.first,
         ),
         MeasurementsState.init().copyWith(
           connectivity: ConnectivityResult.wifi,
-          networkInfoDetails: NetworkInfoDetails(type: wifi),
+          networkInfoDetails: _networkInfoDetails,
           servers: _measurementServers,
           currentServer: _measurementServers.first,
           error: MeasurementsBloc.noConnectionError,
@@ -623,8 +587,10 @@ void main() {
     blocTest<MeasurementsBloc, MeasurementsState>(
       'connectivity returning basic mobile',
       build: () {
-        when(GetIt.I.get<NetworkService>().getBasicNetworkDetails())
-            .thenAnswer((_) async => _basicMobileNetworkInfoDetails);
+        when(GetIt.I.get<NetworkService>().getNetworkInfo(
+              setState: argThat(isNotNull, named: 'setState'),
+              state: argThat(isNotNull, named: 'state'),
+            )).thenAnswer((_) async => _basicMobileNetworkInfoDetails);
         when(GetIt.I
                 .get<MeasurementsApiService>()
                 .getMeasurementServersForCurrentFlavor())
@@ -650,8 +616,10 @@ void main() {
     blocTest<MeasurementsBloc, MeasurementsState>(
       'SetError event with double-checking for connectivity returning some connectivity',
       build: () {
-        when(GetIt.I.get<NetworkService>().getBasicNetworkDetails())
-            .thenAnswer((_) async => _basicWifiNetworkInfoDetails);
+        when(GetIt.I.get<NetworkService>().getNetworkInfo(
+              setState: argThat(isNotNull, named: 'setState'),
+              state: argThat(isNotNull, named: 'state'),
+            )).thenAnswer((_) async => _basicWifiNetworkInfoDetails);
         when(GetIt.I
                 .get<MeasurementsApiService>()
                 .getMeasurementServersForCurrentFlavor())
@@ -695,17 +663,6 @@ void main() {
             _measurementResultScreenArguments,
           ));
     });
-    test(
-        'check permissions calls service if no values are saved in preferences',
-        () async {
-      when(GetIt.I
-              .get<SharedPreferencesWrapper>()
-              .getBool(StorageKeys.isWizardCompleted))
-          .thenReturn(false);
-      final bloc = _measurementsBloc;
-      final permissionsResult = await bloc.checkPermissions();
-      expect(permissionsResult, _permissionsMap);
-    });
   });
 }
 
@@ -720,6 +677,7 @@ MeasurementsBloc _setUpBloc([MeasurementPhase? phase]) {
 
 MeasurementsBloc get _measurementsBloc => MeasurementsBloc(
       errorHandler: _errorHandler,
+      testing: true,
     );
 
 MeasurementsState get _initStateWithPermissions =>
@@ -749,10 +707,13 @@ _setUpStubs() {
 
   when(GetIt.I.get<LocationService>().isLocationServiceEnabled)
       .thenAnswer((_) async => true);
-  when(GetIt.I.get<LocationService>().latestLocation)
-      .thenAnswer((_) async => _locationModel);
-  when(GetIt.I.get<LocationService>().getAddressByLocation(_lat, _lng))
-      .thenAnswer((_) async => _locationModel);
+
+  when(GetIt.I.get<NetworkService>().getNetworkInfo(
+        setState: argThat(isNotNull, named: 'setState'),
+        state: argThat(isNotNull, named: 'state'),
+      )).thenAnswer((realInvocation) async {
+    return _networkInfoDetails;
+  });
 
   when(GetIt.I.get<NetworkService>().subscribeToNetworkChanges(
           changesHandler: anyNamed('changesHandler')))
@@ -762,7 +723,9 @@ _setUpStubs() {
   when(GetIt.I.get<NetworkService>().getBasicNetworkDetails())
       .thenAnswer((_) async => _basicWifiNetworkInfoDetails);
 
-  when(GetIt.I.get<PermissionsService>().initialize()).thenAnswer((_) {});
+  when(GetIt.I.get<PermissionsService>().initAndGet()).thenAnswer((_) async {
+    return _permissionsMap;
+  });
   when(GetIt.I.get<PermissionsService>().isSignalPermissionGranted)
       .thenAnswer((_) async => true);
   when(GetIt.I.get<PermissionsService>().permissionsMap)
@@ -783,7 +746,9 @@ _setUpStubs() {
   when(GetIt.I.get<MeasurementsApiService>().sendMeasurementResults(
           _measurementResult,
           errorHandler: _errorHandler))
-      .thenAnswer((_) async {});
+      .thenAnswer((_) async {
+    return Response(requestOptions: RequestOptions());
+  });
 
   when(GetIt.I.get<SettingsService>().saveClientUuidAndSettings(
         errorHandler: _errorHandler,
@@ -823,6 +788,15 @@ _setUpStubs() {
         measurementServer: null,
         loopModeSettings: null,
       )).thenAnswer((_) async => testStartedMessage);
+
+  when(GetIt.I.get<MeasurementService>().startTest(
+        Environment.appSuffix.substring(1),
+        clientUUID: _measurementResult.uuid,
+        location: null,
+        measurementServer: _measurementServers[0],
+        loopModeSettings: null,
+      )).thenAnswer((_) async => testStartedMessage);
+
   when(GetIt.I.get<MeasurementService>().startTest(
         Environment.appSuffix.substring(1),
         clientUUID: null,
@@ -836,14 +810,6 @@ _setUpStubs() {
   when(GetIt.I.get<PlatformWrapper>().isAndroid).thenAnswer((_) => false);
   when(GetIt.I.get<PlatformWrapper>().isIOS).thenAnswer((_) => true);
 
-  when(GetIt.I.get<DeviceInfoPlugin>().iosInfo)
-      .thenAnswer((_) async => IosDeviceInfo.fromMap({
-            'isPhysicalDevice': false,
-            'name': 'iPhone',
-            'utsname': {
-              'sysname': 'iPhone',
-            },
-          }));
   when(GetIt.I.get<LocalizationService>().currentLocale)
       .thenAnswer((_) => Locale('en'));
 
@@ -860,4 +826,11 @@ _setUpStubs() {
   when(GetIt.I.get<WakelockWrapper>().enable()).thenAnswer((_) {});
 
   when(GetIt.I.get<WakelockWrapper>().disable()).thenAnswer((_) {});
+
+  when(
+    GetIt.I.get<SignalService>().startRecordingSignalInfo(
+          setState: argThat(isNotNull, named: 'setState'),
+          state: argThat(isNotNull, named: 'state'),
+        ),
+  ).thenAnswer((realInvocation) async {});
 }

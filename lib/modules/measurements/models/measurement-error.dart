@@ -1,7 +1,8 @@
-import 'package:nt_flutter_standalone/core/extensions/string.ext.dart';
+import 'package:nt_flutter_standalone/core/constants/api-errors.dart';
 
 class MeasurementError implements Exception {
-  static MeasurementError get pingFailed => MeasurementError("Ping failed");
+  static MeasurementError get pingFailed =>
+      MeasurementError(ApiErrors.pingFailed);
 
   late final String message;
 
@@ -9,7 +10,7 @@ class MeasurementError implements Exception {
     if (message != null && message.isNotEmpty) {
       this.message = message;
     } else {
-      this.message = "Unknown error".translated;
+      this.message = ApiErrors.noConnectionToMS;
     }
   }
 

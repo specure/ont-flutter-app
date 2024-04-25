@@ -79,4 +79,17 @@ class LocationModel with EquatableMixin {
   @override
   List<Object?> get props =>
       [latitude, longitude, city, country, county, postalCode];
+
+  bool isNot(LocationModel? lastLocation) {
+    if (lastLocation == null) {
+      return true;
+    }
+    final latDiff = (latitude! - lastLocation.latitude!).abs();
+    final lonDiff = (longitude! - lastLocation.longitude!).abs();
+    return latDiff > 0.005 || lonDiff > 0.005;
+  }
+
+  bool isA(LocationModel? lastLocation) {
+    return !isNot(lastLocation);
+  }
 }

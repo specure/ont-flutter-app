@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -5,8 +6,10 @@ import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/cell-info.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
+import 'package:nt_flutter_standalone/modules/measurements/models/radio-info.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/signal-info.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart';
@@ -21,6 +24,8 @@ class SignalService {
   static const UNKNOWN = -1;
 
   final CellInfoWrapper cellPlugin = GetIt.I.get<CellInfoWrapper>();
+  final PermissionsService permissionsService =
+      GetIt.I.get<PermissionsService>();
   final PlatformWrapper platform = GetIt.I.get<PlatformWrapper>();
   final PermissionsService permission = GetIt.I.get<PermissionsService>();
   final CarrierInfoWrapper carrierPlugin = GetIt.I.get<CarrierInfoWrapper>();
@@ -28,6 +33,43 @@ class SignalService {
   final WifiForIoTPluginWrapper wifiPlugin =
       GetIt.I.get<WifiForIoTPluginWrapper>();
   final LocationService _locationService = GetIt.I.get<LocationService>();
+
+  Timer? _signalsMeasurementTimer;
+
+  Future startRecordingSignalInfo({
+    required MeasurementsState? state,
+    required Function(RadioInfo)? setState,
+  }) async {
+    if (state == null || setState == null) {
+      return;
+    }
+    final isSignalPermissionGranted =
+        await permissionsService.isSignalPermissionGranted;
+    if (!state.permissions.locationPermissionsGranted ||
+        !state.permissions.phoneStatePermissionsGranted ||
+        !isSignalPermissionGranted) {
+      return;
+    }
+    final primaryCell = await getPrimaryCellInfo();
+    final radioInfo = RadioInfo(
+      cells: primaryCell != null ? [primaryCell] : [],
+      signals: [],
+    );
+    final measurementStartTimestamp = DateTime.now().millisecondsSinceEpoch;
+    _signalsMeasurementTimer?.cancel();
+    _signalsMeasurementTimer =
+        Timer.periodic(Duration(seconds: 1), (timer) async {
+      final signalInfo = await getCurrentSignalInfo(measurementStartTimestamp);
+      if (signalInfo != null) {
+        radioInfo.signals.addAll(signalInfo);
+      }
+      setState(radioInfo);
+    });
+  }
+
+  void stopRecordingSignalInfo() {
+    _signalsMeasurementTimer?.cancel();
+  }
 
   Future<NetworkInfoDetails> getCurrentMobileNetworkDetails() async {
     var networkInfoDetails = NetworkInfoDetails();

@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart';
@@ -33,6 +34,25 @@ class NetworkService {
     return connectivity.onConnectivityChanged.listen((result) {
       changesHandler?.process(result);
     });
+  }
+
+  Future<NetworkInfoDetails?> getNetworkInfo({
+    required MeasurementsState? state,
+    required void Function(NetworkInfoDetails)? setState,
+  }) async {
+    if (state == null || setState == null) {
+      return null;
+    }
+    var locationServiceEnabled =
+        await _locationService.isLocationServiceEnabled;
+    if (!state.permissions.locationPermissionsGranted ||
+        !locationServiceEnabled) {
+      var networkInfoDetails = await getBasicNetworkDetails();
+      return networkInfoDetails;
+    }
+    var networkInfoDetails = await getAllNetworkDetails();
+    setState(networkInfoDetails);
+    return networkInfoDetails;
   }
 
   Future<NetworkInfoDetails> getBasicNetworkDetails() async {

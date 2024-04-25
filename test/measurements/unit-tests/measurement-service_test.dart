@@ -257,7 +257,7 @@ void main() {
       expect(_measurementService.lastPhase, null);
       expect(
         _measurementService.lastDispatchedEvent,
-        isA<CompleteMeasurement>(),
+        isA<CompleteAndroidMeasurement>(),
       );
     });
 
@@ -269,7 +269,7 @@ void main() {
       expect(_measurementService.lastPhase, null);
       expect(
         _measurementService.lastDispatchedEvent,
-        isA<OnMeasurementComplete>(),
+        isA<CompleteIOSMeasurement>(),
       );
     });
 
@@ -322,7 +322,7 @@ void main() {
               .getIstance(host, count: 7, intervalS: 0.5))
           .thenReturn(null);
       await _measurementService.startPingTest(host: host, project: project);
-      verify(_bloc.add(any)).called(1);
+      verify(_bloc.add(any)).called(6);
       expect(
         _measurementService.lastDispatchedEvent,
         isA<StartMeasurementPhase>(),

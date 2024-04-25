@@ -7,7 +7,7 @@ import 'dart:async' as _i25;
 import 'dart:ui' as _i16;
 
 import 'package:connectivity_plus/connectivity_plus.dart' as _i24;
-import 'package:device_info_plus/device_info_plus.dart' as _i41;
+import 'package:device_info_plus/device_info_plus.dart' as _i42;
 import 'package:device_info_plus/src/model/android_device_info.dart' as _i8;
 import 'package:device_info_plus/src/model/ios_device_info.dart' as _i9;
 import 'package:device_info_plus/src/model/linux_device_info.dart' as _i10;
@@ -22,20 +22,20 @@ import 'package:flutter/services.dart' as _i2;
 import 'package:flutter_icmp_ping/flutter_icmp_ping.dart' as _i34;
 import 'package:maplibre_gl/maplibre_gl.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i43;
+import 'package:mockito/src/dummies.dart' as _i44;
 import 'package:nt_flutter_standalone/core/models/bloc-event.dart' as _i29;
 import 'package:nt_flutter_standalone/core/models/error-handler.dart' as _i37;
 import 'package:nt_flutter_standalone/core/models/project.dart' as _i33;
 import 'package:nt_flutter_standalone/core/models/settings.dart' as _i38;
-import 'package:nt_flutter_standalone/core/services/cms.service.dart' as _i48;
+import 'package:nt_flutter_standalone/core/services/cms.service.dart' as _i49;
 import 'package:nt_flutter_standalone/core/services/localization.service.dart'
-    as _i42;
+    as _i43;
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart'
-    as _i40;
+    as _i41;
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart'
     as _i22;
 import 'package:nt_flutter_standalone/core/wrappers/wakelock.wrapper.dart'
-    as _i46;
+    as _i47;
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart'
     as _i30;
 import 'package:nt_flutter_standalone/modules/measurement-result/models/loop-mode-settings-model.dart'
@@ -51,21 +51,23 @@ import 'package:nt_flutter_standalone/modules/measurements/models/network-info-d
 import 'package:nt_flutter_standalone/modules/measurements/models/permissions-map.dart'
     as _i3;
 import 'package:nt_flutter_standalone/modules/measurements/services/app.review.service.dart'
-    as _i44;
+    as _i45;
 import 'package:nt_flutter_standalone/modules/measurements/services/ip-info.service.dart'
     as _i18;
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart'
     as _i39;
 import 'package:nt_flutter_standalone/modules/measurements/services/loop.mode.service.dart'
-    as _i45;
+    as _i46;
 import 'package:nt_flutter_standalone/modules/measurements/services/measurement.service.dart'
     as _i27;
 import 'package:nt_flutter_standalone/modules/measurements/services/network.service.dart'
-    as _i47;
+    as _i48;
 import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart'
     as _i35;
 import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart'
     as _i23;
+import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart'
+    as _i40;
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart'
     as _i20;
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart'
@@ -537,6 +539,22 @@ class MockPermissionsService extends _i1.Mock
       );
 
   @override
+  _i25.Future<_i3.PermissionsMap> initAndGet() => (super.noSuchMethod(
+        Invocation.method(
+          #initAndGet,
+          [],
+        ),
+        returnValue:
+            _i25.Future<_i3.PermissionsMap>.value(_FakePermissionsMap_1(
+          this,
+          Invocation.method(
+            #initAndGet,
+            [],
+          ),
+        )),
+      ) as _i25.Future<_i3.PermissionsMap>);
+
+  @override
   _i25.Future<dynamic> requestLocalNetworkAccess() => (super.noSuchMethod(
         Invocation.method(
           #requestLocalNetworkAccess,
@@ -674,6 +692,24 @@ class MockLocationService extends _i1.Mock implements _i39.LocationService {
       );
 
   @override
+  _i25.Future<void> updateLocation({
+    required _i40.MeasurementsState? state,
+    required dynamic Function(_i30.LocationModel?)? setState,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateLocation,
+          [],
+          {
+            #state: state,
+            #setState: setState,
+          },
+        ),
+        returnValue: _i25.Future<void>.value(),
+        returnValueForMissingStub: _i25.Future<void>.value(),
+      ) as _i25.Future<void>);
+
+  @override
   _i25.Future<_i30.LocationModel?> getAddressByLocation(
     double? latitude,
     double? longitude,
@@ -724,7 +760,7 @@ class MockLocationService extends _i1.Mock implements _i39.LocationService {
 /// A class which mocks [NavigationService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNavigationService extends _i1.Mock implements _i40.NavigationService {
+class MockNavigationService extends _i1.Mock implements _i41.NavigationService {
   MockNavigationService() {
     _i1.throwOnMissingStub(this);
   }
@@ -827,7 +863,7 @@ class MockNavigationService extends _i1.Mock implements _i40.NavigationService {
 /// A class which mocks [DeviceInfoPlugin].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDeviceInfoPlugin extends _i1.Mock implements _i41.DeviceInfoPlugin {
+class MockDeviceInfoPlugin extends _i1.Mock implements _i42.DeviceInfoPlugin {
   MockDeviceInfoPlugin() {
     _i1.throwOnMissingStub(this);
   }
@@ -906,7 +942,7 @@ class MockDeviceInfoPlugin extends _i1.Mock implements _i41.DeviceInfoPlugin {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockLocalizationService extends _i1.Mock
-    implements _i42.LocalizationService {
+    implements _i43.LocalizationService {
   MockLocalizationService() {
     _i1.throwOnMissingStub(this);
   }
@@ -914,7 +950,7 @@ class MockLocalizationService extends _i1.Mock
   @override
   String get appLocaleSeparator => (super.noSuchMethod(
         Invocation.getter(#appLocaleSeparator),
-        returnValue: _i43.dummyValue<String>(
+        returnValue: _i44.dummyValue<String>(
           this,
           Invocation.getter(#appLocaleSeparator),
         ),
@@ -984,7 +1020,7 @@ class MockLocalizationService extends _i1.Mock
           #languageCodeAndScriptFromLanguageTag,
           [languageTag],
         ),
-        returnValue: _i43.dummyValue<String>(
+        returnValue: _i44.dummyValue<String>(
           this,
           Invocation.method(
             #languageCodeAndScriptFromLanguageTag,
@@ -1018,7 +1054,7 @@ class MockLocalizationService extends _i1.Mock
           #translate,
           [key],
         ),
-        returnValue: _i43.dummyValue<String>(
+        returnValue: _i44.dummyValue<String>(
           this,
           Invocation.method(
             #translate,
@@ -1038,7 +1074,7 @@ class MockLocalizationService extends _i1.Mock
           [languageCode],
           {#scriptCode: scriptCode},
         ),
-        returnValue: _i43.dummyValue<String>(
+        returnValue: _i44.dummyValue<String>(
           this,
           Invocation.method(
             #toCMSLanguageCode,
@@ -1067,7 +1103,7 @@ class MockLocalizationService extends _i1.Mock
 /// A class which mocks [AppReviewService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAppReviewService extends _i1.Mock implements _i44.AppReviewService {
+class MockAppReviewService extends _i1.Mock implements _i45.AppReviewService {
   MockAppReviewService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1085,7 +1121,7 @@ class MockAppReviewService extends _i1.Mock implements _i44.AppReviewService {
 /// A class which mocks [LoopModeService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLoopModeService extends _i1.Mock implements _i45.LoopModeService {
+class MockLoopModeService extends _i1.Mock implements _i46.LoopModeService {
   MockLoopModeService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1167,7 +1203,7 @@ class MockLoopModeService extends _i1.Mock implements _i45.LoopModeService {
 /// A class which mocks [WakelockWrapper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWakelockWrapper extends _i1.Mock implements _i46.WakelockWrapper {
+class MockWakelockWrapper extends _i1.Mock implements _i47.WakelockWrapper {
   MockWakelockWrapper() {
     _i1.throwOnMissingStub(this);
   }
@@ -1176,7 +1212,7 @@ class MockWakelockWrapper extends _i1.Mock implements _i46.WakelockWrapper {
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i47.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i48.NetworkService {
   @override
   _i18.IPInfoService get ipInfoService => (super.noSuchMethod(
         Invocation.getter(#ipInfoService),
@@ -1270,7 +1306,7 @@ class MockNetworkService extends _i1.Mock implements _i47.NetworkService {
 
   @override
   _i25.Future<_i25.StreamSubscription<dynamic>> subscribeToNetworkChanges(
-          {_i47.ConnectivityChangesHandler? changesHandler}) =>
+          {_i48.ConnectivityChangesHandler? changesHandler}) =>
       (super.noSuchMethod(
         Invocation.method(
           #subscribeToNetworkChanges,
@@ -1297,6 +1333,25 @@ class MockNetworkService extends _i1.Mock implements _i47.NetworkService {
           ),
         )),
       ) as _i25.Future<_i25.StreamSubscription<dynamic>>);
+
+  @override
+  _i25.Future<_i26.NetworkInfoDetails?> getNetworkInfo({
+    required _i40.MeasurementsState? state,
+    required void Function(_i26.NetworkInfoDetails)? setState,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getNetworkInfo,
+          [],
+          {
+            #state: state,
+            #setState: setState,
+          },
+        ),
+        returnValue: _i25.Future<_i26.NetworkInfoDetails?>.value(),
+        returnValueForMissingStub:
+            _i25.Future<_i26.NetworkInfoDetails?>.value(),
+      ) as _i25.Future<_i26.NetworkInfoDetails?>);
 
   @override
   _i25.Future<_i26.NetworkInfoDetails> getBasicNetworkDetails() =>
@@ -1352,7 +1407,7 @@ class MockNetworkService extends _i1.Mock implements _i47.NetworkService {
 /// A class which mocks [CMSService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCMSService extends _i1.Mock implements _i48.CMSService {
+class MockCMSService extends _i1.Mock implements _i49.CMSService {
   @override
   _i4.Dio get dio => (super.noSuchMethod(
         Invocation.getter(#dio),

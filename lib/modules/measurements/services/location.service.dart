@@ -7,6 +7,7 @@ import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/address.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/geocoding-wrapper.dart';
 
 class LocationService extends DioService {
@@ -42,6 +43,32 @@ class LocationService extends DioService {
       print(e);
       return null;
     }
+  }
+
+  Future<void> updateLocation({
+    required MeasurementsState? state,
+    required Function(LocationModel?)? setState,
+  }) async {
+    if (state == null || setState == null) {
+      return;
+    }
+    if (!state.permissions.locationPermissionsGranted) {
+      return;
+    }
+    final locationServiceEnabled = await isLocationServiceEnabled;
+    if (!locationServiceEnabled) {
+      return;
+    }
+    final currentLocation = await latestLocation;
+    if (currentLocation == null || currentLocation.isA(state.currentLocation)) {
+      return;
+    }
+    try {
+      setState(await getAddressByLocation(
+        currentLocation.latitude!,
+        currentLocation.longitude!,
+      ));
+    } catch (_) {}
   }
 
   Future<LocationModel?> getAddressByLocation(

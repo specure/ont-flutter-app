@@ -8,6 +8,7 @@ import 'package:nt_flutter_standalone/core/mixins/error-handling-state.mixin.dar
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
 import 'package:nt_flutter_standalone/core/widgets/app-bar.widget.dart';
 import 'package:nt_flutter_standalone/core/widgets/orientation-builder.widget.dart';
+import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
 import 'package:nt_flutter_standalone/modules/measurements/screens/measurement.screen.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
@@ -96,7 +97,9 @@ class _StartTestWidgetState extends State<StartTestWidget>
   }
 
   _openMeasurementScreen(MeasurementsState state) {
-    if (state.isContinuing && !state.isMeasurementScreenOpen) {
+    if (state.isContinuing &&
+        !state.isMeasurementScreenOpen &&
+        state.phase != MeasurementPhase.none) {
       try {
         Navigator.pushNamed(context, MeasurementScreen.route);
         GetIt.I.get<MeasurementsBloc>().add(SetMeasurmentScreenOpen(true));

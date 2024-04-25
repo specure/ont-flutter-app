@@ -53,11 +53,31 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MeasurementsBloc, MeasurementsState>(
-        builder: (context, state) => WillPopScope(
-              onWillPop: () async {
+    return BlocConsumer<MeasurementsBloc, MeasurementsState>(
+        listenWhen: (previous, current) =>
+            current.message != null && current.message != previous.message,
+        listener: (context, state) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(
+                SnackBar(
+                  content: Center(
+                    child: Text(
+                      state.message!.translated,
+                      style: TextStyle(color: NTColors.title),
+                    ),
+                  ),
+                  backgroundColor: Colors.white,
+                  duration: Duration(milliseconds: 600),
+                ),
+              )
+              .closed
+              .then((value) => ScaffoldMessenger.of(context).clearSnackBars())
+              .catchError((_) {});
+        },
+        builder: (context, state) => PopScope(
+              canPop: false,
+              onPopInvoked: (_) {
                 onClosePressed(state);
-                return false;
               },
               child: Stack(
                 children: [

@@ -36,6 +36,9 @@ class MeasurementsState
   final ConnectivityResult connectivity;
   final NTProject? project;
   final bool leavingScreenShown;
+  final int retryCount;
+  late final Set<int> triedServersIds;
+  final String? message;
 
   List<double> get currentPhaseResultsList => phaseProgressResults[phase] ?? [];
   double get lastResultForCurrentPhase => currentPhaseResultsList.lastWhere(
@@ -81,9 +84,13 @@ class MeasurementsState
     this.connectivity = ConnectivityResult.none,
     this.locationServicesEnabled = false,
     this.leavingScreenShown = false,
+    this.retryCount = 0,
+    this.message = null,
+    Set<int>? triedServersIds,
     Exception? error,
   }) {
     this.error = error;
+    this.triedServersIds = triedServersIds ?? {};
   }
 
   MeasurementsState.init()
@@ -98,13 +105,16 @@ class MeasurementsState
         isContinuing = false,
         isMeasurementScreenOpen = false,
         servers = null,
+        triedServersIds = {},
         currentServer = null,
         currentLocation = null,
         clientUuid = null,
         connectivity = ConnectivityResult.none,
         locationServicesEnabled = false,
         leavingScreenShown = false,
-        project = null;
+        project = null,
+        retryCount = 0,
+        message = null;
 
   MeasurementsState.started(MeasurementsState currentState)
       : networkInfoDetails = currentState.networkInfoDetails,
@@ -118,13 +128,16 @@ class MeasurementsState
         isContinuing = true,
         isMeasurementScreenOpen = currentState.isMeasurementScreenOpen,
         servers = currentState.servers,
+        triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
         clientUuid = currentState.clientUuid,
         connectivity = currentState.connectivity,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = false,
-        project = currentState.project;
+        project = currentState.project,
+        retryCount = currentState.retryCount,
+        message = null;
 
   MeasurementsState.startingPhase(
     MeasurementsState currentState,
@@ -142,6 +155,7 @@ class MeasurementsState
         isContinuing = phase != MeasurementPhase.none,
         isMeasurementScreenOpen = currentState.isMeasurementScreenOpen,
         servers = currentState.servers,
+        triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
         clientUuid = currentState.clientUuid,
@@ -149,11 +163,13 @@ class MeasurementsState
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project;
+        project = currentState.project,
+        retryCount = currentState.retryCount,
+        message = currentState.message;
 
   MeasurementsState.withResultsForPhase(
     MeasurementsState currentState,
-    MapEntry<MeasurementPhase, double> result,
+    MapEntry<MeasurementPhase, double?> result,
   )   : networkInfoDetails = currentState.networkInfoDetails,
         prevPhase = currentState.prevPhase,
         phase = currentState.phase,
@@ -167,6 +183,7 @@ class MeasurementsState
         isContinuing = true,
         isMeasurementScreenOpen = currentState.isMeasurementScreenOpen,
         servers = currentState.servers,
+        triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
         clientUuid = currentState.clientUuid,
@@ -174,7 +191,9 @@ class MeasurementsState
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project;
+        project = currentState.project,
+        retryCount = currentState.retryCount,
+        message = currentState.message;
 
   MeasurementsState.withProgressForPhase(
     MeasurementsState currentState,
@@ -195,6 +214,7 @@ class MeasurementsState
         isContinuing = true,
         isMeasurementScreenOpen = currentState.isMeasurementScreenOpen,
         servers = currentState.servers,
+        triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
         clientUuid = currentState.clientUuid,
@@ -202,7 +222,9 @@ class MeasurementsState
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project;
+        project = currentState.project,
+        retryCount = currentState.retryCount,
+        message = currentState.message;
 
   MeasurementsState.finished(
     MeasurementsState currentState,
@@ -216,6 +238,7 @@ class MeasurementsState
         isContinuing = false,
         isMeasurementScreenOpen = false,
         servers = currentState.servers,
+        triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
         clientUuid = currentState.clientUuid,
@@ -223,7 +246,9 @@ class MeasurementsState
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project;
+        project = currentState.project,
+        retryCount = currentState.retryCount,
+        message = currentState.message;
 
   MeasurementsState.removeObsoleteInformation(
     MeasurementsState currentState,
@@ -238,6 +263,7 @@ class MeasurementsState
         isContinuing = currentState.isContinuing,
         isMeasurementScreenOpen = currentState.isMeasurementScreenOpen,
         servers = currentState.servers,
+        triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = null,
         clientUuid = currentState.clientUuid,
@@ -245,7 +271,9 @@ class MeasurementsState
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project;
+        project = currentState.project,
+        retryCount = currentState.retryCount,
+        message = currentState.message;
 
   MeasurementsState copyWith({
     NetworkInfoDetails? networkInfoDetails,
@@ -258,6 +286,7 @@ class MeasurementsState
     Map<MeasurementPhase, double?>? phaseFinalResults,
     PermissionsMap? permissions,
     List<MeasurementServer>? servers,
+    Set<int>? triedServersIds,
     MeasurementServer? currentServer,
     LocationModel? currentLocation,
     Exception? error,
@@ -269,6 +298,8 @@ class MeasurementsState
     NTProject? project,
     bool? locationServicesEnabled,
     bool? leavingScreenShown,
+    int? retryCount,
+    String? message,
   }) {
     return MeasurementsState(
       networkInfoDetails: networkInfoDetails ?? this.networkInfoDetails,
@@ -282,6 +313,7 @@ class MeasurementsState
       phaseFinalResults: phaseFinalResults ?? this.phaseFinalResults,
       permissions: permissions ?? this.permissions,
       servers: servers ?? this.servers,
+      triedServersIds: triedServersIds ?? this.triedServersIds,
       currentServer: currentServer ?? this.currentServer,
       currentLocation: currentLocation ?? this.currentLocation,
       error: error,
@@ -292,6 +324,8 @@ class MeasurementsState
       locationServicesEnabled:
           locationServicesEnabled ?? this.locationServicesEnabled,
       leavingScreenShown: leavingScreenShown ?? this.leavingScreenShown,
+      retryCount: retryCount ?? this.retryCount,
+      message: message ?? this.message,
     );
   }
 
@@ -307,6 +341,7 @@ class MeasurementsState
         phaseFinalResults,
         permissions,
         servers,
+        triedServersIds,
         currentServer,
         currentLocation,
         error,
@@ -315,7 +350,9 @@ class MeasurementsState
         loopModeDetails,
         locationServicesEnabled,
         leavingScreenShown,
-        project
+        project,
+        retryCount,
+        message
       ];
 
   @override
@@ -352,6 +389,16 @@ class MeasurementsState
       case MeasurementPhase.submittingTestResult:
       default:
         return "-";
+    }
+  }
+
+  MeasurementServer? get nextServer {
+    try {
+      final nextServer =
+          servers!.firstWhere((el) => !triedServersIds.contains(el.id));
+      return nextServer;
+    } catch (_) {
+      return null;
     }
   }
 

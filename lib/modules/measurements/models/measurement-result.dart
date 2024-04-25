@@ -1,9 +1,14 @@
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:get_it/get_it.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/measurement-history-result.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/ping.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/radio-info.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
+import 'package:nt_flutter_standalone/modules/measurements/models/signal-info.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/speed-detail.dart';
+import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 
 import '../../measurement-result/models/loop-mode-settings-model.dart';
 
@@ -204,5 +209,57 @@ class MeasurementResult {
       localIpAddress: arguments?['test_ip_local'] ?? unknown,
       time: DateTime.now().millisecondsSinceEpoch,
     );
+  }
+
+  Future fillRemainingMetadata(
+    MeasurementsState state, {
+    RadioInfo? radioInfo,
+    bool testing = false,
+  }) async {
+    // called on Android only
+    networkType = serverNetworkTypes[state.networkInfoDetails.type];
+    dualSim = state.networkInfoDetails.isDualSim;
+    clientLanguage =
+        GetIt.I.get<LocalizationService>().currentLocale.languageCode;
+    this.radioInfo = RadioInfo(
+      cells: radioInfo?.cells ?? [],
+      signals: _setTimeNsLastForSignals(radioInfo),
+    );
+    telephonyNetworkSimOperator =
+        state.networkInfoDetails.telephonyNetworkSimOperator;
+    telephonyNetworkSimOperatorName =
+        state.networkInfoDetails.telephonyNetworkSimOperatorName;
+    telephonyNetworkSimCountry =
+        state.networkInfoDetails.telephonyNetworkSimCountry;
+    telephonyNetworkOperator =
+        state.networkInfoDetails.telephonyNetworkOperator;
+    telephonyNetworkOperatorName =
+        state.networkInfoDetails.telephonyNetworkOperatorName;
+    telephonyNetworkCountry = state.networkInfoDetails.telephonyNetworkCountry;
+    telephonyNetworkIsRoaming =
+        state.networkInfoDetails.telephonyNetworkIsRoaming;
+    platform = 'Android';
+    if (!testing) {
+      final androidInfo = await GetIt.I.get<DeviceInfoPlugin>().androidInfo;
+      device = androidInfo.device;
+      model = androidInfo.model;
+      apiLevel = androidInfo.version.sdkInt.toString();
+      osVersion =
+          '${androidInfo.version.release} (${androidInfo.version.incremental})';
+      product = androidInfo.brand;
+    }
+  }
+
+  List<SignalInfo> _setTimeNsLastForSignals(
+    RadioInfo? radioInfo,
+  ) {
+    if (radioInfo?.signals == null) {
+      return [];
+    }
+    return radioInfo!.signals
+        .map((signal) => signal.copyWithTimeNs(
+              timeNsLast: radioInfo.signals.last.timeNs,
+            ))
+        .toList();
   }
 }

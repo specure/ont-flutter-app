@@ -87,7 +87,7 @@ class MockMeasurementsApiService extends _i1.Mock
       );
 
   @override
-  _i4.Future<dynamic> sendMeasurementResults(
+  _i4.Future<_i2.Response<dynamic>?> sendMeasurementResults(
     _i5.MeasurementResult? result, {
     _i6.ErrorHandler? errorHandler,
   }) =>
@@ -97,8 +97,8 @@ class MockMeasurementsApiService extends _i1.Mock
           [result],
           {#errorHandler: errorHandler},
         ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+        returnValue: _i4.Future<_i2.Response<dynamic>?>.value(),
+      ) as _i4.Future<_i2.Response<dynamic>?>);
 
   @override
   _i4.Future<List<_i7.MeasurementServer>>

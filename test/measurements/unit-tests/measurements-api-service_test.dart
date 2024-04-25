@@ -55,7 +55,7 @@ void main() {
           .sendMeasurementResults(_emptyMeasurementResult,
               errorHandler: _errorHandler);
       expect(result, isNull);
-      verify(_errorHandler.process(_dioError)).called(1);
+      verify(_errorHandler.process(any)).called(1);
     });
     test('returns list of servers if the request was successful', () async {
       final result = await MeasurementsApiService(testing: true)
@@ -134,5 +134,5 @@ _setUpStubs() {
         statusCode: 200,
         data: {'ip': '192.168.0.0'},
       ));
-  when(_errorHandler.process(_dioError)).thenReturn(null);
+  when(_errorHandler.process(any)).thenReturn(null);
 }
