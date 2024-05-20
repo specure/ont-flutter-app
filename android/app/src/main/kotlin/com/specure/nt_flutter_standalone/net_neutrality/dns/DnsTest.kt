@@ -17,7 +17,7 @@ const val QUERY_STATUS_RESULT_ERROR = "ERROR"
 const val QUERY_STATUS_RESULT_TIMEOUT = "TIMEOUT"
 const val QUERY_STATUS_RESULT_UNKNOWN = "UNKNOWN"
 
-class DnsTest(private val resolver: String?, private val host: String, timeoutSeconds: Int?, private  val recordType: String?) {
+class DnsTest(private val resolver: String?, private val host: String, timeoutSeconds: Double?, private  val recordType: String?) {
     private var queryResult = QUERY_STATUS_RESULT_UNKNOWN
     private var resultStatus = -1
     private var rawResponse:String? = null
@@ -25,7 +25,7 @@ class DnsTest(private val resolver: String?, private val host: String, timeoutSe
     private var resultRecords: List<DnsRecord> = mutableListOf()
     private var startTimeNanos: Long? = null
     private var endTimeNanos: Long? = null
-    private var resultTimeoutSeconds: Int = timeoutSeconds ?: DEFAULT_TIMEOUT_SECONDS
+    private var resultTimeoutSeconds: Int = timeoutSeconds?.toInt() ?: DEFAULT_TIMEOUT_SECONDS
 
     fun execute(result: io.flutter.plugin.common.MethodChannel.Result? = null) = io {
         val dnsResult: DnsResult

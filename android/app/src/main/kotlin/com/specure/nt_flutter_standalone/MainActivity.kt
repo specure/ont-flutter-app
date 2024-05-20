@@ -248,7 +248,7 @@ class MainActivity : FlutterActivity() {
             MeasurementService.intent(context), measurementServiceConnection, Context.BIND_AUTO_CREATE)
     }
 
-    private fun startDnsTest(resolver: String?, host: String, timeoutSeconds: Int?, addressType: String?, result: MethodChannel.Result) {
+    private fun startDnsTest(resolver: String?, host: String, timeoutSeconds: Double?, addressType: String?, result: MethodChannel.Result) {
         val test = DnsTest(resolver, host, timeoutSeconds, addressType)
         test.execute(result)
     }
