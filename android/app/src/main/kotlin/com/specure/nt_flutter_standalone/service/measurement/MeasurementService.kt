@@ -3,6 +3,7 @@ package com.specure.nt_flutter_standalone.service.measurement
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.Handler
@@ -57,6 +58,7 @@ private const val CLIENT_NAME = "RMBT"
 private const val CLIENT_TYPE = "MOBILE"
 private const val CLIENT_VERSION = "1"
 private const val PATH_PREFIX = "mobile"
+private const val NOTIFICATION_ID = 101
 
 private const val SKIP_QOS_TESTS = true
 
@@ -238,13 +240,20 @@ class MeasurementService : CustomLifecycleService() {
         val action = NotificationCompat.Action.Builder(0, "Cancel measurement", actionIntent).build()
         val contentIntent = PendingIntent.getActivity(this@MeasurementService, 0, Intent(this@MeasurementService, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val builder = NotificationCompat.Builder(this, "measurement")
+            val notification = NotificationCompat.Builder(this, "measurement")
                 .setContentText("Measurement is running...")
                 .setContentTitle("Measurement")
                 .setContentIntent(contentIntent)
                 .setSmallIcon(android.R.drawable.ic_media_play)
                 .addAction(action)
-            startForeground(101, builder.build())
+                .build()
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                startForeground(NOTIFICATION_ID, notification)
+            } else {
+                startForeground(NOTIFICATION_ID, notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+            }
         }
     }
 
