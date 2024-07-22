@@ -7,6 +7,8 @@ class StorageKeys {
   static const String preciseLocationPermissionsGranted = "preciseLocationPermissionsGranted";
   static const String phoneStatePermissionsGranted =
       "phoneStatePermissionsGranted";
+  static const String notificationPermissionGranted =
+      "notificationPermissionGranted";
   static const String analyticsEnabled = "analyticsEnabled";
   static const String loopModeEnabled = "loopModeEnabled";
   static const String loopModeFeatureEnabled = "loopModeFeatureEnabled";

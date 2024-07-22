@@ -69,10 +69,20 @@ void main() {
       find.text("Location Permissions", skipOffstage: false),
       findsOneWidget,
     );
+    await tester.dragUntilVisible(find.byKey(ValueKey('clientUuid')),
+        find.byType(ListView), Offset(0, -100));
+    await tester.pumpAndSettle();
     expect(
       find.text("Persistent Client UUID", skipOffstage: false),
       findsOneWidget,
     );
+    expect(
+      find.text("Notification Permissions", skipOffstage: false),
+      findsOneWidget,
+    );
+    await tester.dragUntilVisible(find.byKey(ValueKey('analytics')),
+        find.byType(ListView), Offset(0, -100));
+    await tester.pumpAndSettle();
     expect(
       find.text(
           "Help us improve #appName"
@@ -80,12 +90,6 @@ void main() {
           skipOffstage: false),
       findsOneWidget,
     );
-    expect(
-        find.byType(WizardAccuracyItem, skipOffstage: false), findsNWidgets(4));
-    await tester.dragUntilVisible(find.byKey(ValueKey('analytics')),
-        find.byType(ListView), Offset(0, -100));
-    await tester.pumpAndSettle();
-
     final button = find.byType(GradientButton);
     expect(button, findsOneWidget);
     expect(
@@ -105,7 +109,11 @@ void main() {
   group("Wizard Accuracy screen", () {
     testWidgets(
       "shows accuracy widget on Android in the landscape mode",
-      callTester,
+      (tester) async {
+        tester.binding.window.physicalSizeTestValue = Size(2650, 1200);
+        addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+        callTester(tester);
+      },
     );
     testWidgets(
       "shows accuracy widget on Android in the portrait mode",

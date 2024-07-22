@@ -74,6 +74,8 @@ class MeasurementService {
             _prefs.getBool(StorageKeys.phoneStatePermissionsGranted),
         'locationPermissionGranted':
             _prefs.getBool(StorageKeys.locationPermissionsGranted),
+        'notificationPermissionGranted':
+            _prefs.getBool(StorageKeys.notificationPermissionGranted),
         'uuidPermissionGranted':
             _prefs.getBool(StorageKeys.persistentClientUuidEnabled),
         'pingsNs': _pingsNs,

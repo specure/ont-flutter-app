@@ -110,6 +110,28 @@ class _WizardAccuracyState extends State<WizardAccuracy> {
                         ),
                       ),
                       ConditionalContent(
+                        conditional: GetIt.I.get<PlatformWrapper>().isAndroid,
+                        truthyBuilder: () => Container(
+                          margin: const EdgeInsets.only(top: 26),
+                          child: WizardAccuracyItem(
+                            key: ValueKey('notification'),
+                            iconData: Icons.notifications,
+                            title: "Notification Permissions",
+                            lead:
+                                "We need to display a notification to ensure your measurement continues running correctly when you leave the app."
+                                    .translated,
+                            hasSwitch: true,
+                            switchValue: state.isNotificationPermissionSwitchOn,
+                            onSwitchChange: (p0) {
+                              GetIt.I.get<WizardCubit>().update(
+                                    state.copyWith(
+                                        isNotificationPermissionSwitchOn: p0),
+                                  );
+                            },
+                          ),
+                        ),
+                      ),
+                      ConditionalContent(
                         conditional: GetIt.I.get<PlatformWrapper>().isIOS &&
                             state.project?.enableAppNetNeutralityTests == true,
                         truthyBuilder: () => Container(

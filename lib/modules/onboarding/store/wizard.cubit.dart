@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/services/cms.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
+import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/screens/home.screen.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart';
@@ -11,6 +12,8 @@ import 'package:nt_flutter_standalone/modules/onboarding/store/wizard.state.dart
 class WizardCubit extends Cubit<WizardState> {
   final PermissionsService _permissionsService =
       GetIt.I.get<PermissionsService>();
+
+  final PlatformWrapper platform = GetIt.I.get<PlatformWrapper>();
 
   final SharedPreferencesWrapper _preferencesWrapper =
       GetIt.I.get<SharedPreferencesWrapper>();
@@ -31,6 +34,7 @@ class WizardCubit extends Cubit<WizardState> {
   handlePermissions() async {
     await _handlePhonePermissions();
     await _handleLocationPermissions();
+    await _handleNotificationPermissions();
     await _handleNetworkAcceess();
     await _preferencesWrapper.setBool(
         StorageKeys.analyticsEnabled, state.isAnalyticsSwitchOn);
@@ -69,5 +73,16 @@ class WizardCubit extends Cubit<WizardState> {
         state.project?.enableAppNetNeutralityTests == true) {
       await _permissionsService.requestLocalNetworkAccess();
     }
+  }
+
+  _handleNotificationPermissions() async {
+    bool isGranted = false;
+    if (state.isNotificationPermissionSwitchOn && platform.isAndroid) {
+      isGranted = await _permissionsService.isNotificationPermissionGranted;
+    }
+    await _preferencesWrapper.setBool(
+      StorageKeys.notificationPermissionGranted,
+      isGranted,
+    );
   }
 }

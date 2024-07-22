@@ -240,6 +240,10 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
           StorageKeys.preciseLocationPermissionsGranted,
           event.payload.preciseLocationPermissionsGranted,
         );
+        preferences.setBool(
+          StorageKeys.notificationPermissionGranted,
+          event.payload.notificationPermissionGranted,
+        );
       }
       emit(state.copyWith(permissions: event.payload));
       if (event.payload.locationPermissionsGranted &&

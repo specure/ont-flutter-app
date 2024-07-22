@@ -51,6 +51,7 @@ private const val TEST_START_EXTRA = "externalTestStart"
 private const val TELEPHONY_PERMISSION_GRANTED = "telephony_permission_granted"
 private const val LOCATION_PERMISSION_GRANTED = "location_permission_granted"
 private const val UUID_PERMISSION_GRANTED = "uuid_permission_granted"
+private const val NOTIFICATION_PERMISSION_GRANTED = "notification_permission_granted"
 private const val KEY_LOOP_MODE_ENABLED = "user_loop_mode"
 private const val KEY_LOOP_MODE_SETTINGS = "loopmode_info"
 
@@ -80,6 +81,7 @@ class MeasurementService : CustomLifecycleService() {
     private var externalTestStart: Double = 0.0
     private var telephonyPermissionGranted: Boolean = false
     private var locationPermissionGranted: Boolean = false
+    private var notificationPermissionGranted: Boolean = false
     private var uuidPermissionGranted: Boolean = false
     private var loopModeConfig: LoopModeSettings? = null
 
@@ -128,6 +130,7 @@ class MeasurementService : CustomLifecycleService() {
             }
             put(TELEPHONY_PERMISSION_GRANTED, telephonyPermissionGranted)
             put(LOCATION_PERMISSION_GRANTED, locationPermissionGranted)
+            put(NOTIFICATION_PERMISSION_GRANTED, notificationPermissionGranted)
             put(UUID_PERMISSION_GRANTED, uuidPermissionGranted)
             put(APP_VERSION_EXTRA, appVersion)
             if (loopModeConfig != null) {
@@ -205,6 +208,7 @@ class MeasurementService : CustomLifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("MeasurementService: onStartCommand ${intent?.action}")
         if (intent != null) {
+            showForegroundNotificationForAndroidO()
             host = resources.getString(R.string.control_server_url)
             appVersion = intent.getStringExtra(APP_VERSION_EXTRA) ?: ""
             clientUUID = intent.getStringExtra(CLIENT_UUID_EXTRA) ?: ""
@@ -220,13 +224,13 @@ class MeasurementService : CustomLifecycleService() {
             }
             telephonyPermissionGranted = intent.getBooleanExtra(TELEPHONY_PERMISSION_GRANTED, false)
             locationPermissionGranted = intent.getBooleanExtra(LOCATION_PERMISSION_GRANTED, false)
+            notificationPermissionGranted = intent.getBooleanExtra(NOTIFICATION_PERMISSION_GRANTED, false)
             uuidPermissionGranted = intent.getBooleanExtra(UUID_PERMISSION_GRANTED, false)
             externalPings = intent.getDoubleArrayExtra(PINGS_EXTRA) ?: doubleArrayOf()
             externalJitter = intent.getDoubleExtra(JITTER_EXTRA, 0.0)
             externalPacketLoss = intent.getDoubleExtra(PACKET_LOSS_EXTRA, 0.0)
             externalTestStart = intent.getDoubleExtra(TEST_START_EXTRA, 0.0)
             println("Measurement Server id: ${measurementServer?.id}")
-            showForegroundNotificationForAndroidO()
             when (intent.action) {
                 ACTION_START_TEST -> startTest()
                 ACTION_STOP_TEST -> stopTest()
@@ -251,8 +255,7 @@ class MeasurementService : CustomLifecycleService() {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 startForeground(NOTIFICATION_ID, notification)
             } else {
-                startForeground(NOTIFICATION_ID, notification,
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
             }
         }
     }
@@ -468,6 +471,7 @@ class MeasurementService : CustomLifecycleService() {
             measurementServer: TargetMeasurementServer?,
             telephonyPermissionGranted: Boolean,
             locationPermissionGranted: Boolean,
+            notificationPermissionGranted: Boolean,
             uuidPermissionGranted: Boolean,
             loopModeSettings: LoopModeSettings?,
             externalPings: DoubleArray,
@@ -493,6 +497,7 @@ class MeasurementService : CustomLifecycleService() {
             intent.putExtra(TELEPHONY_PERMISSION_GRANTED, telephonyPermissionGranted)
             intent.putExtra(LOCATION_PERMISSION_GRANTED, locationPermissionGranted)
             intent.putExtra(UUID_PERMISSION_GRANTED, uuidPermissionGranted)
+            intent.putExtra(NOTIFICATION_PERMISSION_GRANTED, notificationPermissionGranted)
             intent.putExtra(PINGS_EXTRA, externalPings)
             intent.putExtra(JITTER_EXTRA, externalJitter)
             intent.putExtra(PACKET_LOSS_EXTRA, externalPacketLoss)
@@ -510,7 +515,7 @@ class MeasurementService : CustomLifecycleService() {
 
         fun stopTests(context: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(stopTestsIntent(context))
+                context.startService(stopTestsIntent(context))
             } else {
                 context.startService(stopTestsIntent(context))
             }

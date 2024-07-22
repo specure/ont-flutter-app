@@ -22,10 +22,13 @@ Future _testPermissionsMap() async {
         StorageKeys.locationPermissionsGranted,
       )).thenReturn(true);
   when(GetIt.I.get<SharedPreferencesWrapper>().getBool(
-    StorageKeys.preciseLocationPermissionsGranted,
-  )).thenReturn(true);
+        StorageKeys.preciseLocationPermissionsGranted,
+      )).thenReturn(true);
   when(GetIt.I.get<SharedPreferencesWrapper>().getBool(
         StorageKeys.phoneStatePermissionsGranted,
+      )).thenReturn(true);
+  when(GetIt.I.get<SharedPreferencesWrapper>().getBool(
+        StorageKeys.notificationPermissionGranted,
       )).thenReturn(true);
   final permissionsService = PermissionsService();
   expect(
@@ -34,6 +37,7 @@ Future _testPermissionsMap() async {
       locationPermissionsGranted: true,
       readPhoneStatePermissionsGranted: true,
       preciseLocationPermissionsGranted: true,
+      notificationPermissionGranted: true,
     ),
   );
 }

@@ -36,6 +36,16 @@ fun Context.isReadPhoneStatePermitted() =
     ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
 
 /**
+ * @return true if [Manifest.permission.POST_NOTIFICATIONS] permission is granted
+ */
+fun Context.isPostingNotificationsPermitted() =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+    } else {
+        true
+    }
+
+/**
  * Opens Current application system settings
  */
 @RequiresApi(Build.VERSION_CODES.GINGERBREAD)

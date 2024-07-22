@@ -6,6 +6,7 @@ class PermissionsMap extends Equatable {
   final bool locationPermissionsGranted;
   final bool preciseLocationPermissionsGranted;
   final bool readPhoneStatePermissionsGranted;
+  final bool notificationPermissionGranted;
 
   bool get phoneStatePermissionsGranted =>
       Platform.isIOS || readPhoneStatePermissionsGranted;
@@ -14,6 +15,7 @@ class PermissionsMap extends Equatable {
     this.locationPermissionsGranted = false,
     this.preciseLocationPermissionsGranted = false,
     this.readPhoneStatePermissionsGranted = false,
+    this.notificationPermissionGranted = false,
   });
 
   PermissionsMap.fromJson(Map<String, dynamic> json)
@@ -21,19 +23,29 @@ class PermissionsMap extends Equatable {
             json['locationPermissionsGranted'].toString().toLowerCase() ==
                 "true",
         preciseLocationPermissionsGranted =
-            json['preciseLocationPermissionsGranted'].toString().toLowerCase() ==
+            json['preciseLocationPermissionsGranted']
+                    .toString()
+                    .toLowerCase() ==
                 "true",
         readPhoneStatePermissionsGranted =
             json['readPhoneStatePermissionsGranted'].toString().toLowerCase() ==
+                "true",
+        notificationPermissionGranted =
+            json['notificationPermissionGranted'].toString().toLowerCase() ==
                 "true";
 
   @override
-  List<Object?> get props =>
-      [locationPermissionsGranted, preciseLocationPermissionsGranted, readPhoneStatePermissionsGranted];
+  List<Object?> get props => [
+        locationPermissionsGranted,
+        preciseLocationPermissionsGranted,
+        readPhoneStatePermissionsGranted,
+        notificationPermissionGranted,
+      ];
 
   Map<String, dynamic> toJson() => {
         "locationPermissionsGranted": locationPermissionsGranted,
         "preciseLocationPermissionsGranted": preciseLocationPermissionsGranted,
-        "readPhoneStatePermissionsGranted": readPhoneStatePermissionsGranted
+        "readPhoneStatePermissionsGranted": readPhoneStatePermissionsGranted,
+        "notificationPermissionGranted": notificationPermissionGranted
       };
 }

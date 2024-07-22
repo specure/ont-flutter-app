@@ -432,6 +432,8 @@ Future _testLoopOnTestFinished() async {
     when(_prefs.getBool(StorageKeys.loopModeNetNeutralityEnabled))
         .thenAnswer((_) => true);
     when(_prefs.getBool(StorageKeys.loopModeEnabled)).thenAnswer((_) => true);
+    when(_prefs.getBool(StorageKeys.notificationPermissionGranted))
+        .thenAnswer((_) => true);
     when(_prefs.getInt(StorageKeys.loopModeMeasurementCountSet))
         .thenAnswer((_) => 2);
     when(_prefs.getInt(StorageKeys.loopModeDistanceMetersSet))

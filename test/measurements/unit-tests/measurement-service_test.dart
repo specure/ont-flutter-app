@@ -56,6 +56,10 @@ void main() {
         .thenReturn(true);
     when(GetIt.I
             .get<SharedPreferencesWrapper>()
+            .getBool(StorageKeys.notificationPermissionGranted))
+        .thenReturn(true);
+    when(GetIt.I
+            .get<SharedPreferencesWrapper>()
             .getBool(StorageKeys.persistentClientUuidEnabled))
         .thenReturn(true);
     when(GetIt.I.get<CarrierInfoWrapper>().getNativeCarrierName())
@@ -94,6 +98,7 @@ void main() {
         'telephonyPermissionGranted': true,
         'locationPermissionGranted': true,
         'uuidPermissionGranted': true,
+        'notificationPermissionGranted': true,
         'pingsNs': [],
         'testStartNs': 0.0,
         'packetLoss': 0.0,

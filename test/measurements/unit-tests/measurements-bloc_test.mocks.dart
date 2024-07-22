@@ -503,6 +503,12 @@ class MockPermissionsService extends _i1.Mock
       ) as _i25.Future<bool>);
 
   @override
+  _i25.Future<bool> get isNotificationPermissionGranted => (super.noSuchMethod(
+        Invocation.getter(#isNotificationPermissionGranted),
+        returnValue: _i25.Future<bool>.value(false),
+      ) as _i25.Future<bool>);
+
+  @override
   _i25.Future<bool> get isLocationWhenInUseEnabled => (super.noSuchMethod(
         Invocation.getter(#isLocationWhenInUseEnabled),
         returnValue: _i25.Future<bool>.value(false),

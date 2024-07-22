@@ -32,6 +32,8 @@ void main() {
         .thenAnswer(((realInvocation) async => _project));
     when(GetIt.I.get<PermissionsService>().isPhonePermissionGranted)
         .thenAnswer(((realInvocation) async => true));
+    when(GetIt.I.get<PermissionsService>().isNotificationPermissionGranted)
+        .thenAnswer(((realInvocation) async => true));
     when(GetIt.I.get<PermissionsService>().isLocationPermissionGranted)
         .thenAnswer(((realInvocation) async => true));
     when(GetIt.I.get<PermissionsService>().requestLocalNetworkAccess())
@@ -55,6 +57,10 @@ void main() {
     when(GetIt.I
             .get<SharedPreferencesWrapper>()
             .setBool(StorageKeys.phoneStatePermissionsGranted, true))
+        .thenAnswer((realInvocation) async => null);
+    when(GetIt.I
+            .get<SharedPreferencesWrapper>()
+            .setBool(StorageKeys.notificationPermissionGranted, true))
         .thenAnswer((realInvocation) async => null);
     when(GetIt.I
             .get<NavigationService>()
@@ -114,6 +120,11 @@ void main() {
               StorageKeys.locationPermissionsGranted,
               true,
             )).called(1);
+        verify(
+          GetIt.I
+              .get<SharedPreferencesWrapper>()
+              .setBool(StorageKeys.notificationPermissionGranted, true),
+        ).called(1);
         verify(GetIt.I.get<PermissionsService>().requestLocalNetworkAccess())
             .called(1);
         verify(

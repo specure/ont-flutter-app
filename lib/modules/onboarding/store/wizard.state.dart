@@ -8,6 +8,7 @@ class WizardState extends Equatable {
   final bool isNetworkAccessSwitchOn;
   final bool isAnalyticsSwitchOn;
   final bool isPersistentClientUuidSwitchOn;
+  final bool isNotificationPermissionSwitchOn;
 
   WizardState({
     this.project,
@@ -16,6 +17,7 @@ class WizardState extends Equatable {
     this.isNetworkAccessSwitchOn = true,
     this.isAnalyticsSwitchOn = true,
     this.isPersistentClientUuidSwitchOn = true,
+    this.isNotificationPermissionSwitchOn = true,
   });
 
   WizardState copyWith({
@@ -25,6 +27,7 @@ class WizardState extends Equatable {
     bool? isNetworkAccessSwitchOn,
     bool? isAnalyticsSwitchOn,
     bool? isPersistentClientUuidSwitchOn,
+    bool? isNotificationPermissionSwitchOn,
   }) =>
       WizardState(
         project: project ?? this.project,
@@ -37,6 +40,8 @@ class WizardState extends Equatable {
         isAnalyticsSwitchOn: isAnalyticsSwitchOn ?? this.isAnalyticsSwitchOn,
         isPersistentClientUuidSwitchOn: isPersistentClientUuidSwitchOn ??
             this.isPersistentClientUuidSwitchOn,
+        isNotificationPermissionSwitchOn: isNotificationPermissionSwitchOn ??
+            this.isNotificationPermissionSwitchOn,
       );
 
   @override
@@ -46,6 +51,7 @@ class WizardState extends Equatable {
         isPhoneStatePermissionsSwitchOn,
         isNetworkAccessSwitchOn,
         isAnalyticsSwitchOn,
-        isPersistentClientUuidSwitchOn
+        isPersistentClientUuidSwitchOn,
+        isNotificationPermissionSwitchOn,
       ];
 }

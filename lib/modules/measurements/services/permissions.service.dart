@@ -19,6 +19,7 @@ class PermissionsService {
   final PlatformWrapper _platformWrapper = GetIt.I.get<PlatformWrapper>();
   var _isLocationPermissionGranted = false;
   var _isPhonePermissionGranted = false;
+  var _isNotificationPermissionGranted = false;
 
   void initialize() {
     _channel.setMethodCallHandler(_platformCallHandler);
@@ -39,6 +40,14 @@ class PermissionsService {
     return _isPhonePermissionGranted;
   }
 
+  Future<bool> get isNotificationPermissionGranted async {
+    try {
+      _isNotificationPermissionGranted =
+          await Permission.notification.request().isGranted;
+    } catch (_) {}
+    return _isNotificationPermissionGranted;
+  }
+
   Future<bool> get isLocationWhenInUseEnabled async =>
       await Permission.locationWhenInUse.serviceStatus.isEnabled;
 
@@ -57,6 +66,10 @@ class PermissionsService {
           false,
       readPhoneStatePermissionsGranted: _preferences.getBool(
             StorageKeys.phoneStatePermissionsGranted,
+          ) ??
+          false,
+      notificationPermissionGranted: _preferences.getBool(
+            StorageKeys.notificationPermissionGranted,
           ) ??
           false,
     );
@@ -84,14 +97,19 @@ class PermissionsService {
               call.arguments["readPhoneStatePermissionsGranted"];
           var permissionsMap;
           if (_platformWrapper.isAndroid) {
+            final bool? notificationPermissionGranted =
+                call.arguments["notificationPermissionGranted"];
             final bool? preciseLocationPermissionsGranted =
                 call.arguments["preciseLocationPermissionsGranted"];
             permissionsMap = PermissionsMap(
-                readPhoneStatePermissionsGranted:
-                    readPhoneStatePermissionsGranted ?? true,
-                locationPermissionsGranted: locationPermissionsGranted ?? true,
-                preciseLocationPermissionsGranted:
-                    preciseLocationPermissionsGranted ?? true);
+              readPhoneStatePermissionsGranted:
+                  readPhoneStatePermissionsGranted ?? true,
+              locationPermissionsGranted: locationPermissionsGranted ?? true,
+              preciseLocationPermissionsGranted:
+                  preciseLocationPermissionsGranted ?? true,
+              notificationPermissionGranted:
+                  notificationPermissionGranted ?? true,
+            );
             _preferences.setBool(StorageKeys.preciseLocationPermissionsGranted,
                 preciseLocationPermissionsGranted ?? true);
           } else {

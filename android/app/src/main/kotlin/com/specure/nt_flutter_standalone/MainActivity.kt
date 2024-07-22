@@ -11,7 +11,6 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.*
 import androidx.annotation.RequiresApi
-import at.rtr.rmbt.client.helper.Config
 import at.rtr.rmbt.client.helper.IntermediateResult
 import at.rtr.rmbt.client.helper.TestStatus
 import at.rtr.rmbt.client.v2.task.result.QoSTestResultEnum
@@ -27,6 +26,7 @@ import com.specure.nt_flutter_standalone.service.measurement.TestProgressListene
 import com.specure.nt_flutter_standalone.utils.client_uuid.ClientUuidMigrator
 import com.specure.nt_flutter_standalone.utils.permission.LocationAccessImpl
 import com.specure.nt_flutter_standalone.utils.permission.PhoneStateAccessImpl
+import com.specure.nt_flutter_standalone.utils.permission.NotificationAccessImpl
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -117,6 +117,7 @@ class MainActivity : FlutterActivity() {
         measurementMethodChannel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "startTest" -> {
+                    Timber.d("SERVICE CALLING: ${ call.argument("notificationPermissionGranted") as Boolean?}")
                     startService(
                         call.argument("appVersion")!!,
                         call.argument("flavor")!!,
@@ -125,6 +126,7 @@ class MainActivity : FlutterActivity() {
                         call.argument("measurementServer"),
                         call.argument("telephonyPermissionGranted"),
                         call.argument("locationPermissionGranted"),
+                        call.argument("notificationPermissionGranted"),
                         call.argument("uuidPermissionGranted"),
                         call.argument("loopModeSettings"),
                         call.argument<ArrayList<Double>>("pingsNs"),
@@ -190,9 +192,11 @@ class MainActivity : FlutterActivity() {
     private fun checkPermissions(): PermissionState {
         val readPhoneStatePermitted = PhoneStateAccessImpl(this).isAllowed
         var locationAccess = LocationAccessImpl(this)
+        var notificationAccess = NotificationAccessImpl(this)
         val locationPermissionsPermitted = locationAccess.isAllowed
         val preciseLocationPermissionsPermitted = locationAccess.isPreciseLocationAllowed
-        return PermissionState(permissionsChecked, locationPermissionsPermitted, preciseLocationPermissionsPermitted, readPhoneStatePermitted)
+        val notificationPermissionPermitted = notificationAccess.isAllowed
+        return PermissionState(permissionsChecked, locationPermissionsPermitted, preciseLocationPermissionsPermitted, readPhoneStatePermitted, notificationPermissionPermitted)
     }
 
     private fun startService(appVersion: String,
@@ -202,6 +206,7 @@ class MainActivity : FlutterActivity() {
                              measurementServer: Map<String, Any?>?,
                              telephonyPermissionGranted: Boolean?,
                              locationPermissionGranted: Boolean?,
+                             notificationPermissionGranted: Boolean?,
                              uuidPermissionGranted: Boolean?,
                              loopModeSettings: Map<String, Any?>?,
                              externalPings: ArrayList<Double>?,
@@ -237,6 +242,7 @@ class MainActivity : FlutterActivity() {
             this@MainActivity.applicationContext, appVersion, flavor, clientUUID, location, parsedMS,
             telephonyPermissionGranted ?: false,
             locationPermissionGranted ?: false,
+            notificationPermissionGranted ?: false,
             uuidPermissionGranted ?: false,
             parsedLoopModeSettings,
             externalPings?.toDoubleArray() ?: doubleArrayOf(),
