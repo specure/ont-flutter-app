@@ -84,7 +84,14 @@ class ErrorInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
+    var message =
+        "${response.requestOptions.method} ${response.requestOptions.path}: ${response.statusCode} ${response.data}.";
+    if (response.requestOptions.method == "POST") {
+      message += " Request body: ${response.requestOptions.data}.";
+    }
     if (response.statusCode != null && response.statusCode! >= 400) {
+      Sentry.captureMessage(message, level: SentryLevel.error)
+          .then((value) => null);
       throw DioException.badResponse(
         statusCode: response.statusCode!,
         requestOptions: response.requestOptions,
