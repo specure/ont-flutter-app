@@ -39,6 +39,8 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
   final _deviceInfoPlugin = GetIt.I.get<DeviceInfoPlugin>();
   List<StreamSubscription<NetNeutralityResultItem>?> _testSubscriptions = [];
 
+  static const MAXIMUM_PERCENTAGE_FOR_EXECUTION_PART = 99.0;
+
   ErrorHandler? errorHandler;
   ConnectivityChangesHandler? connectivityChangesHandler;
   StreamSubscription? _connectivitySubscription;
@@ -134,7 +136,7 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
         ? [...state.interimResults, resultItem]
         : state.interimResults;
     final double progress = min(
-      100,
+      MAXIMUM_PERCENTAGE_FOR_EXECUTION_PART,
       (state.lastResultForCurrentPhase +
               (1 / (_testService.settings!.totalTests)) * 100)
           .roundToDouble(),
@@ -219,17 +221,21 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
         }
       } catch (_) {}
       emit(state.copyWith(
-        lastResultForCurrentPhase: progress,
+        lastResultForCurrentPhase: MAXIMUM_PERCENTAGE_FOR_EXECUTION_PART,
         phase: NetNeutralityPhase.submittingResult,
         interimResults: interimResults,
         loading: true,
       ));
-      _navigationService.pushReplacementRoute(
-          NetNeutralityResultScreen.route, null);
       await _apiService.postResults(
         results: result,
         errorHandler: this.errorHandler,
       );
+      emit(state.copyWith(
+        lastResultForCurrentPhase: 100,
+      ));
+      await showFinishedStateDelay();
+      _navigationService.pushReplacementRoute(
+          NetNeutralityResultScreen.route, null);
       final historyResults = await _apiService.getHistory(
         _testService.settings!.openTestUuid,
         errorHandler: this.errorHandler,
@@ -249,6 +255,10 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
       resultDetailsItems: results,
     ));
     await _navigationService.pushNamed(NetNeutralityResultDetailScreen.route);
+  }
+
+  showFinishedStateDelay() async {
+    await Future.delayed(Duration(milliseconds: 200));
   }
 
   Future<void> loadResults(String openTestUuid) async {

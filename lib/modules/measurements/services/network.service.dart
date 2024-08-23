@@ -141,12 +141,14 @@ class NetworkService {
       ConnectivityResult currentNetwork) async {
     var ipV4PublicAddress = addressIsNotAvailable;
     var ipV6PublicAddress = addressIsNotAvailable;
-    if (currentNetwork != ConnectivityResult.none) {
-      ipV4PublicAddress = await ipInfoService.getPublicAddress(IPVersion.v4);
-      ipV6PublicAddress = await ipInfoService.getPublicAddress(IPVersion.v6);
-    }
     final ipV4Address = await ipInfoService.getPrivateAddress(IPVersion.v4);
     final ipV6Address = await ipInfoService.getPrivateAddress(IPVersion.v6);
+    if (currentNetwork != ConnectivityResult.none) {
+      if (ipV4Address != addressIsNotAvailable)
+        ipV4PublicAddress = await ipInfoService.getPublicAddress(IPVersion.v4);
+      if (ipV6Address != addressIsNotAvailable)
+        ipV6PublicAddress = await ipInfoService.getPublicAddress(IPVersion.v6);
+    }
     var details = NetworkInfoDetails(
       ipV4PrivateAddress: ipV4Address,
       ipV4PublicAddress: ipV4PublicAddress,

@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
@@ -89,10 +90,18 @@ final _dnsResultItem = DnsNetNeutralityResultItem(
     onMissingStub: OnMissingStub.returnDefault,
   ),
 ])
+
+class TestNetNeutralityCubit extends NetNeutralityCubit {
+  TestNetNeutralityCubit({required ErrorHandler errorHandler}) : super(errorHandler: errorHandler);
+
+  @override
+  showFinishedStateDelay() async {}
+}
+
 void main() {
   setUp(() async {
     TestingServiceLocator.registerInstances();
-    _cubit = NetNeutralityCubit(errorHandler: _errorHandler);
+    _cubit = TestNetNeutralityCubit(errorHandler: _errorHandler);
     TestingServiceLocator.swapLazySingleton<NetNeutralityCubit>(() => _cubit);
     when(GetIt.I.get<NetworkService>().subscribeToNetworkChanges(
             changesHandler: anyNamed('changesHandler')))
@@ -203,6 +212,11 @@ void main() {
           interimResults: [_webResultItem],
         ),
         _cubit.state.copyWith(
+          lastResultForCurrentPhase: NetNeutralityCubit.MAXIMUM_PERCENTAGE_FOR_EXECUTION_PART,
+          phase: NetNeutralityPhase.submittingResult,
+          interimResults: [_webResultItem, _dnsResultItem],
+        ),
+        _cubit.state.copyWith(
           lastResultForCurrentPhase: 100,
           phase: NetNeutralityPhase.submittingResult,
           interimResults: [_webResultItem, _dnsResultItem],
@@ -211,7 +225,7 @@ void main() {
           lastResultForCurrentPhase: 100,
           phase: NetNeutralityPhase.finish,
           interimResults: [_webResultItem, _dnsResultItem],
-        )
+        ),
       ],
       verify: (_) {
         verify(GetIt.I
