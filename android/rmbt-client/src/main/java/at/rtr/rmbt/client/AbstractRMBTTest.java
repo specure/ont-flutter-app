@@ -191,7 +191,7 @@ public abstract class AbstractRMBTTest {
         }    	
     }
     
-    protected Socket connect(final TestResult testResult) throws IOException
+    protected Socket connect(final TestResult testResult) throws Exception
     {
     	return connect(testResult, InetAddress.getByName(params.getHost()), params.getPort(), EXPECT_GREETING, "CHUNKSIZE", true, 20000);
     }

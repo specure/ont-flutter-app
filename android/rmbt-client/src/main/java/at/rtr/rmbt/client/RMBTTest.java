@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -234,18 +235,27 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
         return result;
     }
 
-    protected Socket connect(final TestResult testResult) throws IOException {
+    protected Socket connect(final TestResult testResult) throws Exception {
         log(String.format(Locale.US, "thread %d: connecting...", threadId));
 
         final InetAddress inetAddress = InetAddress.getByName(params.getHost());
 
-        System.out.println("connecting to: " + inetAddress.getHostName() + ":" + params.getPort());
+        List<String> connectionLog = new ArrayList<>();
+
+        String logMessage = "connecting to: " + inetAddress.getHostAddress() + ":" + params.getPort();
+        System.out.println(logMessage);
+        connectionLog.add(logMessage);
         final Socket s = getSocket(inetAddress.getHostAddress(), params.getPort(), true, 20000);
 
         testResult.ip_local = s.getLocalAddress();
         testResult.ip_server = s.getInetAddress();
-
         testResult.port_remote = s.getPort();
+        connectionLog.add(
+                "Ip_local is: " + testResult.ip_local +
+                ", ip_server is: "+ testResult.ip_server +
+                ", port is: " + testResult.port_remote +
+                ", socket connected: " + !s.isClosed()
+        );
 
         if (s instanceof SSLSocket) {
             final SSLSocket sslSocket = (SSLSocket) s;
@@ -253,8 +263,13 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
             testResult.encryption = String.format(Locale.US, "%s (%s)", session.getProtocol(), session.getCipherSuite());
         }
 
-        log(String.format(Locale.US, "thread %d: ReceiveBufferSize: '%s'.", threadId, s.getReceiveBufferSize()));
-        log(String.format(Locale.US, "thread %d: SendBufferSize: '%s'.", threadId, s.getSendBufferSize()));
+        logMessage = String.format(Locale.US, "Thread %d: ReceiveBufferSize: '%s'.", threadId, s.getReceiveBufferSize());
+        log(logMessage);
+        connectionLog.add(logMessage);
+
+        logMessage = String.format(Locale.US, "Thread %d: SendBufferSize: '%s'.", threadId, s.getSendBufferSize());
+        log(logMessage);
+        connectionLog.add(logMessage);
 
         if (in != null)
             totalDown += in.getCount();
@@ -281,19 +296,23 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
             out.flush();
 
             line = reader.readLine();
+            connectionLog.add(line);
 
             //Read the HTTP response (terminated with an empty newline)
             if (!line.contains("101")) { //HTTP status code 101 Switching Protocols
-                log(String.format(Locale.US, "thread %d: got '%s' expected '%s'", threadId, line, EXPECT_GREETING));
-                return null;
+                String message = String.format(Locale.US, "Thread %d: got '%s' expected '%s'", threadId, line, EXPECT_GREETING);
+                log(message);
+                throw new Exception(message + "\n" + String.join("\n", connectionLog));
             }
             while (!line.equals("\r\n") && !line.isEmpty()) {
                 line = reader.readLine();
+                connectionLog.add(line);
             }
         }
         //At this point, the communication is based on RMBT
         // - either directly from the start, or from switching from RMBThttp
         line = reader.readLine();
+        connectionLog.add(line);
         if (line.contains(EXPECT_GREETING)) {
             line = line.trim();
             Matcher matcher = RMBT_SERVER_PATTERN.matcher(line.trim());
@@ -303,14 +322,17 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
                 testResult.client_version = version;
             }
         } else {
-            log(String.format(Locale.US, "thread %d: got '%s' expected '%s'", threadId, line, EXPECT_GREETING));
-            return null;
+            String message = String.format(Locale.US, "Thread %d: got '%s' expected '%s'", threadId, line, EXPECT_GREETING);
+            log(message);
+            throw new Exception(message + "\n" + String.join("\n", connectionLog));
         }
 
         line = reader.readLine();
+        connectionLog.add(line);
         if (!line.startsWith("ACCEPT ")) {
-            log(String.format(Locale.US, "thread %d: got '%s' expected 'ACCEPT'", threadId, line));
-            return null;
+            String message = String.format(Locale.US, "Thread %d: got '%s' expected 'ACCEPT'", threadId, line);
+            log(message);
+            throw new Exception(message + "\n" + String.join("\n", connectionLog));
         }
 
         final String send = String.format(Locale.US, "TOKEN %s\n", params.getToken());
@@ -318,28 +340,34 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
         out.write(send.getBytes("US-ASCII"));
 
         line = reader.readLine();
+        connectionLog.add(line);
 
         if (line == null) {
-            log(String.format(Locale.US, "thread %d: got no answer expected 'OK'", threadId, line));
-            return null;
+            String message = String.format(Locale.US, "Thread %d: got no answer expected 'OK'", threadId);
+            log(message);
+            throw new Exception(message + "\n" + String.join("\n", connectionLog));
         } else if (!line.equals("OK")) {
-            log(String.format(Locale.US, "thread %d: got '%s' expected 'OK'", threadId, line));
-            return null;
+            String message = String.format(Locale.US, "Thread %d: got '%s' expected 'OK'", threadId, line);
+            log(message);
+            throw new Exception(message + "\n" + String.join("\n", connectionLog));
         }
 
         line = reader.readLine();
+        connectionLog.add(line);
         final Scanner scanner = new Scanner(line);
         try {
             if (!"CHUNKSIZE".equals(scanner.next())) {
-                log(String.format(Locale.US, "thread %d: got '%s' expected 'CHUNKSIZE'", threadId, line));
-                return null;
+                String message = String.format(Locale.US, "Thread %d: got '%s' expected 'CHUNKSIZE'", threadId, line);
+                log(message);
+                throw new Exception(message + "\n" + String.join("\n", connectionLog));
             }
             try {
                 chunksize = scanner.nextInt();
-                log(String.format(Locale.US, "thread %d: CHUNKSIZE is %d", threadId, chunksize));
+                log(String.format(Locale.US, "Thread %d: CHUNKSIZE is %d", threadId, chunksize));
             } catch (final Exception e) {
-                log(String.format(Locale.US, "thread %d: invalid CHUNKSIZE: '%s'", threadId, line));
-                return null;
+                String message = String.format(Locale.US, "Thread %d: invalid CHUNKSIZE: '%s'", threadId, line);
+                log(message);
+                throw new Exception(message + "\n" + String.join("\n", connectionLog));
             }
             if (buf == null || buf != null && buf.length != chunksize)
                 buf = new byte[chunksize];
@@ -356,8 +384,6 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
         try {
 
             s = connect(testResult);
-            if (s == null)
-                throw new Exception("error during connect to test server");
 
             log(String.format(Locale.US, "thread %d: connected, waiting for rest...", threadId));
             barrier.await();
@@ -551,6 +577,7 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
             Thread.currentThread().interrupt();
         } catch (final Exception e) {
             client.log(e);
+            client.setErrorMsg(e.getMessage());
             client.abortTest(true);
         } finally {
             if (s != null)

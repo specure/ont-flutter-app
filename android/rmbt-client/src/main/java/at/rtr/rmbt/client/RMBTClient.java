@@ -193,7 +193,7 @@ public class RMBTClient implements RMBTClientCallback {
         this.externalPings = externalPings;
         this.externalTestStart = externalTestStart;
         this.jitterTestDurationNanos.set(10000000000L); // set default value
-        planInactivityCheck();
+        planInactivityCheck("Init failed. Client is not active.");
 
         params.check();
 
@@ -232,7 +232,7 @@ public class RMBTClient implements RMBTClientCallback {
                 clientName, clientVersion, overrideParams, additionalValues, headerValue, cacheDir, null);
     }
 
-    private void planInactivityCheck() {
+    private void planInactivityCheck(String errorMessage) {
         synchronized (this) {
             inactivityTimer.cancel();
             inactivityTimer.purge();
@@ -244,13 +244,14 @@ public class RMBTClient implements RMBTClientCallback {
                     boolean isNotResponding = !isRMBTClientResponding();
                     if (isNotResponding) {
                         if (commonCallback != null) {
+                            errorMsg = errorMessage;
                             commonCallback.onTestStatusUpdate(TestStatus.ERROR);
                         }
                         RMBTClient.this.abortTest(true);
                         RMBTClient.this.shutdown();
                         inactivityTimer.cancel();
                         inactivityTimer.purge();
-                        Timber.e("Test has been terminated, because of RMBTClient inactivity internal");
+                        Timber.e(errorMsg);
                     }
                 }
             }, TimeUnit.SECONDS.toMillis(MEASUREMENT_INACTIVITY_CHECKER_PERIOD_SECONDS), TimeUnit.SECONDS.toMillis(MEASUREMENT_INACTIVITY_CHECKER_PERIOD_SECONDS));
@@ -342,10 +343,9 @@ public class RMBTClient implements RMBTClientCallback {
         try {
             final SSLContext sc = getSSLContext(null, null);
 
-            final SSLSocketFactory factory = sc.getSocketFactory();
-
-            return factory;
+            return sc.getSocketFactory();
         } catch (final Exception e) {
+            errorMsg = e.getMessage();
             setErrorStatus();
             log(e);
         }
@@ -469,7 +469,7 @@ public class RMBTClient implements RMBTClientCallback {
 
         try {
             measurementLastUpdate = System.currentTimeMillis();
-            planInactivityCheck();
+            planInactivityCheck("Measurement failed. Client is not active.");
             if (commonCallback != null) {
                 System.out.println("commonCallback is not null...");
                 commonCallback.onClientReady(
@@ -483,6 +483,7 @@ public class RMBTClient implements RMBTClientCallback {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("commonCallback exception " + e.getMessage());
+            errorMsg = e.getMessage();
             testStatus.set(TestStatus.ERROR);
         }
 
@@ -662,6 +663,7 @@ public class RMBTClient implements RMBTClientCallback {
                 return result;
             } catch (final ExecutionException e) {
                 log(e);
+                errorMsg = e.getMessage();
                 abortTest(true);
                 return null;
             } catch (final InterruptedException e) {
@@ -1010,6 +1012,10 @@ public class RMBTClient implements RMBTClientCallback {
         return measurementMap;
     }
 
+    public void setErrorMsg(String msg) {
+        errorMsg = msg;
+    }
+
     public String getErrorMsg() {
         return errorMsg;
     }
@@ -1152,7 +1158,7 @@ public class RMBTClient implements RMBTClientCallback {
             commonCallback.onSpeedDataChanged(threadId, bytes, timestampNanos, isUpload);
         }
         measurementLastUpdate = System.currentTimeMillis();
-        planInactivityCheck();
+        planInactivityCheck("Measurement failed. Did not receive any data from the server");
     }
 
     @Override
@@ -1163,7 +1169,7 @@ public class RMBTClient implements RMBTClientCallback {
             commonCallback.onPingDataChanged(clientPing, serverPing, timeNs - startTime);
         }
         measurementLastUpdate = System.currentTimeMillis();
-        planInactivityCheck();
+        planInactivityCheck("Measurement failed. Did not receive any response from the server");
     }
 
     @Override

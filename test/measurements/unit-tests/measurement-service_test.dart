@@ -26,8 +26,10 @@ import '../../di/service-locator.dart';
 import 'measurement-service_test.mocks.dart';
 
 final _methodChannel = MockMethodChannel();
-MeasurementService _measurementService =
-    MeasurementService(channel: _methodChannel);
+MeasurementService _measurementService = MeasurementService(
+  channel: _methodChannel,
+  testing: true,
+);
 final _bloc = MockMeasurementsBlocCalls();
 final _version = '4.0.0';
 final _packageInfo = PackageInfo(
@@ -255,7 +257,10 @@ void main() {
     });
 
     test('completes measurement', () {
-      _measurementService = MeasurementService(channel: _methodChannel);
+      _measurementService = MeasurementService(
+        channel: _methodChannel,
+        testing: true,
+      );
       final call = MethodCall('measurementComplete');
       _measurementService.platformCallHandler(call);
       verify(_bloc.add(any)).called(1);
@@ -267,7 +272,10 @@ void main() {
     });
 
     test('submits results', () {
-      _measurementService = MeasurementService(channel: _methodChannel);
+      _measurementService = MeasurementService(
+        channel: _methodChannel,
+        testing: true,
+      );
       final call = MethodCall('measurementResultSubmitted');
       _measurementService.platformCallHandler(call);
       verify(_bloc.add(any)).called(1);
@@ -280,7 +288,10 @@ void main() {
 
     test('handles no connection during measurement', () {
       when(_bloc.state).thenReturn(MeasurementsState.init());
-      _measurementService = MeasurementService(channel: _methodChannel);
+      _measurementService = MeasurementService(
+        channel: _methodChannel,
+        testing: true,
+      );
       final call = MethodCall('measurementDidFail');
       _measurementService.platformCallHandler(call);
       verify(_bloc.state).called(1);
@@ -294,7 +305,10 @@ void main() {
     test('handles errors during measurement', () {
       when(_bloc.state).thenReturn(MeasurementsState.init()
           .copyWith(connectivity: ConnectivityResult.wifi));
-      _measurementService = MeasurementService(channel: _methodChannel);
+      _measurementService = MeasurementService(
+        channel: _methodChannel,
+        testing: true,
+      );
       final call = MethodCall('measurementDidFail');
       _measurementService.platformCallHandler(call);
       verify(_bloc.state).called(1);
@@ -307,7 +321,10 @@ void main() {
     });
 
     test('calls post-finish methods', () {
-      _measurementService = MeasurementService(channel: _methodChannel);
+      _measurementService = MeasurementService(
+        channel: _methodChannel,
+        testing: true,
+      );
       final call = MethodCall('measurementPostFinish');
       _measurementService.platformCallHandler(call);
       verify(_bloc.add(any)).called(1);
@@ -319,7 +336,10 @@ void main() {
     });
 
     test('starts ping test', () async {
-      _measurementService = MeasurementService(channel: _methodChannel);
+      _measurementService = MeasurementService(
+        channel: _methodChannel,
+        testing: true,
+      );
       final host = 'example.com';
       final project = NTProject(pingDuration: 1, pingInterval: 0.5);
       when(GetIt.I
@@ -413,7 +433,10 @@ void main() {
 }
 
 _setUpPingPhase() {
-  _measurementService = MeasurementService(channel: _methodChannel);
+  _measurementService = MeasurementService(
+    channel: _methodChannel,
+    testing: true,
+  );
   _measurementService.lastDispatchedEvent = StartMeasurement();
   _measurementService.lastPhase = MeasurementPhase.fetchingTestParams;
 }

@@ -24,6 +24,7 @@ import 'package:nt_flutter_standalone/modules/measurements/store/measurements.ev
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/ping.wrapper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:system_clock/system_clock.dart';
 
 import '../../measurement-result/models/loop-mode-settings-model.dart';
@@ -44,9 +45,11 @@ class MeasurementService {
   double? _packLoss = 0;
   double? _jitterNs = 0;
   StreamSubscription? _pingStream;
+  bool testing = false;
 
   MeasurementService({
     this.channel = const MethodChannel('nettest/measurements'),
+    this.testing = false,
   }) {
     channel.setMethodCallHandler(platformCallHandler);
   }
@@ -206,10 +209,18 @@ class MeasurementService {
           bloc.add(lastDispatchedEvent!);
           break;
         case "measurementDidFail":
+          if (!this.testing) {
+            await Sentry.captureMessage(
+                "Measurement failed with arguments: ${call.arguments}");
+          }
+          String? nativeError = call.arguments?.toString();
+          if (nativeError != null && nativeError.length > 0) {
+            nativeError = nativeError.split("\n")[0];
+          }
           final String? error =
               bloc.state.connectivity == ConnectivityResult.none
                   ? ApiErrors.noInternetConnection
-                  : call.arguments;
+                  : nativeError;
           final newEvent = SetError(MeasurementError(error));
           if (newEvent.toString() == lastDispatchedEvent.toString()) {
             break;
