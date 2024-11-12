@@ -19,12 +19,14 @@ import 'package:nt_flutter_standalone/modules/measurement-result/screens/measure
 import 'package:nt_flutter_standalone/modules/measurement-result/services/measurement-result.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/store/measurement-result.cubit.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/widgets/qoe-estimate.widget.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../di/service-locator.dart';
 import '../../util/widget-tester.ext.dart';
 
 late MeasurementResultCubit _cubit;
 final _testUuid = 'testUuid';
+final _version = '4.0.0';
 final _result = MeasurementHistoryResults([
   MeasurementHistoryResult(
       testUuid: 'testUuid',
@@ -64,6 +66,13 @@ final String _selectedLocaleTag = 'sr-Latn-rs';
 
 void main() {
   setUp(() {
+    PackageInfo.setMockInitialValues(
+      appName: '',
+      packageName: '',
+      version: _version,
+      buildNumber: '',
+      buildSignature: '',
+    );
     TestingServiceLocator.registerInstances(withRealLocalization: true);
     _cubit = MeasurementResultCubit();
     TestingServiceLocator.swapLazySingleton<MeasurementResultCubit>(

@@ -11,12 +11,14 @@ import 'package:nt_flutter_standalone/modules/measurement-result/models/measurem
 import 'package:nt_flutter_standalone/modules/measurement-result/services/measurement-result.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/store/measurement-result.cubit.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/store/measurement-result.state.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';
 
 late MeasurementResultCubit _cubit;
 final _testUuid = 'testUuid';
+final _version = '4.0.0';
 final _result = MeasurementHistoryResults([
   MeasurementHistoryResult(
     testUuid: _testUuid,
@@ -25,7 +27,7 @@ final _result = MeasurementHistoryResults([
     pingMs: 30,
     measurementDate: 'measurementDate',
     measurementServerCity: 'Huston',
-  )
+  ),
 ]);
 final _dioError = MockDioError();
 
@@ -38,6 +40,13 @@ void main() {
     await dotenv.load();
     TestingServiceLocator.registerInstances();
     _cubit = MeasurementResultCubit();
+    PackageInfo.setMockInitialValues(
+      appName: '',
+      packageName: '',
+      version: _version,
+      buildNumber: '',
+      buildSignature: '',
+    );
     when(GetIt.I.get<MeasurementResultService>().getResultWithSpeedCurves(
           _testUuid,
           result: _result.tests.first,
@@ -52,7 +61,7 @@ void main() {
       act: (cubit) => cubit.init(result: _result, testUuid: _testUuid),
       expect: () => [
         MeasurementResultState(loading: true),
-        MeasurementResultState(loading: false, result: _result.tests.first),
+        MeasurementResultState(loading: false, appVersion: _version, result: _result.tests.first),
       ],
     );
     blocTest<MeasurementResultCubit, MeasurementResultState>(

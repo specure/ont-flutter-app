@@ -57,6 +57,17 @@ class ResultsMetadataPortraitConfig extends ResultsMetadataConfig {
                       value: state.result?.location?.locationString ?? '-',
                     ),
                     SizedBox(height: 40),
+                    TextSection(
+                      title: 'Test ID',
+                      value: state.result?.testUuid.toString() ?? '-',
+                      allowCopy: true,
+                    ),
+                    SizedBox(height: 40),
+                    TextSection(
+                      title: 'App version',
+                      value: state.appVersion ?? '-',
+                    ),
+                    SizedBox(height: 40),
                   ],
                 ),
               ),

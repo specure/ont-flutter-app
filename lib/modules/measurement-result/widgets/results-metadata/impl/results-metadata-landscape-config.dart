@@ -53,6 +53,15 @@ class ResultsMetadataLandscapeConfig extends ResultsMetadataConfig {
                         title: 'Location',
                         value: state.result?.location?.locationString ?? '-',
                       ),
+                      TextSection(
+                        title: 'Test ID',
+                        value: state.result?.testUuid.toString() ?? '-',
+                        allowCopy: true,
+                      ),
+                      TextSection(
+                        title: 'App version',
+                        value: state.appVersion ?? '-',
+                      ),
                     ]),
                     SizedBox(height: 40),
                   ],

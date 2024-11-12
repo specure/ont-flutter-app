@@ -400,6 +400,21 @@ class MockMeasurementService extends _i1.Mock
       );
 
   @override
+  bool get testing => (super.noSuchMethod(
+        Invocation.getter(#testing),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  set testing(bool? _testing) => super.noSuchMethod(
+        Invocation.setter(
+          #testing,
+          _testing,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   _i25.Future<String?> startTest(
     String? flavor, {
     String? clientUUID,

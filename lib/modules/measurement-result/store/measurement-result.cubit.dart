@@ -5,6 +5,7 @@ import 'package:nt_flutter_standalone/core/services/cms.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/measurement-history-result.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/services/measurement-result.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/store/measurement-result.state.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../models/measurement-history-results.dart';
 
@@ -21,6 +22,7 @@ class MeasurementResultCubit extends Cubit<MeasurementResultState>
     String? testUuid,
   }) async {
     emit(state.copyWith(loading: true));
+    final packageInfo = await PackageInfo.fromPlatform();
     final project = await _cmsService.getProject();
     MeasurementHistoryResult? fullResults;
     var loopResults = state.loopResult;
@@ -36,11 +38,13 @@ class MeasurementResultCubit extends Cubit<MeasurementResultState>
           result?.tests.first;
     }
     emit(state.copyWith(
-      result: fullResults,
-      loopResult: loopResults,
-      project: project,
-      loading: false,
-    ));
+        result: fullResults,
+        loopResult: loopResults,
+        project: project,
+        loading: false,
+        appVersion: packageInfo.buildNumber.isEmpty
+            ? packageInfo.version
+            : '${packageInfo.version} (${packageInfo.buildNumber})'));
   }
 
   getPage(

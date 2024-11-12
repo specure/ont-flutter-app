@@ -10,6 +10,7 @@ class MeasurementResultState with ErrorState, LoadingState, EquatableMixin {
   final MeasurementHistoryResult? result;
   final MeasurementHistoryResults? loopResult;
   final NTProject? project;
+  final String? appVersion;
   late final String staticPageContent;
   late final String staticPageUrl;
 
@@ -17,6 +18,7 @@ class MeasurementResultState with ErrorState, LoadingState, EquatableMixin {
     this.result,
     this.loopResult,
     this.project,
+    this.appVersion,
     staticPageContent,
     staticPageUrl,
     Exception? error,
@@ -32,6 +34,7 @@ class MeasurementResultState with ErrorState, LoadingState, EquatableMixin {
       {MeasurementHistoryResult? result,
       MeasurementHistoryResults? loopResult,
       NTProject? project,
+      String? appVersion,
       Exception? error,
       bool? loading,
       String? staticPageContent,
@@ -40,6 +43,7 @@ class MeasurementResultState with ErrorState, LoadingState, EquatableMixin {
       result: result ?? this.result,
       loopResult: loopResult ?? this.loopResult,
       project: project ?? this.project,
+      appVersion: appVersion ?? this.appVersion,
       error: error,
       loading: loading ?? this.loading,
       staticPageContent: staticPageContent ?? this.staticPageContent,
@@ -52,6 +56,7 @@ class MeasurementResultState with ErrorState, LoadingState, EquatableMixin {
         loading,
         result,
         project,
+        appVersion,
         error,
         staticPageContent,
         staticPageUrl
