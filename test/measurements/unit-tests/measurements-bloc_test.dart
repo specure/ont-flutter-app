@@ -14,7 +14,10 @@ import 'package:nt_flutter_standalone/core/constants/api-errors.dart';
 import 'package:nt_flutter_standalone/core/constants/environment.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
+import 'package:nt_flutter_standalone/core/models/project.dart';
 import 'package:nt_flutter_standalone/core/services/cms.service.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/core/services/localization.service.dart';
@@ -30,7 +33,6 @@ import 'package:nt_flutter_standalone/modules/measurements/models/measurement-se
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/permissions-map.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
-import 'package:nt_flutter_standalone/modules/measurements/models/signal-info.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/location.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/loop.mode.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/measurement.service.dart';
@@ -38,7 +40,6 @@ import 'package:nt_flutter_standalone/modules/measurements/services/measurements
 import 'package:nt_flutter_standalone/modules/measurements/services/network.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/signal.service.dart';
-import 'package:nt_flutter_standalone/modules/measurements/store/handlers/connectivity-changes-handler.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/handlers/error-handler.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
@@ -48,6 +49,7 @@ import 'package:nt_flutter_standalone/modules/settings/services/settings.service
 
 import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';
+import '../../settings/unit-tests/settings-cubit_test.mocks.dart';
 
 final _loopModeDetails = LoopModeDetails(medians: HashMap());
 final _permissionsMap = PermissionsMap(
@@ -72,18 +74,6 @@ final _basicMobileNetworkInfoDetails = NetworkInfoDetails(
   name: unknown,
 );
 
-final _networkInfoDetailsChanged = NetworkInfoDetails(
-    type: wifi,
-    mobileNetworkGeneration: unknown,
-    name: 'Home network',
-    currentAllSignalInfo: [
-      SignalInfo(
-        signal: -63,
-        band: '2.4Ghz',
-        technology: wifi,
-        networkTypeId: serverNetworkTypes[wifi]!,
-      )
-    ]);
 final _lat = 10.0;
 final _lng = 20.0;
 final _locationModel = LocationModel(
@@ -147,6 +137,7 @@ final _unknownErrorString = 'Unknown error';
 void main() {
   setUpAll(() {
     TestingServiceLocator.registerInstances();
+    TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
     _setUpStubs();
   });
 
@@ -157,18 +148,13 @@ void main() {
       act: (bloc) => bloc.add(Initialize()),
       expect: () => [
         _initStateWithPermissions.copyWith(
-          isInitializing: true,
-          locationServicesEnabled: true,
+          servers: _measurementServers,
+          currentServer: _measurementServers.first,
         ),
         _initStateWithPermissions.copyWith(
-          isInitializing: true,
-          clientUuid: "uuid",
           locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
-          clientUuid: "uuid",
-          locationServicesEnabled: true,
+          servers: _measurementServers,
+          currentServer: _measurementServers.first,
         ),
       ],
     );
@@ -181,27 +167,13 @@ void main() {
       },
       expect: () => [
         _initStateWithPermissions.copyWith(
-          isInitializing: true,
-          locationServicesEnabled: true,
+          servers: _measurementServers,
+          currentServer: _measurementServers.first,
         ),
         _initStateWithPermissions.copyWith(
-          isInitializing: true,
-          clientUuid: "uuid",
           locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          isInitializing: true,
-          locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          isInitializing: true,
-          clientUuid: "uuid",
-          locationServicesEnabled: true,
-        ),
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
-          clientUuid: "uuid",
-          locationServicesEnabled: true,
+          servers: _measurementServers,
+          currentServer: _measurementServers.first,
         ),
       ],
     );
@@ -216,33 +188,8 @@ void main() {
         ),
         _initStateWithPermissions.copyWith(
           networkInfoDetails: _networkInfoDetails,
-          currentServer: _measurementServers.first,
-          servers: _measurementServers,
           connectivity: ConnectivityResult.wifi,
         )
-      ],
-    );
-    blocTest<MeasurementsBloc, MeasurementsState>(
-      'SignalUpdate event',
-      build: () {
-        MeasurementsBloc bloc = _setUpBloc();
-        bloc.add(GetNetworkInfo(connectivity: ConnectivityResult.wifi));
-        return bloc;
-      },
-      act: (bloc) =>
-          bloc.add(SignalUpdate(networkDetails: _networkInfoDetailsChanged)),
-      skip: 1,
-      expect: () => [
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetailsChanged,
-          connectivity: ConnectivityResult.wifi,
-        ),
-        _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
-          currentServer: _measurementServers.first,
-          servers: _measurementServers,
-          connectivity: ConnectivityResult.wifi,
-        ),
       ],
     );
     blocTest<MeasurementsBloc, MeasurementsState>(
@@ -250,17 +197,10 @@ void main() {
       build: () => _setUpBloc(),
       act: (bloc) =>
           bloc.add(GetNetworkInfo(connectivity: ConnectivityResult.none)),
-      expect: () => [],
-    );
-    blocTest<MeasurementsBloc, MeasurementsState>(
-      'Signal update event without connection',
-      build: () => _setUpBloc(),
-      act: (bloc) => {
-        bloc.add(GetNetworkInfo(connectivity: ConnectivityResult.none)),
-        bloc.add(SignalUpdate(networkDetails: _networkInfoDetails))
-      },
-      skip: 1,
-      expect: () => [],
+      expect: () => [
+        _initStateWithPermissions.copyWith(
+            connectivity: ConnectivityResult.none)
+      ],
     );
     blocTest<MeasurementsBloc, MeasurementsState>(
       'SetLocationInfo event',
@@ -271,28 +211,17 @@ void main() {
           currentLocation: _locationModel,
           currentServer: _measurementServers.first,
           servers: _measurementServers,
+          networkInfoDetails: _networkInfoDetails,
         )
       ],
     );
     blocTest<MeasurementsBloc, MeasurementsState>(
       'RemoveObsoleteInfo event',
-      build: () => _setUpBloc(),
+      build: () => _setUpBloc(locationModel: _locationModel),
       act: (bloc) {
-        bloc.add(SetLocationInfo(_locationModel));
         bloc.add(RemoveObsoleteInfo());
       },
-      expect: () => [
-        _initStateWithPermissions.copyWith(
-          currentLocation: _locationModel,
-          currentServer: _measurementServers.first,
-          servers: _measurementServers,
-        ),
-        _initStateWithPermissions.copyWith(
-          currentLocation: null,
-          currentServer: _measurementServers.first,
-          servers: _measurementServers,
-        )
-      ],
+      expect: () => [_initStateWithPermissions],
     );
     blocTest<MeasurementsBloc, MeasurementsState>('StartMeasurement event',
         build: () => _measurementsBloc,
@@ -411,7 +340,7 @@ void main() {
     );
     blocTest<MeasurementsBloc, MeasurementsState>(
       'StopMeasurement event',
-      build: () => _setUpBloc(MeasurementPhase.submittingTestResult),
+      build: () => _setUpBloc(phase: MeasurementPhase.submittingTestResult),
       act: (bloc) => bloc.add(StopMeasurement()),
       expect: () => [
         MeasurementsState.finished(_initStateWithPermissions),
@@ -421,12 +350,13 @@ void main() {
       'SetPermissions event',
       build: () => _measurementsBloc,
       act: (bloc) => bloc.add(SetPermissions(_permissionsMap)),
-      skip: 3,
+      skip: 2,
       expect: () => [
         _initStateWithPermissions.copyWith(
-          networkInfoDetails: _networkInfoDetails,
           clientUuid: "uuid",
           locationServicesEnabled: true,
+          servers: _measurementServers,
+          currentServer: _measurementServers.first,
         ),
       ],
     );
@@ -501,31 +431,6 @@ void main() {
     );
 
     blocTest(
-      'Handling connectivity changes',
-      build: () {
-        TestingServiceLocator.swapLazySingleton<MeasurementsBloc>(
-            () => _measurementsBloc);
-        return GetIt.I.get<MeasurementsBloc>();
-      },
-      act: (_) {
-        final ConnectivityChangesHandler changesHandler =
-            MeasurementBlocConnectivityChangesHandler();
-        changesHandler.process(ConnectivityResult.wifi);
-      },
-      expect: () => [
-        MeasurementsState.init().copyWith(
-          connectivity: ConnectivityResult.wifi,
-        ),
-        MeasurementsState.init().copyWith(
-          connectivity: ConnectivityResult.wifi,
-          networkInfoDetails: _networkInfoDetails,
-          currentServer: _measurementServers.first,
-          servers: _measurementServers,
-        ),
-      ],
-    );
-
-    blocTest(
       'Handling errors',
       build: () {
         TestingServiceLocator.swapLazySingleton<MeasurementsBloc>(
@@ -546,7 +451,6 @@ void main() {
       expect: () => [
         MeasurementsState.init().copyWith(
           error: _noConnectionError,
-          connectivity: ConnectivityResult.none,
         ),
       ],
     );
@@ -564,21 +468,11 @@ void main() {
         bloc.add(GetNetworkInfo(connectivity: ConnectivityResult.wifi));
         bloc.add(SetError(_unknownError));
       },
+      skip: 2,
       expect: () => [
         MeasurementsState.init().copyWith(
           connectivity: ConnectivityResult.wifi,
-        ),
-        MeasurementsState.init().copyWith(
-          connectivity: ConnectivityResult.wifi,
           networkInfoDetails: _networkInfoDetails,
-          servers: _measurementServers,
-          currentServer: _measurementServers.first,
-        ),
-        MeasurementsState.init().copyWith(
-          connectivity: ConnectivityResult.wifi,
-          networkInfoDetails: _networkInfoDetails,
-          servers: _measurementServers,
-          currentServer: _measurementServers.first,
           error: MeasurementsBloc.noConnectionError,
         ),
       ],
@@ -588,8 +482,7 @@ void main() {
       'connectivity returning basic mobile',
       build: () {
         when(GetIt.I.get<NetworkService>().getNetworkInfo(
-              setState: argThat(isNotNull, named: 'setState'),
-              state: argThat(isNotNull, named: 'state'),
+              permissions: argThat(isNotNull, named: 'permissions'),
             )).thenAnswer((_) async => _basicMobileNetworkInfoDetails);
         when(GetIt.I
                 .get<MeasurementsApiService>()
@@ -600,15 +493,11 @@ void main() {
       act: (bloc) {
         bloc.add(GetNetworkInfo(connectivity: ConnectivityResult.mobile));
       },
+      skip: 1,
       expect: () => [
         MeasurementsState.init().copyWith(
           connectivity: ConnectivityResult.mobile,
-        ),
-        MeasurementsState.init().copyWith(
-          connectivity: ConnectivityResult.mobile,
           networkInfoDetails: NetworkInfoDetails(type: mobile),
-          servers: _measurementServers,
-          currentServer: _measurementServers.first,
         )
       ],
     );
@@ -617,8 +506,7 @@ void main() {
       'SetError event with double-checking for connectivity returning some connectivity',
       build: () {
         when(GetIt.I.get<NetworkService>().getNetworkInfo(
-              setState: argThat(isNotNull, named: 'setState'),
-              state: argThat(isNotNull, named: 'state'),
+              permissions: argThat(isNotNull, named: 'permissions'),
             )).thenAnswer((_) async => _basicWifiNetworkInfoDetails);
         when(GetIt.I
                 .get<MeasurementsApiService>()
@@ -630,21 +518,11 @@ void main() {
         bloc.add(GetNetworkInfo(connectivity: ConnectivityResult.wifi));
         bloc.add(SetError(_unknownError));
       },
+      skip: 2,
       expect: () => [
         MeasurementsState.init().copyWith(
           connectivity: ConnectivityResult.wifi,
-        ),
-        MeasurementsState.init().copyWith(
-          connectivity: ConnectivityResult.wifi,
           networkInfoDetails: NetworkInfoDetails(type: wifi),
-          servers: _measurementServers,
-          currentServer: _measurementServers.first,
-        ),
-        MeasurementsState.init().copyWith(
-          connectivity: ConnectivityResult.wifi,
-          servers: _measurementServers,
-          networkInfoDetails: NetworkInfoDetails(type: wifi),
-          currentServer: _measurementServers.first,
           error: _unknownError,
         ),
       ],
@@ -666,11 +544,15 @@ void main() {
   });
 }
 
-MeasurementsBloc _setUpBloc([MeasurementPhase? phase]) {
+MeasurementsBloc _setUpBloc({
+  MeasurementPhase? phase,
+  LocationModel? locationModel,
+}) {
   final bloc = _measurementsBloc;
   bloc.emit(bloc.state.copyWith(
     permissions: _permissionsMap,
     phase: phase,
+    currentLocation: locationModel,
   ));
   return bloc;
 }
@@ -709,15 +591,14 @@ _setUpStubs() {
       .thenAnswer((_) async => true);
 
   when(GetIt.I.get<NetworkService>().getNetworkInfo(
-        setState: argThat(isNotNull, named: 'setState'),
-        state: argThat(isNotNull, named: 'state'),
+        permissions: argThat(isNotNull, named: 'permissions'),
       )).thenAnswer((realInvocation) async {
     return _networkInfoDetails;
   });
 
   when(GetIt.I.get<NetworkService>().subscribeToNetworkChanges(
           changesHandler: anyNamed('changesHandler')))
-      .thenAnswer((_) async => Stream.fromIterable([]).listen((event) {}));
+      .thenReturn(Stream.fromIterable([]).listen((event) {}));
   when(GetIt.I.get<NetworkService>().getAllNetworkDetails())
       .thenAnswer((_) async => _networkInfoDetails);
   when(GetIt.I.get<NetworkService>().getBasicNetworkDetails())
@@ -736,12 +617,14 @@ _setUpStubs() {
       .getMeasurementServersForCurrentFlavor(
         location: _locationModel,
         errorHandler: _errorHandler,
+        project: anyNamed('project'),
       )).thenAnswer((_) async => _measurementServers);
   when(GetIt.I
       .get<MeasurementsApiService>()
       .getMeasurementServersForCurrentFlavor(
         location: null,
         errorHandler: _errorHandler,
+        project: anyNamed('project'),
       )).thenAnswer((_) async => _measurementServers);
   when(GetIt.I.get<MeasurementsApiService>().sendMeasurementResults(
           _measurementResult,
@@ -787,6 +670,7 @@ _setUpStubs() {
         location: null,
         measurementServer: null,
         loopModeSettings: null,
+        project: anyNamed('project'),
       )).thenAnswer((_) async => testStartedMessage);
 
   when(GetIt.I.get<MeasurementService>().startTest(
@@ -795,6 +679,7 @@ _setUpStubs() {
         location: null,
         measurementServer: _measurementServers[0],
         loopModeSettings: null,
+        project: anyNamed('project'),
       )).thenAnswer((_) async => testStartedMessage);
 
   when(GetIt.I.get<MeasurementService>().startTest(
@@ -803,6 +688,7 @@ _setUpStubs() {
         location: null,
         measurementServer: null,
         loopModeSettings: null,
+        project: anyNamed('project'),
       )).thenAnswer((_) async => testStartedMessage);
   when(GetIt.I.get<MeasurementService>().stopTest())
       .thenAnswer((_) async => testStoppedMessage);
@@ -833,4 +719,11 @@ _setUpStubs() {
           state: argThat(isNotNull, named: 'state'),
         ),
   ).thenAnswer((realInvocation) async {});
+
+  when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+    project: NTProject(),
+  ));
+
+  when(GetIt.I.get<MeasurementsApiService>().servers)
+      .thenReturn(_measurementServers);
 }

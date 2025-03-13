@@ -40,7 +40,6 @@ class StartTestLandscapeConfig extends StartTestConfig {
                     Flexible(
                       flex: 3,
                       child: HomeHeroImage(
-                        state: state,
                         imagePath: state.connectivity !=
                                     ConnectivityResult.none &&
                                 state.currentServer == null

@@ -1,9 +1,11 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/colors.dart';
 import 'package:nt_flutter_standalone/core/constants/dimensions.dart';
 import 'package:nt_flutter_standalone/core/extensions/string.ext.dart';
 import 'package:nt_flutter_standalone/core/mixins/error-state.mixin.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/widgets/conditional-content.dart';
 import 'package:nt_flutter_standalone/core/widgets/error.snackbar.dart';
 import 'package:nt_flutter_standalone/core/widgets/gradient-button.widget.dart';
@@ -54,7 +56,8 @@ mixin ErrorHandlingState {
         ),
         actions: <Widget>[
           ConditionalContent(
-            conditional: state.connectivity != ConnectivityResult.none,
+            conditional: GetIt.I.get<CoreCubit>().state.connectivity !=
+                ConnectivityResult.none,
             truthyBuilder: () => GradientButton(
               colors: [Colors.transparent],
               child: Text(

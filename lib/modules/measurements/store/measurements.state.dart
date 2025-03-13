@@ -1,11 +1,15 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:collection';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
+import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/extensions/string.ext.dart';
 import 'package:nt_flutter_standalone/core/mixins/error-state.mixin.dart';
 import 'package:nt_flutter_standalone/core/models/basic-measurements.state.dart';
 import 'package:nt_flutter_standalone/core/models/project.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
 import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart';
@@ -32,13 +36,17 @@ class MeasurementsState
   final List<MeasurementServer>? servers;
   final MeasurementServer? currentServer;
   final LocationModel? currentLocation;
-  final String? clientUuid;
-  final ConnectivityResult connectivity;
-  final NTProject? project;
+
+  // TODO: replace with CoreCubit connectivity
+  final ConnectivityResult? connectivity;
+
   final bool leavingScreenShown;
   final int retryCount;
   late final Set<int> triedServersIds;
   final String? message;
+
+  NTProject? get project => GetIt.I.get<CoreCubit>().state.project;
+  String? get clientUuid => GetIt.I.get<CoreCubit>().state.clientUuid;
 
   List<double> get currentPhaseResultsList => phaseProgressResults[phase] ?? [];
   double get lastResultForCurrentPhase => currentPhaseResultsList.lastWhere(
@@ -76,11 +84,9 @@ class MeasurementsState
     required this.phaseProgressResults,
     required this.phaseFinalResults,
     required this.permissions,
-    this.project,
     this.servers,
     this.currentServer,
     this.currentLocation,
-    this.clientUuid,
     this.connectivity = ConnectivityResult.none,
     this.locationServicesEnabled = false,
     this.leavingScreenShown = false,
@@ -108,11 +114,9 @@ class MeasurementsState
         triedServersIds = {},
         currentServer = null,
         currentLocation = null,
-        clientUuid = null,
-        connectivity = ConnectivityResult.none,
+        connectivity = null,
         locationServicesEnabled = false,
         leavingScreenShown = false,
-        project = null,
         retryCount = 0,
         message = null;
 
@@ -131,11 +135,9 @@ class MeasurementsState
         triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
-        clientUuid = currentState.clientUuid,
         connectivity = currentState.connectivity,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = false,
-        project = currentState.project,
         retryCount = currentState.retryCount,
         message = null;
 
@@ -158,12 +160,10 @@ class MeasurementsState
         triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
-        clientUuid = currentState.clientUuid,
         connectivity = currentState.connectivity,
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project,
         retryCount = currentState.retryCount,
         message = currentState.message;
 
@@ -186,12 +186,10 @@ class MeasurementsState
         triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
-        clientUuid = currentState.clientUuid,
         connectivity = currentState.connectivity,
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project,
         retryCount = currentState.retryCount,
         message = currentState.message;
 
@@ -217,12 +215,10 @@ class MeasurementsState
         triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
-        clientUuid = currentState.clientUuid,
         connectivity = currentState.connectivity,
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project,
         retryCount = currentState.retryCount,
         message = currentState.message;
 
@@ -241,12 +237,10 @@ class MeasurementsState
         triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = currentState.currentLocation,
-        clientUuid = currentState.clientUuid,
         connectivity = currentState.connectivity,
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project,
         retryCount = currentState.retryCount,
         message = currentState.message;
 
@@ -266,12 +260,10 @@ class MeasurementsState
         triedServersIds = currentState.triedServersIds,
         currentServer = currentState.currentServer,
         currentLocation = null,
-        clientUuid = currentState.clientUuid,
         connectivity = currentState.connectivity,
         loopModeDetails = currentState.loopModeDetails,
         locationServicesEnabled = currentState.locationServicesEnabled,
         leavingScreenShown = currentState.leavingScreenShown,
-        project = currentState.project,
         retryCount = currentState.retryCount,
         message = currentState.message;
 
@@ -295,7 +287,6 @@ class MeasurementsState
     LoopModeDetails? loopModeDetails,
     bool? enableAppPrivateIp,
     bool? enableAppIpColorCoding,
-    NTProject? project,
     bool? locationServicesEnabled,
     bool? leavingScreenShown,
     int? retryCount,
@@ -317,10 +308,8 @@ class MeasurementsState
       currentServer: currentServer ?? this.currentServer,
       currentLocation: currentLocation ?? this.currentLocation,
       error: error,
-      clientUuid: clientUuid ?? this.clientUuid,
       loopModeDetails: loopModeDetails ?? this.loopModeDetails,
       connectivity: connectivity ?? this.connectivity,
-      project: project ?? this.project,
       locationServicesEnabled:
           locationServicesEnabled ?? this.locationServicesEnabled,
       leavingScreenShown: leavingScreenShown ?? this.leavingScreenShown,

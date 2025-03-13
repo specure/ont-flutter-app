@@ -118,7 +118,9 @@ class PermissionsService {
                     readPhoneStatePermissionsGranted ?? true,
                 locationPermissionsGranted: locationPermissionsGranted ?? true);
           }
-          GetIt.I.get<MeasurementsBloc>().add(SetPermissions(permissionsMap));
+          final bloc = GetIt.I.get<MeasurementsBloc>();
+          if (bloc.state.connectivity == null) break;
+          bloc.add(SetPermissions(permissionsMap));
           break;
       }
     } catch (err) {

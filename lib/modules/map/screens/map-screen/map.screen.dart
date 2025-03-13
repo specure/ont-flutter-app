@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nt_flutter_standalone/core/constants/api-errors.dart';
@@ -22,14 +23,26 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
-  MaplibreMap? _map;
+class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver {
+  MapLibreMap? _map;
+  UniqueKey? _mapKey;
   CoreState? _coreState;
   StreamSubscription? _styleSub;
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      setState(() {
+        _mapKey = UniqueKey();
+      });
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _mapKey = UniqueKey();
     _coreState = GetIt.I.get<CoreCubit>().state;
     if (_coreState?.connectivity == null ||
         _coreState?.connectivity == ConnectivityResult.none) {
@@ -47,12 +60,14 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void dispose() {
     _styleSub?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MapCubit, MapState>(
+      key: _mapKey,
       bloc: GetIt.I.get<MapCubit>(),
       builder: (context, state) {
         if (_map == null) {
@@ -72,7 +87,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   _setMap(bool isIspActive) {
-    _map = MaplibreMap(
+    _map = MapLibreMap(
       onMapCreated: GetIt.I.get<MapCubit>().onMapCreated,
       onStyleLoadedCallback: GetIt.I.get<MapCubit>().onMapStyleLoaded,
       onMapClick: GetIt.I.get<MapCubit>().onMapClick,

@@ -52,9 +52,7 @@ class StartTestPortraitConfig extends StartTestConfig {
                             state.connectivity == ConnectivityResult.none,
                         truthyBuilder: () => Flexible(
                           child: Center(
-                            child: HomeHeroImage(
-                              state: state,
-                            ),
+                            child: HomeHeroImage(),
                           ),
                         ),
                       ),
@@ -76,7 +74,6 @@ class StartTestPortraitConfig extends StartTestConfig {
                         truthyBuilder: () => Flexible(
                           child: Center(
                             child: HomeHeroImage(
-                              state: state,
                               imagePath:
                                   'config/${Environment.appSuffix}/images/home-screen-hero-no-server.svg',
                             ),
@@ -121,9 +118,7 @@ class StartTestPortraitConfig extends StartTestConfig {
                                   ),
                                   Expanded(
                                     flex: 10,
-                                    child: HomeHeroImage(
-                                      state: state,
-                                    ),
+                                    child: HomeHeroImage(),
                                   ),
                                   Expanded(
                                     flex: 5,

@@ -672,7 +672,7 @@ _setUpStubs({
   when(GetIt.I.get<Connectivity>().onConnectivityChanged)
       .thenAnswer((_) => Stream.empty());
   when(GetIt.I.get<Connectivity>().checkConnectivity())
-      .thenAnswer((_) async => result);
+      .thenAnswer((_) async => [result]);
   when(GetIt.I.get<PlatformWrapper>().isAndroid).thenAnswer((_) => isAndroid);
   when(GetIt.I.get<PermissionsService>().isPhonePermissionGranted)
       .thenAnswer((_) async => true);

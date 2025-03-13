@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nt_flutter_standalone/core/extensions/list.ext.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
+import 'package:nt_flutter_standalone/modules/measurements/models/permissions-map.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/server-network-types.dart';
-import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/carrier-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/cell-info.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/wrappers/wifi-for-iot-plugin.wrapper.dart';
@@ -27,36 +28,35 @@ class NetworkService {
   final SignalService signalService = GetIt.I.get<SignalService>();
   final Connectivity connectivity = GetIt.I.get<Connectivity>();
   final LocationService _locationService = GetIt.I.get<LocationService>();
+  NetworkInfoDetails? _networkInfoDetails;
 
-  Future<StreamSubscription> subscribeToNetworkChanges(
-      {ConnectivityChangesHandler? changesHandler}) async {
-    changesHandler?.process(await connectivity.checkConnectivity());
+  NetworkInfoDetails? get networkInfoDetails => _networkInfoDetails;
+
+  StreamSubscription subscribeToNetworkChanges(
+      {ConnectivityChangesHandler? changesHandler}) {
     return connectivity.onConnectivityChanged.listen((result) {
-      changesHandler?.process(result);
+      changesHandler?.process(result.wifiOrMobile);
     });
   }
 
   Future<NetworkInfoDetails?> getNetworkInfo({
-    required MeasurementsState? state,
-    required void Function(NetworkInfoDetails)? setState,
+    PermissionsMap? permissions,
   }) async {
-    if (state == null || setState == null) {
-      return null;
-    }
     var locationServiceEnabled =
         await _locationService.isLocationServiceEnabled;
-    if (!state.permissions.locationPermissionsGranted ||
+    if (permissions == null ||
+        !permissions.locationPermissionsGranted ||
         !locationServiceEnabled) {
-      var networkInfoDetails = await getBasicNetworkDetails();
-      return networkInfoDetails;
+      _networkInfoDetails = await getBasicNetworkDetails();
+      return _networkInfoDetails;
     }
-    var networkInfoDetails = await getAllNetworkDetails();
-    setState(networkInfoDetails);
-    return networkInfoDetails;
+    _networkInfoDetails = await getAllNetworkDetails();
+    return _networkInfoDetails;
   }
 
   Future<NetworkInfoDetails> getBasicNetworkDetails() async {
-    final currentNetwork = await connectivity.checkConnectivity();
+    final currentNetwork =
+        (await connectivity.checkConnectivity()).wifiOrMobile;
     var networkInfoDetails = await _getNetworkIpAddresses(currentNetwork);
     switch (currentNetwork) {
       case ConnectivityResult.wifi:
@@ -82,7 +82,8 @@ class NetworkService {
   Future<NetworkInfoDetails> getAllNetworkDetails() async {
     var locationServiceEnabled =
         await _locationService.isLocationServiceEnabled;
-    final currentNetwork = await connectivity.checkConnectivity();
+    final currentNetwork =
+        (await connectivity.checkConnectivity()).wifiOrMobile;
     var networkInfoDetails = await _getNetworkIpAddresses(currentNetwork);
     switch (currentNetwork) {
       case ConnectivityResult.wifi:

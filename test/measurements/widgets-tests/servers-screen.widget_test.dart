@@ -6,6 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/models/project.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/widgets/app-bar.widget.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/location-model.dart';
@@ -18,6 +21,7 @@ import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bl
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.events.dart';
 
 import '../../di/service-locator.dart';
+import '../../settings/unit-tests/settings-cubit_test.mocks.dart';
 
 final _loopModeDetails = LoopModeDetails(medians: HashMap());
 
@@ -48,6 +52,10 @@ late MeasurementsBloc _bloc;
 void main() {
   setUp(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
+    TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+    final project = NTProject();
+    when(GetIt.I.get<CoreCubit>().state)
+        .thenReturn(CoreState(project: project));
     _bloc = MeasurementsBloc();
     when(GetIt.I.get<SharedPreferencesWrapper>().init())
         .thenAnswer((_) async => null);
@@ -60,6 +68,7 @@ void main() {
         .getMeasurementServersForCurrentFlavor(
           location: _location,
           errorHandler: _bloc.errorHandler,
+          project: project,
         )).thenAnswer((realInvocation) async => _servers);
     when(GetIt.I.get<LoopModeService>().updateLocation(_location))
         .thenAnswer((_) {});

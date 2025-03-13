@@ -5,24 +5,35 @@ import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/models/project.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.state.dart';
 import 'package:nt_flutter_standalone/modules/measurements/widgets/ip-info.widget.dart';
 
 import '../../di/service-locator.dart';
+import '../../settings/unit-tests/settings-cubit_test.mocks.dart';
 
 final String _selectedLocaleTag = 'sr-Latn-rs';
 
 void main() {
   setUp(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
+    TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+    when(GetIt.I.get<CoreCubit>().state)
+        .thenReturn(CoreState(project: NTProject()));
     when(GetIt.I.get<SharedPreferencesWrapper>().init())
         .thenAnswer((_) async => null);
     when(GetIt.I
             .get<SharedPreferencesWrapper>()
             .getString(StorageKeys.selectedLocaleTag))
         .thenReturn(_selectedLocaleTag);
+    when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+        project: NTProject(
+      enableAppIpColorCoding: true,
+      enableAppPrivateIp: true,
+    )));
   });
   group(
       'IP info widget when color coding is enabled and private IPs are visible',
@@ -30,10 +41,7 @@ void main() {
     testWidgets('when no connectivity', (widgetTester) async {
       final widget = IPInfo(
         state: MeasurementsState.init().copyWith(
-          project: NTProject(
-            enableAppIpColorCoding: true,
-            enableAppPrivateIp: true,
-          ),
+          connectivity: ConnectivityResult.none,
         ),
         badgeText: 'IPv4',
         statusColor: NetworkInfoDetails.yellow,
@@ -52,10 +60,6 @@ void main() {
       final widget = IPInfo(
         state: MeasurementsState.init().copyWith(
           connectivity: ConnectivityResult.wifi,
-          project: NTProject(
-            enableAppIpColorCoding: true,
-            enableAppPrivateIp: true,
-          ),
         ),
         badgeText: 'IPv4',
         statusColor: NetworkInfoDetails.yellow,
@@ -76,9 +80,19 @@ void main() {
   group(
       'IP info widget when color coding is disabled and private IPs are hidden',
       () {
+    setUp(() {
+      when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+          project: NTProject(
+        enableAppIpColorCoding: false,
+        enableAppPrivateIp: false,
+      )));
+    });
+
     testWidgets('when no connectivity', (widgetTester) async {
       final widget = IPInfo(
-        state: MeasurementsState.init(),
+        state: MeasurementsState.init().copyWith(
+          connectivity: ConnectivityResult.none,
+        ),
         badgeText: 'IPv4',
         statusColor: NetworkInfoDetails.yellow,
         privateAddress: 'private',

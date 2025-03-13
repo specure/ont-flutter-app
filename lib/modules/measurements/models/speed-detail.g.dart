@@ -7,10 +7,10 @@ part of 'speed-detail.dart';
 // **************************************************************************
 
 SpeedDetail _$SpeedDetailFromJson(Map<String, dynamic> json) => SpeedDetail(
-      bytes: json['bytes'] as int,
+      bytes: (json['bytes'] as num).toInt(),
       direction: json['direction'] as String,
-      thread: json['thread'] as int,
-      time: json['time'] as int,
+      thread: (json['thread'] as num).toInt(),
+      time: (json['time'] as num).toInt(),
     );
 
 Map<String, dynamic> _$SpeedDetailToJson(SpeedDetail instance) =>

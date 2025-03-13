@@ -12,7 +12,6 @@ import 'package:nt_flutter_standalone/modules/onboarding/screens/wizard.screen.d
 import 'package:nt_flutter_standalone/modules/onboarding/store/wizard.cubit.dart';
 import 'package:nt_flutter_standalone/modules/onboarding/store/wizard.state.dart';
 import 'package:nt_flutter_standalone/modules/onboarding/widgets/welcome-message.widget.dart';
-import 'package:nt_flutter_standalone/modules/onboarding/widgets/wizard-accuracy-item.widget.dart';
 import 'package:nt_flutter_standalone/modules/onboarding/widgets/wizard-accuracy/wizard-accuracy.widget.dart';
 import 'package:nt_flutter_standalone/modules/onboarding/widgets/wizard-rotated-gradient-box.widget.dart';
 
@@ -110,16 +109,14 @@ void main() {
     testWidgets(
       "shows accuracy widget on Android in the landscape mode",
       (tester) async {
-        tester.binding.window.physicalSizeTestValue = Size(2650, 1200);
-        addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+        tester.view.physicalSize = Size(2650, 1200);
         callTester(tester);
       },
     );
     testWidgets(
       "shows accuracy widget on Android in the portrait mode",
       (tester) async {
-        tester.binding.window.physicalSizeTestValue = Size(1200, 2560);
-        addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+        tester.view.physicalSize = Size(1200, 2560);
         callTester(tester);
       },
     );

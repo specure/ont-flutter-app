@@ -10,6 +10,7 @@ import 'package:nt_flutter_standalone/core/services/screen-config.service.dart';
 import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/network.service.dart';
+import 'package:nt_flutter_standalone/modules/settings/services/settings.service.dart';
 
 class CoreCubit extends Cubit<CoreState> {
   final CMSService _cmsService = GetIt.I.get<CMSService>();
@@ -18,6 +19,7 @@ class CoreCubit extends Cubit<CoreState> {
   final NetworkService _networkService = GetIt.I.get<NetworkService>();
   final ConnectivityChangesHandler connectivityChangesHandler =
       CoreCubitConnectivityChangesHandler();
+  final SettingsService settingsService = GetIt.I.get<SettingsService>();
 
   StreamSubscription? _connectivitySubscription;
 
@@ -26,17 +28,8 @@ class CoreCubit extends Cubit<CoreState> {
   void init() async {
     _connectivitySubscription = await _networkService.subscribeToNetworkChanges(
         changesHandler: connectivityChangesHandler);
-  }
-
-  Future update({ConnectivityResult? connectivity}) async {
-    if (connectivity == state.connectivity) {
-      return;
-    }
-    if (connectivity == ConnectivityResult.none) {
-      emit(state.copyWith(connectivity: connectivity));
-      return;
-    }
-    final cmsProject = await _cmsService.getProject();
+    final clientUuid = await settingsService.saveClientUuidAndSettings();
+    final cmsProject = _cmsService.project;
     final bool loopModeFeatureEnabled = cmsProject?.enableAppLoopMode ?? false;
     final bool languageSwitchEnabled =
         cmsProject?.enableAppLanguageSwitch ?? false;
@@ -49,10 +42,17 @@ class CoreCubit extends Cubit<CoreState> {
     _preferences.setBool(
         StorageKeys.netNeutralityTestsEnabled, netNeutralityTestsEnabled);
     emit(state.copyWith(
-      connectivity: connectivity,
       netNeutralityTestsEnabled: netNeutralityTestsEnabled,
       project: cmsProject,
+      clientUuid: clientUuid,
     ));
+  }
+
+  Future update({ConnectivityResult? connectivity}) async {
+    if (connectivity == state.connectivity) {
+      return;
+    }
+    emit(state.copyWith(connectivity: connectivity));
   }
 
   void onItemTap(int index) {

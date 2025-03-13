@@ -14,7 +14,7 @@ DnsNetNeutralitySettingsItem _$DnsNetNeutralitySettingsItemFromJson(
       expectedDnsStatus: json['expectedDnsStatus'] as String?,
       target: json['target'] as String,
       entryType: json['entryType'] as String,
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       type: json['type'] as String,
       timeout: (json['timeout'] as num).toDouble(),
     );

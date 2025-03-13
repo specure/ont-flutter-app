@@ -59,10 +59,6 @@ class DnsResultStatus {
   /// Unsupported EDNS level
   static const BADVERS = 16;
 
-  /// TSIG/TKEY only rcodes
-  /// The signature is invalid (TSIG/TKEY extended error)
-  static const BADSIG = 16;
-
   /// The key is invalid (TSIG/TKEY extended error)
   static const BADKEY = 17;
 
@@ -98,8 +94,6 @@ class DnsResultStatus {
         return "NOTZONE";
       case BADVERS:
         return "BADVERS";
-      case BADSIG:
-        return "BADSIG";
       case BADKEY:
         return "BADKEY";
       case BADTIME:

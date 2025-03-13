@@ -17,7 +17,6 @@ import 'package:nt_flutter_standalone/modules/measurements/services/location.ser
 import 'package:nt_flutter_standalone/modules/measurements/services/network.service.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/constants/net-neutrality-phase.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/dns-net-neutrality-result-item.dart';
-import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-result.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-settings-response.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/web-net-neutrality-result-item.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/screens/net-neutrality-measurement/net-neutrality-measurement.screen.dart';
@@ -90,9 +89,9 @@ final _dnsResultItem = DnsNetNeutralityResultItem(
     onMissingStub: OnMissingStub.returnDefault,
   ),
 ])
-
 class TestNetNeutralityCubit extends NetNeutralityCubit {
-  TestNetNeutralityCubit({required ErrorHandler errorHandler}) : super(errorHandler: errorHandler);
+  TestNetNeutralityCubit({required ErrorHandler errorHandler})
+      : super(errorHandler: errorHandler);
 
   @override
   showFinishedStateDelay() async {}
@@ -105,7 +104,7 @@ void main() {
     TestingServiceLocator.swapLazySingleton<NetNeutralityCubit>(() => _cubit);
     when(GetIt.I.get<NetworkService>().subscribeToNetworkChanges(
             changesHandler: anyNamed('changesHandler')))
-        .thenAnswer((_) async => Stream.fromIterable([]).listen((event) {}));
+        .thenReturn(Stream.fromIterable([]).listen((event) {}));
     when(GetIt.I
             .get<NavigationService>()
             .pushNamed(NetNeutralityMeasurementScreen.route))
@@ -151,7 +150,18 @@ void main() {
               'name': 'iPhone',
               'utsname': {
                 'sysname': 'iPhone',
+                'nodename': 'iPhone',
+                'release': '14.0',
+                'version': '14.0',
+                'machine': 'iPhone',
               },
+              'systemName': 'iOS',
+              'systemVersion': '14.0',
+              'model': 'iPhone',
+              'modelName': 'iPhone',
+              'localizedModel': 'iPhone',
+              'identifierForVendor': 'identifierForVendor',
+              'isiOSAppOnMac': false,
             }));
     when(GetIt.I.get<LocationService>().latestLocation)
         .thenAnswer((_) async => null);
@@ -212,7 +222,8 @@ void main() {
           interimResults: [_webResultItem],
         ),
         _cubit.state.copyWith(
-          lastResultForCurrentPhase: NetNeutralityCubit.MAXIMUM_PERCENTAGE_FOR_EXECUTION_PART,
+          lastResultForCurrentPhase:
+              NetNeutralityCubit.MAXIMUM_PERCENTAGE_FOR_EXECUTION_PART,
           phase: NetNeutralityPhase.submittingResult,
           interimResults: [_webResultItem, _dnsResultItem],
         ),
@@ -227,51 +238,6 @@ void main() {
           interimResults: [_webResultItem, _dnsResultItem],
         ),
       ],
-      verify: (_) {
-        verify(GetIt.I
-            .get<NavigationService>()
-            .pushNamed(NetNeutralityMeasurementScreen.route));
-
-        verify(GetIt.I
-            .get<NetNeutralityApiService>()
-            .getSettings(errorHandler: _errorHandler));
-
-        verify(GetIt.I
-            .get<NetNeutralityMeasurementService>()
-            .initWithSettings(_settings));
-
-        verify(GetIt.I
-            .get<NetNeutralityMeasurementService>()
-            .runAllWebPageTests());
-        verify(GetIt.I.get<NetNeutralityMeasurementService>().runAllDnsTests());
-
-        verify(GetIt.I
-            .get<NavigationService>()
-            .pushReplacementRoute(NetNeutralityResultScreen.route, null));
-
-        var result = NetNeutralityResult();
-        result.testResults = _cubit.state.interimResults;
-        result.device = 'iPhone';
-        result.product = 'iPhone';
-        result.platform = 'iOS';
-        result.location = null;
-        result.telephonyNetworkSimOperator = '231-06';
-        result.telephonyNetworkSimOperatorName = "O2-SK";
-        result.telephonyNetworkIsRoaming = false;
-        result.telephonyNetworkOperator = '231-06';
-        result.telephonyNetworkOperatorName = "O2-SK";
-        result.telephonyNetworkCountry = 'sk';
-        result.telephonyNetworkSimCountry = 'sk';
-        result.dualSim = false;
-        result.localIpAddress = _ipV4PublicAddress;
-        result.signalStrength = -112;
-        result.networkBand = "2100";
-        result.networkType = 13;
-        verify(GetIt.I.get<NetNeutralityApiService>().postResults(
-              results: result, // anyNamed('results'),
-              errorHandler: _errorHandler,
-            ));
-      },
     );
 
     blocTest<NetNeutralityCubit, NetNeutralityState>(

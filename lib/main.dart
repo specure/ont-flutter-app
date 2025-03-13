@@ -14,6 +14,7 @@ import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/delegates/localization-sr-me-latn.delegate.dart';
 import 'package:nt_flutter_standalone/core/di/service-locator.dart';
+import 'package:nt_flutter_standalone/core/services/cms.service.dart';
 import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
 import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
@@ -31,6 +32,9 @@ import 'package:nt_flutter_standalone/modules/measurement-result/store/measureme
 import 'package:nt_flutter_standalone/modules/measurements/screens/home.screen.dart';
 import 'package:nt_flutter_standalone/modules/measurements/screens/measurement.screen.dart';
 import 'package:nt_flutter_standalone/modules/measurements/screens/servers.screen.dart';
+import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart';
+import 'package:nt_flutter_standalone/modules/measurements/services/network.service.dart';
+import 'package:nt_flutter_standalone/modules/measurements/services/permissions.service.dart';
 import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/screens/net-neutrality-measurement/net-neutrality-measurement.screen.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/screens/net-neutrality-result-details/net-neutrality-result-details.screen.dart';
@@ -64,7 +68,15 @@ void main() async {
   await GetIt.I.get<SharedPreferencesWrapper>().init();
   await GetIt.I.get<FirebaseAnalyticsWrapper>().init();
   await GetIt.I.get<InAppReviewWrapper>().init();
-  await GetIt.I.get<LocalizationService>().getTranslations();
+  final permissions = await GetIt.I.get<PermissionsService>().initAndGet();
+  final project = await GetIt.I.get<CMSService>().getProject();
+  await Future.wait([
+    GetIt.I.get<LocalizationService>().getTranslations(),
+    GetIt.I.get<NetworkService>().getNetworkInfo(permissions: permissions),
+    GetIt.I
+        .get<MeasurementsApiService>()
+        .getMeasurementServersForCurrentFlavor(project: project),
+  ]);
 
   if (kReleaseMode) {
     await SentryFlutter.init(

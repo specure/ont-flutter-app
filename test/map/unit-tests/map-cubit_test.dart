@@ -27,7 +27,7 @@ final NTProject _project =
 
 final NTProject _projectDecember =
     NTProject.fromJson({'mapbox_actual_date': '2022-12-03'});
-late final _cmsService;
+late final CMSService _cmsService;
 late final MapCubit cubit;
 
 class MockMapCubit extends MockCubit<MapState> implements MapCubit {}
@@ -93,13 +93,13 @@ void main() {
 
     test('retrieves default date from the CMS', () async {
       await cubit.loadDefaultDate();
-      verify(_cmsService.getProject()).called(1);
+      verify(_cmsService.project).called(1);
       final match = DateTime.parse(_project.mapboxActualDate!);
       expect(cubit.state.defaultPeriod, match);
       expect(cubit.state.currentPeriod, match);
 
       await cubit.loadDefaultDate();
-      verifyNever(_cmsService.getProject());
+      verifyNever(_cmsService.project);
       expect(cubit.state.defaultPeriod, match);
       expect(cubit.state.currentPeriod, match);
     });
@@ -156,7 +156,7 @@ _setUpStubs(NTProject project) {
   final technologyApiService = GetIt.I.get<TechnologyApiService>();
   final mapSearchApiService = GetIt.I.get<MapSearchApiService>();
   _cmsService = GetIt.I.get<CMSService>();
-  when(_cmsService.getProject()).thenAnswer((_) async => project);
+  when(_cmsService.project).thenReturn(project);
   when(technologyApiService.getMnoProviders())
       .thenAnswer((_) async => ['Operator']);
   when(mapSearchApiService.search(MapSearchRequest(

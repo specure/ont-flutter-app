@@ -7,12 +7,14 @@ class CoreState extends Equatable {
   final bool netNeutralityTestsEnabled;
   final ConnectivityResult? connectivity;
   final NTProject? project;
+  final String? clientUuid;
 
   CoreState({
     this.connectivity,
     this.currentScreen = 0,
     this.netNeutralityTestsEnabled = false,
     this.project,
+    this.clientUuid,
   });
 
   CoreState copyWith({
@@ -20,6 +22,7 @@ class CoreState extends Equatable {
     bool? netNeutralityTestsEnabled,
     ConnectivityResult? connectivity,
     NTProject? project,
+    String? clientUuid,
   }) =>
       CoreState(
         connectivity: connectivity ?? this.connectivity,
@@ -27,6 +30,7 @@ class CoreState extends Equatable {
         netNeutralityTestsEnabled:
             netNeutralityTestsEnabled ?? this.netNeutralityTestsEnabled,
         project: project ?? this.project,
+        clientUuid: clientUuid ?? this.clientUuid,
       );
 
   @override
@@ -35,5 +39,6 @@ class CoreState extends Equatable {
         currentScreen,
         netNeutralityTestsEnabled,
         project,
+        clientUuid,
       ];
 }

@@ -11,8 +11,8 @@ History _$HistoryFromJson(Map<String, dynamic> json) => History(
           .map((e) =>
               MeasurementHistoryResults.fromJson(e as Map<String, dynamic>))
           .toList(),
-      totalElements: json['totalElements'] as int,
-      totalPages: json['totalPages'] as int,
+      totalElements: (json['totalElements'] as num).toInt(),
+      totalPages: (json['totalPages'] as num).toInt(),
       last: json['last'] as bool,
     );
 

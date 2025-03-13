@@ -57,8 +57,7 @@ class NetNeutralityCubit extends Cubit<NetNeutralityState>
   Future init() async {
     try {
       _connectivitySubscription?.cancel();
-      _connectivitySubscription =
-          await _networkService.subscribeToNetworkChanges(
+      _connectivitySubscription = _networkService.subscribeToNetworkChanges(
         changesHandler: connectivityChangesHandler,
       );
     } catch (e) {

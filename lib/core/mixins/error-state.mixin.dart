@@ -1,8 +1,6 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 
 mixin ErrorState {
-  ConnectivityResult connectivity = ConnectivityResult.none;
   Exception? error;
   String? get errorMessage {
     if (error == null) {

@@ -7,7 +7,7 @@ part of 'settings.dart';
 // **************************************************************************
 
 Settings _$SettingsFromJson(Map<String, dynamic> json) => Settings(
-      apiLevel: json['api_level'] as int?,
+      apiLevel: (json['api_level'] as num?)?.toInt(),
       capabilities: json['capabilities'] as Map<String, dynamic>?,
       device: json['device'] as String?,
       language: json['language'] as String?,
@@ -17,17 +17,17 @@ Settings _$SettingsFromJson(Map<String, dynamic> json) => Settings(
       platform: json['platform'] as String? ?? '',
       product: json['product'] as String?,
       softwareRevision: json['softwareRevision'] as String?,
-      softwareRevisionCode: json['softwareRevisionCode'] as int?,
+      softwareRevisionCode: (json['softwareRevisionCode'] as num?)?.toInt(),
       softwareVersionName: json['softwareVersionName'] as String?,
       termsAndConditionsAccepted:
           json['terms_and_conditions_accepted'] as bool?,
       termsAndConditionsAcceptedVersion:
-          json['terms_and_conditions_accepted_version'] as int?,
+          (json['terms_and_conditions_accepted_version'] as num?)?.toInt(),
       timezone: json['timezone'] as String?,
       type: json['type'] as String? ?? 'MOBILE',
       userServerSelection: json['user_server_selection'] as bool?,
       uuid: json['uuid'] as String?,
-      versionCode: json['version_code'] as int?,
+      versionCode: (json['version_code'] as num?)?.toInt(),
       versionName: json['version_name'] as String?,
     );
 

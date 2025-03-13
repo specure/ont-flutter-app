@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:nt_flutter_standalone/core/extensions/list.ext.dart';

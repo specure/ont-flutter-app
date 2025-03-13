@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
 import 'package:nt_flutter_standalone/core/mixins/error-state.mixin.dart';
@@ -20,6 +22,9 @@ class NetNeutralityState
   final List<NetNeutralityHistoryItem> historyResults;
   final List<NetNeutralityHistoryItem>? resultDetailsItems;
   final NetNeutralityDetailsConfig? resultDetailsConfig;
+
+  // TODO: replace with CoreCubit connectivity
+  final ConnectivityResult? connectivity;
 
   @override
   String get phaseName => 'Net Neutrality'.translated.toUpperCase();
@@ -96,14 +101,13 @@ class NetNeutralityState
     this.resultDetailsItems,
     this.resultDetailsConfig,
     this.lastResultForCurrentPhase = 0,
-    ConnectivityResult connectivity = ConnectivityResult.none,
+    this.connectivity,
     Exception? error,
     bool loading = false,
     NetNeutralityResultItem? resultItem,
   }) {
     this.loading = loading;
     this.error = error;
-    this.connectivity = connectivity;
   }
 
   NetNeutralityState copyWith({

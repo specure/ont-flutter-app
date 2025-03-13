@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/constants/urls.dart';
@@ -56,7 +55,6 @@ final _historyToJson = {
   'last': true,
 };
 
-@GenerateMocks([SharedPreferencesWrapper])
 void main() {
   setUp(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);

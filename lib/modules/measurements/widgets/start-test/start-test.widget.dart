@@ -46,7 +46,8 @@ class _StartTestWidgetState extends State<StartTestWidget>
         .distinct((a, b) => a.isContinuing == b.isContinuing)
         .listen(_openMeasurementScreen);
     GetIt.I.get<RouteObserver>().subscribe(this, ModalRoute.of(context)!);
-    if (_bloc.state.connectivity == ConnectivityResult.none) {
+    if (_bloc.state.connectivity == ConnectivityResult.none ||
+        _bloc.state.connectivity == null) {
       _bloc.add(Initialize());
     }
   }

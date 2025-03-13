@@ -1,5 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/widgets/conditional-content.dart';
 import 'package:nt_flutter_standalone/core/widgets/header-with-logo.widget.dart';
 import 'package:nt_flutter_standalone/modules/measurements/widgets/home-hero-image.widget.dart';
@@ -14,6 +16,7 @@ class NetNeutralityHomeLandscapeConfig extends NetNeutralityHomeConfig {
 
   @override
   Widget get content => LayoutBuilder(builder: (context, viewportConstraints) {
+        final state = GetIt.I.get<CoreCubit>().state;
         return SafeArea(
           child: Stack(
             children: [
@@ -31,9 +34,7 @@ class NetNeutralityHomeLandscapeConfig extends NetNeutralityHomeConfig {
                   children: [
                     Flexible(
                       flex: 3,
-                      child: HomeHeroImage(
-                        state: state,
-                      ),
+                      child: HomeHeroImage(),
                     ),
                     Flexible(
                       flex: 5,

@@ -44,8 +44,6 @@ import 'package:nt_flutter_standalone/modules/net-neutrality/services/net-neutra
 import 'package:nt_flutter_standalone/modules/net-neutrality/store/net-neutrality.cubit.dart';
 import 'package:nt_flutter_standalone/modules/settings/services/settings.service.dart';
 
-import '../core/unit-tests/dio-service_test.mocks.dart';
-import '../history/unit-tests/history-api-service_test.mocks.dart';
 import '../history/unit-tests/history-cubit_test.dart';
 import '../history/unit-tests/history-cubit_test.mocks.dart';
 import '../history/widget-tests/history-screen_test.mocks.dart';

@@ -23,7 +23,7 @@ class MeasurementResultCubit extends Cubit<MeasurementResultState>
   }) async {
     emit(state.copyWith(loading: true));
     final packageInfo = await PackageInfo.fromPlatform();
-    final project = await _cmsService.getProject();
+    final project = _cmsService.project;
     MeasurementHistoryResult? fullResults;
     var loopResults = state.loopResult;
     if (result != null && result.isLoopMeasurement) {

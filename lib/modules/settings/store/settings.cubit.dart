@@ -10,7 +10,6 @@ import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/wrappers/firebase-analytics.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/loop.mode.service.dart';
-import 'package:nt_flutter_standalone/modules/measurements/store/measurements.bloc.dart';
 import 'package:nt_flutter_standalone/modules/settings/screens/loop-mode-agreement.dart';
 import 'package:nt_flutter_standalone/modules/settings/screens/markdown.screen.dart';
 import 'package:nt_flutter_standalone/modules/settings/services/settings.service.dart';
@@ -35,7 +34,7 @@ class SettingsCubit extends Cubit<SettingsState> implements ErrorHandler {
   init() async {
     final packageInfo = await PackageInfo.fromPlatform();
     final clientUuid = (await _preferences.clientUuid) ??
-        GetIt.I.get<MeasurementsBloc>().state.clientUuid;
+        GetIt.I.get<CoreCubit>().state.clientUuid;
     final persistentClientUuid =
         _preferences.getBool(StorageKeys.persistentClientUuidEnabled) ?? true;
     final analyticsEnabled =

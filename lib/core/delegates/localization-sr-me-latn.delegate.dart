@@ -60,6 +60,7 @@ class CupertinoLocalizationSrMeLatnDelegate
         singleDigitHourFormat: DateFormat.H(),
         singleDigitMinuteFormat: DateFormat.m(),
         singleDigitSecondFormat: DateFormat.s(),
+        weekdayFormat: DateFormat.E(),
       );
 
   @override
@@ -76,5 +77,6 @@ class CupertinoLocalizationSrMeLatn extends CupertinoLocalizationSrLatn {
     required super.doubleDigitMinuteFormat,
     required super.singleDigitSecondFormat,
     required super.decimalFormat,
+    required super.weekdayFormat,
   });
 }

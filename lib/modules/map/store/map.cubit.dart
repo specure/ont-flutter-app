@@ -148,8 +148,8 @@ class MapCubit extends Cubit<MapState> {
     if (state.defaultPeriod != null) {
       return;
     }
-    final NTProject? project = GetIt.I.get<CoreCubit>().state.project ??
-        await _cmsService.getProject();
+    final NTProject? project =
+        GetIt.I.get<CoreCubit>().state.project ?? _cmsService.project;
     if (project != null && project.mapboxActualDate != null) {
       final DateTime currentPeriod = DateTime.parse(project.mapboxActualDate!);
       emit(state.copyWith(

@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -43,7 +42,8 @@ _testMetadataView(NetNeutralityState state) {
   final networkTypeFinder = find.byWidgetPredicate((widget) =>
       widget is TextSection &&
       widget.title == 'Network type' &&
-      widget.value == "${state.historyResults.first.networkType} (${state.historyResults.first.networkName})"&&
+      widget.value ==
+          "${state.historyResults.first.networkType} (${state.historyResults.first.networkName})" &&
       widget.icon == Icons.signal_cellular_alt_outlined);
   final networkNameFinder = find.byWidgetPredicate((widget) =>
       widget is TextSection &&
@@ -60,10 +60,8 @@ _testMetadataView(NetNeutralityState state) {
   expect(locationFinder, findsOneWidget);
 }
 
-Future<NetNeutralityState> _setUpStateAndPumpWidget(
-    WidgetTester tester) async {
+Future<NetNeutralityState> _setUpStateAndPumpWidget(WidgetTester tester) async {
   final state = NetNeutralityState(
-    connectivity: ConnectivityResult.none,
     interimResults: [],
     historyResults: [
       WebNetNeutralityHistoryItem(
@@ -107,8 +105,7 @@ Future<NetNeutralityState> _setUpStateAndPumpWidget(
   return state;
 }
 
-NetNeutralityCubit setUpMeasurementResultCubit(
-    NetNeutralityState state) {
+NetNeutralityCubit setUpMeasurementResultCubit(NetNeutralityState state) {
   final cubit = MockNetNeutralityCubit();
   whenListen(
     cubit,

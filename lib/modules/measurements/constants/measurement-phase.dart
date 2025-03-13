@@ -37,7 +37,6 @@ extension MeasurementPhaseExt on MeasurementPhase {
         return 'Packet loss';
       case MeasurementPhase.submittingTestResult:
         return 'Submitting test result';
-      case MeasurementPhase.none:
       default:
         return '';
     }
@@ -65,7 +64,6 @@ extension MeasurementPhaseExt on MeasurementPhase {
         return 1;
       case MeasurementPhase.submittingTestResult:
         return 1;
-      case MeasurementPhase.none:
       default:
         return 0;
     }

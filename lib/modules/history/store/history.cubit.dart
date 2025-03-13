@@ -48,7 +48,7 @@ class HistoryCubit extends Cubit<HistoryState>
     final deviceFilters = getFiltersFromHistory(
         _history!.getFlatResult(), MeasurementHistoryResult.deviceField);
     final enableSynchronization =
-        (await _cmsService.getProject())?.enableAppResultsSynchronization;
+        _cmsService.project?.enableAppResultsSynchronization;
 
     var newState;
     if (_history != null) {

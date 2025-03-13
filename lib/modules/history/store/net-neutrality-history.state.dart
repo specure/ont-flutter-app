@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:equatable/equatable.dart';
 import 'package:nt_flutter_standalone/core/mixins/error-state.mixin.dart';
 import 'package:nt_flutter_standalone/core/mixins/loading-state.mixin.dart';

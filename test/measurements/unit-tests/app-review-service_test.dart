@@ -14,8 +14,10 @@ import 'package:nt_flutter_standalone/modules/measurements/services/app.review.s
 import '../../di/service-locator.dart';
 
 int milliseconds = 1654096923668;
-int secondAppReviewDelayMillis = AppReview.IN_APP_REVIEW_SECOND_DISPLAY_DELAY_MILLIS;
-int thirdAppReviewDelayMillis = AppReview.IN_APP_REVIEW_THIRD_DISPLAY_DELAY_MILLIS;
+int secondAppReviewDelayMillis =
+    AppReview.IN_APP_REVIEW_SECOND_DISPLAY_DELAY_MILLIS;
+int thirdAppReviewDelayMillis =
+    AppReview.IN_APP_REVIEW_THIRD_DISPLAY_DELAY_MILLIS;
 
 final List<Map<String, dynamic>> _projects = [
   {
@@ -83,55 +85,69 @@ Future _testStartReviewFourthTry() async {
 Future _testStartReviewThirdTryCorrectDelay() async {
   _setUpEnabledReviewStubs();
   when(_prefs.getInt(StorageKeys.inAppReviewShownCount)).thenAnswer((_) => 2);
-  when(_prefs.setInt(StorageKeys.inAppReviewShownCount, 3)).thenAnswer((_) async => true);
-  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis)).thenAnswer((_) => milliseconds - thirdAppReviewDelayMillis - 1);
+  when(_prefs.setInt(StorageKeys.inAppReviewShownCount, 3))
+      .thenAnswer((_) async => true);
+  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis))
+      .thenAnswer((_) => milliseconds - thirdAppReviewDelayMillis - 1);
   expect(await AppReviewService().startAppReview(), true);
 }
 
 Future _testStartReviewThirdTryNotEnoughDelay() async {
   _setUpEnabledReviewStubs();
   when(_prefs.getInt(StorageKeys.inAppReviewShownCount)).thenAnswer((_) => 2);
-  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis)).thenAnswer((_) => milliseconds - thirdAppReviewDelayMillis);
+  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis))
+      .thenAnswer((_) => milliseconds - thirdAppReviewDelayMillis);
   expect(await AppReviewService().startAppReview(), false);
 }
 
 Future _testStartReviewSecondTryCorrectDelay() async {
   _setUpEnabledReviewStubs();
   when(_prefs.getInt(StorageKeys.inAppReviewShownCount)).thenAnswer((_) => 1);
-  when(_prefs.setInt(StorageKeys.inAppReviewShownCount, 2)).thenAnswer((_) async => true);
-  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis)).thenAnswer((_) => milliseconds - secondAppReviewDelayMillis - 1);
+  when(_prefs.setInt(StorageKeys.inAppReviewShownCount, 2))
+      .thenAnswer((_) async => true);
+  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis))
+      .thenAnswer((_) => milliseconds - secondAppReviewDelayMillis - 1);
   expect(await AppReviewService().startAppReview(), true);
 }
 
 Future _testStartReviewSecondTryNotEnoughDelay() async {
   _setUpEnabledReviewStubs();
   when(_prefs.getInt(StorageKeys.inAppReviewShownCount)).thenAnswer((_) => 1);
-  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis)).thenAnswer((_) => milliseconds - secondAppReviewDelayMillis);
+  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis))
+      .thenAnswer((_) => milliseconds - secondAppReviewDelayMillis);
   expect(await AppReviewService().startAppReview(), false);
 }
 
 Future _testStartReviewAllowedCmsButNotAvailable() async {
   _setUpEnabledReviewStubs();
-  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis)).thenAnswer((_) => null);
+  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis))
+      .thenAnswer((_) => null);
   when(_prefs.getInt(StorageKeys.inAppReviewShownCount)).thenAnswer((_) => 0);
-  when(GetIt.I.get<InAppReviewWrapper>().isAvailable).thenAnswer((_) async => false);
+  when(GetIt.I.get<InAppReviewWrapper>().isAvailable)
+      .thenAnswer((_) async => false);
   expect(await AppReviewService().startAppReview(), false);
 }
 
 Future _testStartReviewAllowedCMS() async {
   _setUpEnabledReviewStubs();
-  when(_prefs.setInt(StorageKeys.inAppReviewShownCount, 1)).thenAnswer((_) async => true);
-  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis)).thenAnswer((_) => null);
+  when(_prefs.setInt(StorageKeys.inAppReviewShownCount, 1))
+      .thenAnswer((_) async => true);
+  when(_prefs.getInt(StorageKeys.inAppReviewLastShownTimestampMillis))
+      .thenAnswer((_) => null);
   when(_prefs.getInt(StorageKeys.inAppReviewShownCount)).thenAnswer((_) => 0);
   expect(await AppReviewService().startAppReview(), true);
 }
 
 Future _testStartReviewNotAllowedCMS() async {
-  when(GetIt.I.get<CMSService>().getProject()).thenAnswer((_) async => NTProject.fromJson(_projects[1]));
-  when(GetIt.I.get<DateTimeWrapper>().nowInMillis()).thenAnswer((_) => milliseconds);
-  when(GetIt.I.get<InAppReviewWrapper>().isAvailable).thenAnswer((_) async => true);
+  when(GetIt.I.get<CMSService>().project)
+      .thenReturn(NTProject.fromJson(_projects[1]));
+  when(GetIt.I.get<DateTimeWrapper>().nowInMillis())
+      .thenAnswer((_) => milliseconds);
+  when(GetIt.I.get<InAppReviewWrapper>().isAvailable)
+      .thenAnswer((_) async => true);
   when(_prefs.getInt(StorageKeys.inAppReviewShownCount)).thenAnswer((_) => 0);
-  when(GetIt.I.get<InAppReviewWrapper>().requestReview()).thenAnswer((_) async => true);
+  when(GetIt.I.get<InAppReviewWrapper>().requestReview())
+      .thenAnswer((_) async => true);
   expect(await AppReviewService().startAppReview(), false);
 }
 
@@ -142,13 +158,20 @@ Future _testStartReviewOutOfTries() async {
 _setUpStubs() {
   TestingServiceLocator.registerInstances();
   _prefs = GetIt.I.get<SharedPreferencesWrapper>();
-  when(_prefs.setInt(StorageKeys.inAppReviewShownCount, 0)).thenAnswer((_) async => true);
-  when(_prefs.setInt(StorageKeys.inAppReviewLastShownTimestampMillis, milliseconds)).thenAnswer((_) async => true);
+  when(_prefs.setInt(StorageKeys.inAppReviewShownCount, 0))
+      .thenAnswer((_) async => true);
+  when(_prefs.setInt(
+          StorageKeys.inAppReviewLastShownTimestampMillis, milliseconds))
+      .thenAnswer((_) async => true);
 }
 
 void _setUpEnabledReviewStubs() {
-  when(GetIt.I.get<CMSService>().getProject()).thenAnswer((_) async => NTProject.fromJson(_projects[0]));
-  when(GetIt.I.get<DateTimeWrapper>().nowInMillis()).thenAnswer((_) => milliseconds);
-  when(GetIt.I.get<InAppReviewWrapper>().isAvailable).thenAnswer((_) async => true);
-  when(GetIt.I.get<InAppReviewWrapper>().requestReview()).thenAnswer((_) async => true);
+  when(GetIt.I.get<CMSService>().project)
+      .thenReturn(NTProject.fromJson(_projects[0]));
+  when(GetIt.I.get<DateTimeWrapper>().nowInMillis())
+      .thenAnswer((_) => milliseconds);
+  when(GetIt.I.get<InAppReviewWrapper>().isAvailable)
+      .thenAnswer((_) async => true);
+  when(GetIt.I.get<InAppReviewWrapper>().requestReview())
+      .thenAnswer((_) async => true);
 }

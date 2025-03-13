@@ -8,9 +8,9 @@ part of 'technology-signal.dart';
 
 TechnologySignal _$TechnologySignalFromJson(Map<String, dynamic> json) =>
     TechnologySignal(
-      signal: json['signal'] as int,
+      signal: (json['signal'] as num).toInt(),
       technology: json['technology'] as String,
-      timeNs: json['timeNs'] as int?,
+      timeNs: (json['timeNs'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TechnologySignalToJson(TechnologySignal instance) =>

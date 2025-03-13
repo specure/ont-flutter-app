@@ -23,11 +23,11 @@ class WizardCubit extends Cubit<WizardState> {
   WizardCubit() : super(WizardState());
 
   init() async {
-    emit(state.copyWith(project: await _cmsService.getProject()));
+    emit(state.copyWith(project: _cmsService.project));
   }
 
   update(WizardState newState) {
-    if(isClosed) return;
+    if (isClosed) return;
     emit(newState);
   }
 

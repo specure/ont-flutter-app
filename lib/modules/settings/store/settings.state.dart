@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:equatable/equatable.dart';
 import 'package:nt_flutter_standalone/core/constants/loop-mode.dart';
 import 'package:nt_flutter_standalone/core/extensions/string.ext.dart';
@@ -28,9 +30,12 @@ class SettingsState with ErrorState, LoadingState, EquatableMixin {
   final NetNeutralityMeasurement netNeutralityMeasurement;
   final bool netNeutralityTestsEnabled;
 
-  int get loopModeDistanceMetersSet => loopModeDistanceMeters ?? LoopMode.loopModeDefaultDistanceMeters;
-  int get loopModeWaitingTimeMinSet => loopModeWaitingTimeMin ?? LoopMode.loopModeDefaultWaitingTimeMinutes;
-  int get loopModeTestCountSet => loopModeTestCount ?? LoopMode.loopModeDefaultMeasurementCount;
+  int get loopModeDistanceMetersSet =>
+      loopModeDistanceMeters ?? LoopMode.loopModeDefaultDistanceMeters;
+  int get loopModeWaitingTimeMinSet =>
+      loopModeWaitingTimeMin ?? LoopMode.loopModeDefaultWaitingTimeMinutes;
+  int get loopModeTestCountSet =>
+      loopModeTestCount ?? LoopMode.loopModeDefaultMeasurementCount;
 
   SettingsState({
     this.appVersion = '',
@@ -90,28 +95,35 @@ class SettingsState with ErrorState, LoadingState, EquatableMixin {
       clientUuid: clientUuid,
       persistentClientUuidEnabled:
           persistentClientUuidEnabled ?? this.persistentClientUuidEnabled,
-      analyticsEnabled:
-      analyticsEnabled ?? this.analyticsEnabled,
-      languageSwitchEnabled: languageSwitchEnabled ?? this.languageSwitchEnabled,
+      analyticsEnabled: analyticsEnabled ?? this.analyticsEnabled,
+      languageSwitchEnabled:
+          languageSwitchEnabled ?? this.languageSwitchEnabled,
       selectedLanguage: selectedLanguage ?? this.selectedLanguage,
       supportedLanguages: supportedLanguages ?? this.supportedLanguages,
       loopModeFeatureEnabled:
-      loopModeFeatureEnabled ?? this.loopModeFeatureEnabled,
-      loopModeEnabled:
-      loopModeEnabled ?? this.loopModeEnabled,
+          loopModeFeatureEnabled ?? this.loopModeFeatureEnabled,
+      loopModeEnabled: loopModeEnabled ?? this.loopModeEnabled,
       loopModeNetNeutralityEnabled:
-      loopModeNetNeutralityEnabled ?? this.loopModeNetNeutralityEnabled,
-      loopModeTestCount: loopModeMeasurementCountSet ?? this.loopModeTestCountSet,
-      loopModeWaitingTimeMin: loopModeWaitingTimeMinSet ?? this.loopModeWaitingTimeMinSet,
-      loopModeDistanceMeters: loopModeDistanceMetersSet ?? this.loopModeDistanceMetersSet,
-      loopMeasurementCountSetError: loopMeasurementCountSetError ?? this.loopMeasurementCountSetError,
-      loopMeasurementDistanceSetError: loopMeasurementDistanceSetError ?? this.loopMeasurementDistanceSetError,
-      loopMeasurementWaitingTimeSetError: loopMeasurementWaitingTimeSetError ?? this.loopMeasurementWaitingTimeSetError,
+          loopModeNetNeutralityEnabled ?? this.loopModeNetNeutralityEnabled,
+      loopModeTestCount:
+          loopModeMeasurementCountSet ?? this.loopModeTestCountSet,
+      loopModeWaitingTimeMin:
+          loopModeWaitingTimeMinSet ?? this.loopModeWaitingTimeMinSet,
+      loopModeDistanceMeters:
+          loopModeDistanceMetersSet ?? this.loopModeDistanceMetersSet,
+      loopMeasurementCountSetError:
+          loopMeasurementCountSetError ?? this.loopMeasurementCountSetError,
+      loopMeasurementDistanceSetError: loopMeasurementDistanceSetError ??
+          this.loopMeasurementDistanceSetError,
+      loopMeasurementWaitingTimeSetError: loopMeasurementWaitingTimeSetError ??
+          this.loopMeasurementWaitingTimeSetError,
       staticPageContent: staticPageContent ?? this.staticPageContent,
       staticPageTitle: staticPageTitle ?? this.staticPageTitle,
       loading: loading ?? this.loading,
-      netNeutralityMeasurement: netNeutralityMeasurement ?? this.netNeutralityMeasurement,
-      netNeutralityTestsEnabled: netNeutralityTestsEnabled ?? this.netNeutralityTestsEnabled,
+      netNeutralityMeasurement:
+          netNeutralityMeasurement ?? this.netNeutralityMeasurement,
+      netNeutralityTestsEnabled:
+          netNeutralityTestsEnabled ?? this.netNeutralityTestsEnabled,
     );
   }
 
@@ -146,7 +158,9 @@ class SettingsState with ErrorState, LoadingState, EquatableMixin {
   }
 
   bool isLoopModeConfiguredCorrectly() {
-    return !(loopMeasurementWaitingTimeSetError || loopMeasurementDistanceSetError || loopMeasurementCountSetError);
+    return !(loopMeasurementWaitingTimeSetError ||
+        loopMeasurementDistanceSetError ||
+        loopMeasurementCountSetError);
   }
 }
 
@@ -165,9 +179,12 @@ enum NetNeutralityMeasurement {
 extension Naming on NetNeutralityMeasurement {
   String toName() {
     switch (this) {
-      case NetNeutralityMeasurement.ALWAYS: return "Always".translated;
-      case NetNeutralityMeasurement.MANUALLY: return "Manually".translated;
-      case NetNeutralityMeasurement.ON_NEW_NETWORK: return "On New Network".translated;
+      case NetNeutralityMeasurement.ALWAYS:
+        return "Always".translated;
+      case NetNeutralityMeasurement.MANUALLY:
+        return "Manually".translated;
+      case NetNeutralityMeasurement.ON_NEW_NETWORK:
+        return "On New Network".translated;
     }
   }
 }

@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/widgets/error.snackbar.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-error.dart';
@@ -18,6 +20,7 @@ import 'package:nt_flutter_standalone/modules/net-neutrality/store/net-neutralit
 
 import '../../di/service-locator.dart';
 import '../../measurements/widgets-tests/start-test.widget_test.dart';
+import '../../settings/unit-tests/settings-cubit_test.mocks.dart';
 import '../unit-tests/net-neutrality-measurement-service_test.mocks.dart';
 import 'net-neutrality-result-screen_test.dart';
 
@@ -41,6 +44,8 @@ final Widget _screen = MultiBlocProvider(
 void main() {
   setUpAll(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
+    TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+    when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState());
     when(GetIt.I.get<SharedPreferencesWrapper>().init())
         .thenAnswer((_) async => null);
     when(GetIt.I
@@ -56,7 +61,6 @@ void main() {
       _state = NetNeutralityState(
         interimResults: [],
         historyResults: [],
-        connectivity: ConnectivityResult.wifi,
       );
       whenListen(_cubit, Stream.fromIterable([_state]), initialState: _state);
       when(_cubitCalls.init()).thenAnswer((realInvocation) async => null);
@@ -78,8 +82,7 @@ void main() {
     testWidgets(
         'shows start button and lets to run measurement in PORTRAIT mode',
         (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      tester.view.physicalSize = Size(1200, 1920);
       await tester.pumpWidget(_screen);
       await tester.pumpAndSettle();
       expect(find.text('Net Neutrality Measurement'), findsOneWidget);
@@ -96,8 +99,10 @@ void main() {
       _state = NetNeutralityState(
         interimResults: [],
         historyResults: [],
-        connectivity: ConnectivityResult.none,
       );
+      when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+        connectivity: ConnectivityResult.none,
+      ));
       whenListen(_cubit, Stream.fromIterable([_state]), initialState: _state);
       when(_cubitCalls.init()).thenAnswer((realInvocation) async => null);
       TestingServiceLocator.swapLazySingleton<NetNeutralityCubit>(
@@ -112,8 +117,7 @@ void main() {
     });
 
     testWidgets('start button is NOT shown in PORTRAIT mode', (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      tester.view.physicalSize = Size(1200, 1920);
       await tester.pumpWidget(_screen);
       expect(find.text('Net Neutrality Measurement'), findsNothing);
       expect(find.byKey(Key('home-screen-hero')), findsOneWidget);
@@ -126,8 +130,10 @@ void main() {
       _state = NetNeutralityState(
         interimResults: [],
         historyResults: [],
-        connectivity: ConnectivityResult.wifi,
       );
+      when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+        connectivity: ConnectivityResult.wifi,
+      ));
       when(_cubitCalls.init()).thenAnswer((realInvocation) async => null);
       TestingServiceLocator.swapLazySingleton<NetNeutralityCubit>(
           () => _cubitCalls);

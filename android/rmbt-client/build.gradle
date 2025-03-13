@@ -1,5 +1,7 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+plugins {
+    id "com.android.library"
+    id "kotlin-android"
+}
 
 android {
 
@@ -16,10 +18,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17 
+    }
+    namespace 'at.rtr.rmbt.client'
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
     implementation "net.sf.jopt-simple:jopt-simple:$versions.jopt_simple"
     implementation "dnsjava:dnsjava:$versions.dnsjava"
     implementation "com.google.code.gson:gson:$versions.gson"

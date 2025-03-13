@@ -10,10 +10,10 @@ DnsResult _$DnsResultFromJson(Map<String, dynamic> json) => DnsResult(
       givenResolver: json['givenResolver'] as String?,
       record: json['record'] as String?,
       host: json['host'] as String?,
-      timeoutSeconds: json['timeoutSeconds'] as int?,
+      timeoutSeconds: (json['timeoutSeconds'] as num?)?.toInt(),
       resultQueryStatus: json['resultQueryStatus'] as String?,
-      resultStatus: json['resultStatus'] as int?,
-      resultDurationNanos: json['resultDurationNanos'] as int?,
+      resultStatus: (json['resultStatus'] as num?)?.toInt(),
+      resultDurationNanos: (json['resultDurationNanos'] as num?)?.toInt(),
       resultResolver: json['resultResolver'] as String?,
       rawResponse: json['rawResponse'] as String?,
       dnsRecords: (json['dnsRecords'] as List<dynamic>?)

@@ -8,6 +8,9 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/models/bloc-event.dart';
+import 'package:nt_flutter_standalone/core/models/project.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/widgets/loop-mode.button.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
@@ -26,6 +29,7 @@ import 'package:nt_flutter_standalone/modules/settings/store/settings.state.dart
 
 import '../../core/unit-tests/dio-service_test.mocks.dart';
 import '../../di/service-locator.dart';
+import '../../settings/unit-tests/settings-cubit_test.mocks.dart';
 import 'bottom-box-widget_test.dart';
 
 final _servers = [
@@ -63,6 +67,9 @@ void main() {
     TestingServiceLocator.swapLazySingleton<SettingsCubit>(
         () => _settingsCubit);
     TestingServiceLocator.registerInstances(withRealLocalization: true);
+    TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+    when(GetIt.I.get<CoreCubit>().state)
+        .thenReturn(CoreState(project: NTProject()));
     when(GetIt.I.get<SharedPreferencesWrapper>().init())
         .thenAnswer((_) async => null);
     when(GetIt.I
@@ -131,6 +138,7 @@ void main() {
       _state = MeasurementsState.init().copyWith(
         servers: _servers,
         currentServer: _servers.first,
+        connectivity: ConnectivityResult.none,
       );
       _bloc = setUpMeasurementsBloc(_state);
       TestingServiceLocator.swapLazySingleton<MeasurementsBloc>(() => _bloc);
@@ -166,8 +174,7 @@ void main() {
     testWidgets(
         'measurement server, start button and network info box are shown',
         (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      tester.view.physicalSize = Size(1200, 1920);
       await tester.pumpWidget(getNecessaryParentWidgets<MeasurementsBloc>(
           _bloc, StartTestWidget()));
       expect(find.text('Name (Cupertino)'), findsOneWidget);
@@ -175,8 +182,7 @@ void main() {
       expect(find.text('Run speed measurements'), findsOneWidget);
     });
     testWidgets('hero image is correctly shown', (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      tester.view.physicalSize = Size(1200, 1920);
       await tester.pumpWidget(getNecessaryParentWidgets<MeasurementsBloc>(
           _bloc, StartTestWidget()));
       final heroImageFinder = find.byKey(Key('home-screen-hero'));
@@ -189,15 +195,16 @@ void main() {
       _state = MeasurementsState.init().copyWith(
         servers: _servers,
         currentServer: _servers.first,
+        connectivity: ConnectivityResult.none,
       );
       _bloc = setUpMeasurementsBloc(_state);
+      TestingServiceLocator.swapLazySingleton<MeasurementsBloc>(() => _bloc);
     });
 
     testWidgets(
         'measurement server, start button and network info box are not shown',
         (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      tester.view.physicalSize = Size(1200, 1920);
       await tester.pumpWidget(getNecessaryParentWidgets<MeasurementsBloc>(
           _bloc, StartTestWidget()));
       expect(find.text('Name (Cupertino)'), findsNothing);
@@ -205,8 +212,7 @@ void main() {
       expect(find.text('Run speed measurements'), findsNothing);
     });
     testWidgets('hero image is correctly shown', (tester) async {
-      tester.binding.window.physicalSizeTestValue = Size(1200, 1920);
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      tester.view.physicalSize = Size(1200, 1920);
       await tester.pumpWidget(getNecessaryParentWidgets<MeasurementsBloc>(
           _bloc, StartTestWidget()));
       final heroImageFinder = find.byKey(Key('home-screen-hero'));
@@ -310,6 +316,7 @@ void main() {
     });
 
     testWidgets('enabling', (tester) async {
+      tester.view.physicalSize = Size(1920, 1200);
       await tester.pumpWidget(getNecessaryParentWidgets<MeasurementsBloc>(
           _bloc, StartTestWidget()));
       expect(find.text('Name (Cupertino)'), findsOneWidget);
@@ -318,6 +325,7 @@ void main() {
       expect(find.text('Loop mode'), findsOneWidget);
       final loopModeButton = find.byType(LoopModeButton);
       expect(loopModeButton, findsOneWidget);
+      await tester.ensureVisible(loopModeButton);
       await tester.tap(loopModeButton);
       await tester.pumpAndSettle();
       verify(GetIt.I
@@ -327,6 +335,7 @@ void main() {
     });
 
     testWidgets('disabling', (tester) async {
+      tester.view.physicalSize = Size(1920, 1200);
       final _settingsState = _initialSettingsState.copyWith(
           clientUuid: _uuid,
           loopModeFeatureEnabled: true,
@@ -348,6 +357,7 @@ void main() {
       expect(find.byType(LoopModeButton), findsNWidgets(2));
       final loopModeButton = find.text('Loop mode');
       expect(loopModeButton, findsOneWidget);
+      await tester.ensureVisible(loopModeButton);
       await tester.tap(loopModeButton);
       await tester.pumpAndSettle();
       verifyNever(GetIt.I

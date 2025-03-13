@@ -7,7 +7,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/models/project.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/widgets/loop-mode.button.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/constants/measurement-phase.dart';
@@ -25,6 +28,7 @@ import 'package:nt_flutter_standalone/modules/measurements/widgets/measurement-r
 
 import '../../core/unit-tests/dio-service_test.mocks.dart';
 import '../../di/service-locator.dart';
+import '../../settings/unit-tests/settings-cubit_test.mocks.dart';
 import 'start-test.widget_test.dart';
 
 final _initState = MeasurementsState.init().copyWith(
@@ -255,6 +259,9 @@ void main() {
   setUp(() {
     TestingServiceLocator.registerInstances(withRealLocalization: true);
     TestingServiceLocator.swapLazySingleton<MeasurementsBloc>(() => _bloc);
+    TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+    when(GetIt.I.get<CoreCubit>().state)
+        .thenReturn(CoreState(project: NTProject()));
     when(GetIt.I.get<SharedPreferencesWrapper>().init())
         .thenAnswer((_) async => null);
     when(GetIt.I

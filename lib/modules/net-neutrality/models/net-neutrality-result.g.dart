@@ -14,7 +14,7 @@ NetNeutralityResult _$NetNeutralityResultFromJson(Map<String, dynamic> json) =>
       ..clientVersion = json['clientVersion'] as String?
       ..clientLanguage = json['clientLanguage'] as String?
       ..dualSim = json['dualSim'] as bool?
-      ..networkType = json['networkType'] as int
+      ..networkType = (json['networkType'] as num).toInt()
       ..localIpAddress = json['testIpLocal'] as String?
       ..platform = json['platform'] as String?
       ..telephonyNetworkSimOperator = json['simMccMnc'] as String?
@@ -24,7 +24,7 @@ NetNeutralityResult _$NetNeutralityResultFromJson(Map<String, dynamic> json) =>
       ..telephonyNetworkOperatorName = json['networkOperatorName'] as String?
       ..telephonyNetworkCountry = json['networkCountry'] as String?
       ..telephonyNetworkIsRoaming = json['networkIsRoaming'] as bool?
-      ..signalStrength = json['signalStrength'] as int?
+      ..signalStrength = (json['signalStrength'] as num?)?.toInt()
       ..networkBand = json['networkChannelNumber'] as String?
       ..location = json['location'] == null
           ? null

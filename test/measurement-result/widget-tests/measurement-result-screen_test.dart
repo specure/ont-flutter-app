@@ -82,8 +82,8 @@ void main() {
           result: _result.tests.first,
           errorHandler: _cubit,
         )).thenAnswer((realInvocation) async => _result.tests.first);
-    when(GetIt.I.get<CMSService>().getProject()).thenAnswer(
-        (realInvocation) async => NTProject(enableAppResultsSharing: true));
+    when(GetIt.I.get<CMSService>().project)
+        .thenReturn(NTProject(enableAppResultsSharing: true));
     when(GetIt.I.get<SharedPreferencesWrapper>().init())
         .thenAnswer((_) async => null);
     when(GetIt.I

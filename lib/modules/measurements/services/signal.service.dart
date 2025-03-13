@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nt_flutter_standalone/core/extensions/list.ext.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/cell-info.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/network-info-details.dart';
@@ -164,7 +165,8 @@ class SignalService {
       } else {
         cellTechnology = await carrierPlugin.getNetworkGeneration();
       }
-      final currentNetwork = await connectivity.checkConnectivity();
+      final currentNetwork =
+          (await connectivity.checkConnectivity()).wifiOrMobile;
       CellInfoModel? cellInfo;
       if (cell?['type'] != null) {
         String networkType = (cell['type'] as String).toLowerCase();
@@ -192,7 +194,8 @@ class SignalService {
 
   /// Returns all signals detected by primary data connection according to cellType in case of mobile connection, connected cell in case of wifi
   Future<List<SignalInfo>> getPrimaryDataSignalInfo(CellType cellType) async {
-    final currentNetwork = await connectivity.checkConnectivity();
+    final currentNetwork =
+        (await connectivity.checkConnectivity()).wifiOrMobile;
     if (currentNetwork == ConnectivityResult.wifi) {
       return await _getWifiSignalInfo();
     } else if (currentNetwork == ConnectivityResult.mobile) {

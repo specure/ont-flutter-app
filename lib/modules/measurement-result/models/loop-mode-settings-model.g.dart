@@ -8,10 +8,10 @@ part of 'loop-mode-settings-model.dart';
 
 LoopModeSettings _$LoopModeSettingsFromJson(Map<String, dynamic> json) =>
     LoopModeSettings(
-      targetWaitingTimeSeconds: json['max_delay'] as int,
-      targetDistanceMeters: json['max_movement'] as int,
-      targetTestCount: json['max_tests'] as int,
-      currentTestNumber: json['test_counter'] as int,
+      targetWaitingTimeSeconds: (json['max_delay'] as num).toInt(),
+      targetDistanceMeters: (json['max_movement'] as num).toInt(),
+      targetTestCount: (json['max_tests'] as num).toInt(),
+      currentTestNumber: (json['test_counter'] as num).toInt(),
       loopUuid: json['loop_uuid'] as String?,
     );
 

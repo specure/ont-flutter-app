@@ -24,7 +24,7 @@ DnsNetNeutralityHistoryItem _$DnsNetNeutralityHistoryItemFromJson(
       failReason: json['failReason'] as String?,
       measurementDate: json['measurementDate'] as String,
       testStatus: json['testStatus'] as String,
-      durationNs: json['durationNs'] as int,
+      durationNs: (json['durationNs'] as num).toInt(),
       clientUuid: json['clientUuid'] as String,
       openTestUuid: json['openTestUuid'] as String,
       type: json['type'] as String,

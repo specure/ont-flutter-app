@@ -9,9 +9,9 @@ part of 'web-net-neutrality-settings-item.dart';
 WebNetNeutralitySettingsItem _$WebNetNeutralitySettingsItemFromJson(
         Map<String, dynamic> json) =>
     WebNetNeutralitySettingsItem(
-      expectedStatusCode: json['expectedStatusCode'] as int?,
+      expectedStatusCode: (json['expectedStatusCode'] as num?)?.toInt(),
       target: json['target'] as String,
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       type: json['type'] as String,
       timeout: (json['timeout'] as num).toDouble(),
     );

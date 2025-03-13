@@ -8,7 +8,7 @@ part of 'measurement-server.dart';
 
 MeasurementServer _$MeasurementServerFromJson(Map<String, dynamic> json) =>
     MeasurementServer(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       uuid: json['uuid'] as String?,
       name: json['name'] as String?,
       webAddress: json['webAddress'] as String?,
@@ -35,8 +35,8 @@ MeasurementServerTypeDetails _$MeasurementServerTypeDetailsFromJson(
         Map<String, dynamic> json) =>
     MeasurementServerTypeDetails(
       serverType: json['serverType'] as String? ?? 'RMBTws',
-      port: json['port'] as int? ?? 8080,
-      portSsl: json['portSsl'] as int? ?? 443,
+      port: (json['port'] as num?)?.toInt() ?? 8080,
+      portSsl: (json['portSsl'] as num?)?.toInt() ?? 443,
       encrypted: json['encrypted'] as bool? ?? true,
     );
 

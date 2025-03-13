@@ -8,8 +8,8 @@ part of 'speed-curve.item.dart';
 
 SpeedCurveItem _$SpeedCurveItemFromJson(Map<String, dynamic> json) =>
     SpeedCurveItem(
-      bytes: json['bytes_total'] as int,
-      time: json['time_elapsed'] as int,
+      bytes: (json['bytes_total'] as num).toInt(),
+      time: (json['time_elapsed'] as num).toInt(),
     );
 
 Map<String, dynamic> _$SpeedCurveItemToJson(SpeedCurveItem instance) =>

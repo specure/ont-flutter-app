@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
+import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-result.dart';
 import 'package:nt_flutter_standalone/modules/measurements/models/measurement-server.dart';
 import 'package:nt_flutter_standalone/modules/measurements/services/measurements.api.service.dart';
@@ -35,8 +39,46 @@ final _emptyMeasurementResult =
 final DioException _dioError = MockDioError();
 final ErrorHandler _errorHandler = MockErrorHandler();
 late final Dio _dio;
+final _servers = [
+  {
+    'id': 1,
+    'uuid': 'uuid',
+    'name': 'SERV',
+    'webAddress': 'server1.example.net',
+    'distance': 456789,
+    'serverTypeDetails': [
+      {'serverType': 'RMBT'}
+    ]
+  },
+  {
+    'id': 2,
+    'uuid': 'uuid',
+    'name': 'SERV2',
+    'webAddress': 'server2.example.net',
+    'distance': 123456,
+    'serverTypeDetails': [
+      {'serverType': 'RMBTws'}
+    ]
+  },
+  {
+    'id': 3,
+    'uuid': 'uuid',
+    'name': 'SERV3',
+    'webAddress': 'server3.example.net',
+    'distance': 1000,
+    'serverTypeDetails': [
+      {'serverType': 'RMBTws'}
+    ]
+  },
+];
 
-@GenerateMocks([Dio])
+@GenerateMocks([
+  Dio
+], customMocks: [
+  MockSpec<SharedPreferencesWrapper>(
+    onMissingStub: OnMissingStub.returnDefault,
+  ),
+])
 void main() {
   setUpAll(() {
     TestingServiceLocator.registerInstances();
@@ -63,6 +105,14 @@ void main() {
       expect(result, isA<List<MeasurementServer>>());
       expect(result.length, 2);
       expect(result.first.id, 3);
+      verify(GetIt.I
+              .get<SharedPreferencesWrapper>()
+              .getString(StorageKeys.measurementServers))
+          .called(1);
+      verify(GetIt.I
+              .get<SharedPreferencesWrapper>()
+              .setString(StorageKeys.measurementServers, jsonEncode(result)))
+          .called(1);
     });
     test('returns an empty list if the request was not successful', () async {
       when(_dio.get(NTUrls.csMeasurementServerRoute))
@@ -95,38 +145,7 @@ _setUpStubs() {
             requestOptions:
                 RequestOptions(path: NTUrls.csMeasurementServerRoute),
             statusCode: 200,
-            data: [
-              {
-                'id': 1,
-                'uuid': 'uuid',
-                'name': 'SERV',
-                'webAddress': 'server1.example.net',
-                'distance': 456789,
-                'serverTypeDetails': [
-                  {'serverType': 'RMBT'}
-                ]
-              },
-              {
-                'id': 2,
-                'uuid': 'uuid',
-                'name': 'SERV2',
-                'webAddress': 'server2.example.net',
-                'distance': 123456,
-                'serverTypeDetails': [
-                  {'serverType': 'RMBTws'}
-                ]
-              },
-              {
-                'id': 3,
-                'uuid': 'uuid',
-                'name': 'SERV3',
-                'webAddress': 'server3.example.net',
-                'distance': 1000,
-                'serverTypeDetails': [
-                  {'serverType': 'RMBTws'}
-                ]
-              },
-            ],
+            data: _servers,
           ));
 
   when(_dio.post(NTUrls.csIpRoute)).thenAnswer((_) async => Response(

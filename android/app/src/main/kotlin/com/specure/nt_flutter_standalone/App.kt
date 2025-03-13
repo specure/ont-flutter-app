@@ -4,10 +4,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import io.flutter.app.FlutterApplication
 import timber.log.Timber
 
-class App : FlutterApplication() {
+class App : android.app.Application() {
 
     override fun onCreate() {
         super.onCreate()

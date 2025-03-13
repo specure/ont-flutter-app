@@ -83,8 +83,8 @@ void main() {
       verify(_errorHandler.process(_dioError));
     });
     test('returns a project if the request is successful', () async {
-      final project = await _service.getProject();
-      expect(project, NTProject.fromJson(_projects[0]));
+      await _service.getProject();
+      expect(_service.project, NTProject.fromJson(_projects[0]));
     });
     test('returns a json from current mapbox date', () async {
       expect(
@@ -98,8 +98,8 @@ void main() {
           '_limit': 1,
         },
       )).thenAnswer((realInvocation) async => throw _dioError);
-      final project = await _service.getProject(errorHandler: _errorHandler);
-      expect(project, isNull);
+      await _service.getProject(errorHandler: _errorHandler);
+      expect(_service.project, isNull);
       verify(_errorHandler.process(_dioError));
     });
     test('returns translated description for a qos explanation', () async {

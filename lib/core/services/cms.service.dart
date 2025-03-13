@@ -10,6 +10,9 @@ import 'package:nt_flutter_standalone/core/services/localization.service.dart';
 class CMSService extends DioService {
   final LocalizationService _localizationService =
       GetIt.I.get<LocalizationService>();
+  NTProject? _project;
+
+  NTProject? get project => _project;
 
   CMSService({bool testing = false})
       : super(
@@ -18,18 +21,19 @@ class CMSService extends DioService {
         );
 
   Future<NTProject?> getProject({ErrorHandler? errorHandler}) async {
-    NTProject? project;
     try {
       final response = await dio.get(NTUrls.cmsProjectsRoute, queryParameters: {
         'slug': Environment.appSuffix.replaceAll('.', ''),
         '_limit': 1,
       });
-      project = NTProject.fromJson(response.data[0]);
+      _project = NTProject.fromJson(response.data[0]);
+      return _project;
     } on DioException catch (e) {
       print(e);
       errorHandler?.process(e);
+      _project = null;
+      return null;
     }
-    return project;
   }
 
   Future<String?>? getPage(String route, {ErrorHandler? errorHandler}) async {

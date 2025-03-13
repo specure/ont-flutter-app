@@ -9,12 +9,12 @@ part of 'web-net-neutrality-result-item.dart';
 WebNetNeutralityResultItem _$WebNetNeutralityResultItemFromJson(
         Map<String, dynamic> json) =>
     WebNetNeutralityResultItem(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       openTestUuid: json['openTestUuid'] as String,
-      durationNs: json['durationNs'] as int,
+      durationNs: (json['durationNs'] as num).toInt(),
       timeoutExceeded: json['timeoutExceeded'] as bool,
       type: json['type'] as String,
-      statusCode: json['statusCode'] as int?,
+      statusCode: (json['statusCode'] as num?)?.toInt(),
       clientUuid: json['clientUuid'] as String?,
     );
 

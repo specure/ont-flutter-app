@@ -9,7 +9,7 @@ enum EClientSuffix: String {
     case nettest = "nt"
 }
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
     static let testStartedMessage = "TEST_STARTED"
     static let testStoppedMessage = "TEST_STOPPED"

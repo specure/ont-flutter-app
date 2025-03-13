@@ -10,7 +10,6 @@ import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/extensions/loopModeDetails.ext.dart';
 import 'package:nt_flutter_standalone/core/models/bloc-event.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
-import 'package:nt_flutter_standalone/core/services/cms.service.dart';
 import 'package:nt_flutter_standalone/core/services/navigation.service.dart';
 import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/wrappers/platform.wrapper.dart';
@@ -61,12 +60,11 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
   final PlatformWrapper platform = GetIt.I.get<PlatformWrapper>();
   final SharedPreferencesWrapper preferences =
       GetIt.I.get<SharedPreferencesWrapper>();
-  final CMSService _cmsService = GetIt.I.get<CMSService>();
   final WakelockWrapper _wakelock = GetIt.I.get<WakelockWrapper>();
   ErrorHandler? errorHandler;
   ConnectivityChangesHandler? connectivityChangesHandler;
   LoopModeChangesHandler? loopModeChangesHandler;
-  Timer? _signalsHomeScreenTimer;
+  Timer? _locationHomeScreenTimer;
   RadioInfo? _radioInfo;
   StreamSubscription? _connectivitySubscription;
   bool testing;
@@ -86,39 +84,16 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
 
     on<Initialize>((event, emit) async {
       emit(state.copyWith(
-        isInitializing: true,
-        permissions: await permissionsService.initAndGet(),
-        locationServicesEnabled: await locationService.isLocationServiceEnabled,
         loopModeDetails: loopModeService.loopModeDetails,
+        permissions: permissionsService.permissionsMap,
+        networkInfoDetails: networkService.networkInfoDetails,
+        servers: measurementsApiService.servers,
+        currentServer: measurementsApiService.servers.length > 0
+            ? measurementsApiService.servers.first
+            : null,
       ));
-      final List<dynamic> remoteSettings = await Future.wait([
-        _cmsService.getProject(),
-        settingsService.saveClientUuidAndSettings(
-            errorHandler: this.errorHandler),
-      ]);
-      emit(state.copyWith(
-        project: remoteSettings[0],
-        clientUuid: remoteSettings[1],
-      ));
-      final List<dynamic> localSettings = await Future.wait([
-        networkService.getNetworkInfo(
-          state: state,
-          setState: (networkDetails) {
-            add(SignalUpdate(networkDetails: networkDetails));
-          },
-        ),
-        _watchNetwork()
-      ]);
-      emit(state.copyWith(
-        networkInfoDetails: localSettings[0],
-        isInitializing: false,
-      ));
-    });
-
-// ANCHOR SignalUpdate
-
-    on<SignalUpdate>((event, emit) async {
-      emit(state.copyWith(networkInfoDetails: event.payload));
+      _watchNetwork();
+      _updateLocation();
     });
 
 // ANCHOR GetNetworkInfo
@@ -128,51 +103,37 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
       if (event.payload == ConnectivityResult.none) {
         return;
       }
-      final List<dynamic> info = await Future.wait([
-        networkService.getNetworkInfo(
-          state: state,
-          setState: (networkDetails) {
-            add(SignalUpdate(networkDetails: networkDetails));
-          },
-        ),
-        measurementsApiService.getMeasurementServersForCurrentFlavor(
-          location: state.currentLocation,
-          errorHandler: this.errorHandler,
-          project: state.project,
-        )
-      ]);
-      final List<MeasurementServer> servers = info[1];
-      MeasurementServer? currentServer = state.currentServer;
-      if (currentServer == null) {
-        currentServer = servers.length > 0 ? servers.first : null;
-      }
       emit(state.copyWith(
-        networkInfoDetails: info[0],
-        servers: servers,
-        currentServer: currentServer,
+        networkInfoDetails: await networkService.getNetworkInfo(
+          permissions: state.permissions,
+        ),
       ));
     });
 
 // ANCHOR SetLocationInfo
 
     on<SetLocationInfo>((event, emit) async {
+      if (loopModeService.isLoopModeActivated) {
+        loopModeService.updateLocation(event.payload);
+      }
       final servers =
           await measurementsApiService.getMeasurementServersForCurrentFlavor(
         location: event.payload ?? state.currentLocation,
         errorHandler: this.errorHandler,
         project: state.project,
       );
-      if (loopModeService.isLoopModeActivated) {
-        loopModeService.updateLocation(event.payload);
-      }
       MeasurementServer? currentServer = state.currentServer;
       if (currentServer == null) {
         currentServer = servers.length > 0 ? servers.first : null;
       }
+      final networkInfoDetails = await networkService.getNetworkInfo(
+        permissions: state.permissions,
+      );
       emit(state.copyWith(
         currentLocation: event.payload,
         servers: servers,
         currentServer: currentServer,
+        networkInfoDetails: networkInfoDetails,
       ));
     });
 
@@ -424,7 +385,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
 // ANCHOR HomeScreenLeft
 
     on<HomeScreenLeft>((event, emit) {
-      _signalsHomeScreenTimer?.cancel();
+      _locationHomeScreenTimer?.cancel();
     });
 
 // ANCHOR MeasurementLoopUuidObtained
@@ -456,46 +417,36 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
   Future<void> _watchNetwork() async {
     try {
       _connectivitySubscription?.cancel();
-      _connectivitySubscription =
-          await networkService.subscribeToNetworkChanges(
+      _connectivitySubscription = networkService.subscribeToNetworkChanges(
         changesHandler: connectivityChangesHandler,
       );
     } catch (e) {
       print(e);
     }
-    await _updateLocationAndSignal();
-    if (_signalsHomeScreenTimer?.isActive != true) {
-      _signalsHomeScreenTimer =
-          Timer.periodic(const Duration(seconds: 5), (timer) async {
-        await _updateLocationAndSignal();
-      });
-    }
   }
 
-// ANCHOR _updateLocationAndSignal
+// ANCHOR _updateLocation
 
-  Future<void> _updateLocationAndSignal() async {
+  Future<void> _updateLocation() async {
     final isLocationServiceEnabled =
         await locationService.isLocationServiceEnabled;
-    if (platform.isAndroid) {
-      add(LocationServiceStateChanged(isLocationServiceEnabled));
-    }
+    add(LocationServiceStateChanged(isLocationServiceEnabled));
     if (!isLocationServiceEnabled) {
       add(RemoveObsoleteInfo());
     } else {
-      await locationService.updateLocation(
+      locationService.updateLocation(
         state: state,
         setState: (location) {
           add(SetLocationInfo(location));
         },
       );
     }
-    await networkService.getNetworkInfo(
-      state: state,
-      setState: (networkDetails) {
-        add(SignalUpdate(networkDetails: networkDetails));
-      },
-    );
+    if (_locationHomeScreenTimer?.isActive != true) {
+      _locationHomeScreenTimer =
+          Timer.periodic(const Duration(seconds: 5), (timer) {
+        _updateLocation();
+      });
+    }
   }
 
 // ANCHOR startMeasurement

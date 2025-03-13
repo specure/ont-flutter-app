@@ -9,9 +9,9 @@ part of 'dns-net-neutrality-result-item.dart';
 DnsNetNeutralityResultItem _$DnsNetNeutralityResultItemFromJson(
         Map<String, dynamic> json) =>
     DnsNetNeutralityResultItem(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       openTestUuid: json['openTestUuid'] as String,
-      durationNs: json['durationNs'] as int,
+      durationNs: (json['durationNs'] as num).toInt(),
       timeoutExceeded: json['timeoutExceeded'] as bool,
       type: json['type'] as String,
       dnsStatus: json['dnsStatus'] as String,

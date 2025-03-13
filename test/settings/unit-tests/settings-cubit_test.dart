@@ -9,6 +9,8 @@ import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/loop-mode.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/services/localization.service.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/wrappers/firebase-analytics.wrapper.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/core/services/cms.service.dart';
@@ -24,6 +26,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';
 import '../../measurements/widgets-tests/start-test.widget_test.dart';
+import 'settings-cubit_test.mocks.dart';
 
 late SettingsCubit _cubit;
 late SharedPreferencesWrapper _prefs;
@@ -71,6 +74,9 @@ class MockFirebase extends Mock implements Firebase {}
   MockSpec<NavigatorObserver>(
     onMissingStub: OnMissingStub.returnDefault,
   ),
+  MockSpec<CoreCubit>(
+    onMissingStub: OnMissingStub.returnDefault,
+  )
 ])
 void main() {
   setUp(() async {
@@ -105,6 +111,11 @@ void main() {
       'initializes state when no client uuid in prefs',
       build: () => _cubit,
       act: (bloc) {
+        TestingServiceLocator.swapLazySingleton<CoreCubit>(
+            () => MockCoreCubit());
+        when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+          clientUuid: _newUuid,
+        ));
         when(_prefs.clientUuid).thenAnswer((_) async => null);
         return bloc.init();
       },

@@ -28,8 +28,7 @@ WizardCubit _setUpCubit() {
 void main() {
   setUp(() {
     TestingServiceLocator.registerInstances();
-    when(GetIt.I.get<CMSService>().getProject())
-        .thenAnswer(((realInvocation) async => _project));
+    when(GetIt.I.get<CMSService>().project).thenReturn(_project);
     when(GetIt.I.get<PermissionsService>().isPhonePermissionGranted)
         .thenAnswer(((realInvocation) async => true));
     when(GetIt.I.get<PermissionsService>().isNotificationPermissionGranted)

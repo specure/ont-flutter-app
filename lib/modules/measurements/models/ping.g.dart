@@ -7,9 +7,9 @@ part of 'ping.dart';
 // **************************************************************************
 
 Ping _$PingFromJson(Map<String, dynamic> json) => Ping(
-      valueClient: json['value'] as int,
-      valueServer: json['value_server'] as int,
-      timeNS: json['time_ns'] as int,
+      valueClient: (json['value'] as num).toInt(),
+      valueServer: (json['value_server'] as num).toInt(),
+      timeNS: (json['time_ns'] as num).toInt(),
     );
 
 Map<String, dynamic> _$PingToJson(Ping instance) => <String, dynamic>{
