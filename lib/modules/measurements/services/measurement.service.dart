@@ -112,6 +112,7 @@ class MeasurementService {
   Future<String?> stopTest() async {
     try {
       final message = await channel.invokeMethod('stopTest');
+      _pingStream?.cancel();
       return message;
     } on PlatformException catch (err) {
       print(err);
