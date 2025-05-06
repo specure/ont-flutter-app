@@ -6,9 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/wrappers/date-time.wrapper.dart';
-import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/constants/net-neutrality-server-constants.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/dns-net-neutrality-result-item.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/dns-result.dart';
@@ -20,6 +20,7 @@ import 'package:nt_flutter_standalone/modules/net-neutrality/store/net-neutralit
 
 import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';
+import '../../settings/unit-tests/settings-cubit_test.mocks.dart';
 
 final _requestSentAt = 3000;
 final _settings = NetNeutralitySettingsResponse.fromJson(jsonDecode(
@@ -103,10 +104,10 @@ void main() {
     when(GetIt.I.get<Dio>().options).thenReturn(BaseOptions());
     when(GetIt.I.get<DateTimeWrapper>().nowInMillis())
         .thenReturn(_requestSentAt);
-    when(GetIt.I
-            .get<SharedPreferencesWrapper>()
-            .getString(StorageKeys.clientUuid))
-        .thenReturn(_clientUuid);
+    TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+    when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+      clientUuid: _clientUuid,
+    ));
   });
 
   group('Net neutrality measurement service', () {

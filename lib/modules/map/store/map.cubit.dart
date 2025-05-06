@@ -65,7 +65,8 @@ class MapCubit extends Cubit<MapState> {
       GetIt.I.get<TechnologyApiService>();
   final CMSService _cmsService = GetIt.I.get<CMSService>();
   final DateTimeWrapper _dateTimeWrapper = GetIt.I.get<DateTimeWrapper>();
-  MaplibreMapController? _mapController;
+  MapLibreMapController? _mapController;
+  bool _isStyleLoaded = false;
 
   Timer? _debounce;
 
@@ -170,16 +171,18 @@ class MapCubit extends Cubit<MapState> {
     emit(state.copyWith(providers: providers));
   }
 
-  void onMapCreated(MaplibreMapController controller) {
+  void onMapCreated(MapLibreMapController controller) {
     _mapController = controller;
+    _isStyleLoaded = false;
   }
 
   void onMapStyleLoaded() {
+    _isStyleLoaded = true;
     _showCurrentLayer();
   }
 
   Future _showCurrentLayer() async {
-    if (_mapController == null) {
+    if (_mapController == null || !_isStyleLoaded) {
       return;
     }
     final allLayers = await _mapController!.getLayerIds();
@@ -194,17 +197,27 @@ class MapCubit extends Cubit<MapState> {
     });
     await Future.wait(
       dataLayers.map(
-        (layerId) => _mapController!.setLayerVisibility(layerId, false),
+        (layerId) => _setLayerVisibility(layerId, false),
       ),
     );
     return Future.wait([
-      _mapController!.setLayerVisibility('C-$currentLayerAffix', true),
-      _mapController!.setLayerVisibility('M-$currentLayerAffix', true),
-      _mapController!.setLayerVisibility('H10-$currentLayerAffix', true),
-      _mapController!.setLayerVisibility('H1-$currentLayerAffix', true),
-      _mapController!.setLayerVisibility('H01-$currentLayerAffix', true),
-      _mapController!.setLayerVisibility('H001-$currentLayerAffix', true),
+      _setLayerVisibility('C-$currentLayerAffix', true),
+      _setLayerVisibility('M-$currentLayerAffix', true),
+      _setLayerVisibility('H10-$currentLayerAffix', true),
+      _setLayerVisibility('H1-$currentLayerAffix', true),
+      _setLayerVisibility('H01-$currentLayerAffix', true),
+      _setLayerVisibility('H001-$currentLayerAffix', true),
     ]);
+  }
+
+  Future<void> _setLayerVisibility(
+    String layerId,
+    bool isVisible,
+  ) async {
+    if (_mapController == null || !_isStyleLoaded) {
+      return;
+    }
+    await _mapController!.setLayerVisibility(layerId, isVisible);
   }
 
   void onCancelSearchTap() {

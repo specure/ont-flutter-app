@@ -146,6 +146,12 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
 // ANCHOR StartMeasurement
 
     on<StartMeasurement>((event, emit) async {
+      if (state.currentServer == null) {
+        emit(state.copyWith(
+          error: MeasurementError(ApiErrors.noConnectionToMS),
+        ));
+        return;
+      }
       // this happens before setMeasurementScreenOpen event - called only first time when we open the screen
       _wakelock.enable();
       await loopModeService.initializeNewLoopMode(state.currentLocation);
@@ -457,10 +463,7 @@ class MeasurementsBloc extends Bloc<BlocEvent, MeasurementsState> {
     required Emitter<MeasurementsState> emit,
     switchingServer = false,
   }) async {
-    final uuid = await preferences.clientUuid ??
-        await settingsService.saveClientUuidAndSettings(
-          errorHandler: this.errorHandler,
-        );
+    final uuid = GetIt.I.get<CoreCubit>().state.clientUuid;
     final newState = state.copyWith(
       retryCount: retryCount,
       currentServer: currentServer,

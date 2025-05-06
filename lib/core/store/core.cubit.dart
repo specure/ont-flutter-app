@@ -28,7 +28,8 @@ class CoreCubit extends Cubit<CoreState> {
   void init() async {
     _connectivitySubscription = await _networkService.subscribeToNetworkChanges(
         changesHandler: connectivityChangesHandler);
-    final clientUuid = await settingsService.saveClientUuidAndSettings();
+    final clientUuid = await _preferences.clientUuid ??
+        await settingsService.saveClientUuidAndSettings();
     final cmsProject = _cmsService.project;
     final bool loopModeFeatureEnabled = cmsProject?.enableAppLoopMode ?? false;
     final bool languageSwitchEnabled =

@@ -721,6 +721,7 @@ _setUpStubs() {
   ).thenAnswer((realInvocation) async {});
 
   when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+    clientUuid: _measurementResult.uuid,
     project: NTProject(),
   ));
 

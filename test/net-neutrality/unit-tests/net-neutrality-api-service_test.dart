@@ -5,10 +5,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
-import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
-import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-history-list-factory.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-result.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-settings-response.dart';
@@ -16,6 +16,7 @@ import 'package:nt_flutter_standalone/modules/net-neutrality/services/net-neutra
 
 import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';
+import '../../settings/unit-tests/settings-cubit_test.mocks.dart';
 
 final String _openTestUuid = 'openTestUuid';
 final String _clientUuid = 'clientUuid';
@@ -39,10 +40,10 @@ final _results = NetNeutralityResult();
 void main() {
   setUpAll(() async {
     TestingServiceLocator.registerInstances();
-    when(GetIt.I
-            .get<SharedPreferencesWrapper>()
-            .getString(StorageKeys.clientUuid))
-        .thenReturn(_clientUuid);
+    TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+    when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+      clientUuid: _clientUuid,
+    ));
   });
 
   group('Net neutrality API service', () {

@@ -92,7 +92,7 @@ void main() {
       act: (bloc) => bloc.init(),
       expect: () => [
         SettingsState().copyWith(
-            clientUuid: _uuid,
+            clientUuid: _newUuid,
             persistentClientUuidEnabled: true,
             analyticsEnabled: true,
             appVersion: _version,
@@ -111,11 +111,6 @@ void main() {
       'initializes state when no client uuid in prefs',
       build: () => _cubit,
       act: (bloc) {
-        TestingServiceLocator.swapLazySingleton<CoreCubit>(
-            () => MockCoreCubit());
-        when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
-          clientUuid: _newUuid,
-        ));
         when(_prefs.clientUuid).thenAnswer((_) async => null);
         return bloc.init();
       },
@@ -201,7 +196,7 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           persistentClientUuidEnabled: true,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
@@ -209,7 +204,7 @@ void main() {
         )
       ],
       verify: (bloc) {
-        verify(_prefs.setString(StorageKeys.clientUuid, _uuid));
+        verify(_prefs.setString(StorageKeys.clientUuid, _newUuid));
         verify(_prefs.setBool(StorageKeys.persistentClientUuidEnabled, true));
       },
     );
@@ -225,14 +220,14 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           persistentClientUuidEnabled: true,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
           appVersion: _version,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           persistentClientUuidEnabled: true,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
@@ -240,7 +235,7 @@ void main() {
           selectedLanguage: supportedLanguages[3],
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           persistentClientUuidEnabled: true,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
@@ -248,7 +243,7 @@ void main() {
           selectedLanguage: supportedLanguages[0],
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           persistentClientUuidEnabled: true,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
@@ -276,14 +271,14 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           loopModeMeasurementCountSet: LoopMode.loopModeDefaultMeasurementCount,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
           appVersion: _version,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           loopModeMeasurementCountSet: _loopModeMeasurementCountValid,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
@@ -306,14 +301,14 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           loopModeWaitingTimeMinSet: LoopMode.loopModeDefaultWaitingTimeMinutes,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
           appVersion: _version,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           loopModeWaitingTimeMinSet: _loopModeWaitingTimeValid,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
@@ -336,14 +331,14 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           loopModeDistanceMetersSet: LoopMode.loopModeDefaultDistanceMeters,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
           appVersion: _version,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           loopModeDistanceMetersSet: _loopModeDistanceValid,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
@@ -366,14 +361,14 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           loopModeDistanceMetersSet: LoopMode.loopModeDefaultDistanceMeters,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
           appVersion: _version,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           loopModeDistanceMetersSet: _loopModeDistanceValid,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
@@ -398,21 +393,21 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopMeasurementCountSetError: false,
           supportedLanguages: supportedLanguages,
           appVersion: _version,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopMeasurementCountSetError: true,
           supportedLanguages: supportedLanguages,
           appVersion: _version,
         ),
         SettingsState().copyWith(
-            clientUuid: _uuid,
+            clientUuid: _newUuid,
             loopMeasurementCountSetError: false,
             analyticsEnabled: true,
             appVersion: _version,
@@ -434,21 +429,21 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopMeasurementWaitingTimeSetError: false,
           supportedLanguages: supportedLanguages,
           appVersion: _version,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           supportedLanguages: supportedLanguages,
           loopMeasurementWaitingTimeSetError: true,
           appVersion: _version,
         ),
         SettingsState().copyWith(
-            clientUuid: _uuid,
+            clientUuid: _newUuid,
             loopMeasurementWaitingTimeSetError: false,
             analyticsEnabled: true,
             appVersion: _version,
@@ -469,21 +464,21 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopMeasurementDistanceSetError: false,
           appVersion: _version,
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopMeasurementDistanceSetError: true,
           appVersion: _version,
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           loopMeasurementDistanceSetError: false,
           analyticsEnabled: true,
           appVersion: _version,
@@ -502,14 +497,14 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopModeNetNeutralityEnabled: false,
           appVersion: _version,
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopModeNetNeutralityEnabled: true,
           appVersion: _version,
@@ -530,14 +525,14 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopModeEnabled: false,
           appVersion: _version,
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopModeEnabled: true,
           appVersion: _version,
@@ -562,20 +557,20 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           appVersion: _version,
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopMeasurementCountSetError: true,
           appVersion: _version,
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopMeasurementDistanceSetError: true,
           loopMeasurementCountSetError: true,
@@ -583,7 +578,7 @@ void main() {
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopMeasurementWaitingTimeSetError: true,
           loopMeasurementDistanceSetError: true,
@@ -592,7 +587,7 @@ void main() {
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopMeasurementWaitingTimeSetError: false,
           loopMeasurementDistanceSetError: false,
@@ -612,7 +607,7 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           loopModeEnabled: false,
           appVersion: _version,
@@ -637,19 +632,19 @@ void main() {
       },
       expect: () => [
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           appVersion: _version,
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: false,
           appVersion: _version,
           supportedLanguages: supportedLanguages,
         ),
         SettingsState().copyWith(
-          clientUuid: _uuid,
+          clientUuid: _newUuid,
           analyticsEnabled: true,
           appVersion: _version,
           supportedLanguages: supportedLanguages,
@@ -747,4 +742,8 @@ _setUpStubs() {
   if (!GetIt.I.isRegistered<MeasurementsBloc>()) {
     GetIt.I.registerLazySingleton<MeasurementsBloc>(() => bloc);
   }
+  TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+  when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+    clientUuid: _newUuid,
+  ));
 }

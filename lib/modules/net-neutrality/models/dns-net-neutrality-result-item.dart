@@ -1,7 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
-import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/constants/net-neutrality-server-constants.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/dns-net-neutrality-settings-item.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/dns-result.dart';
@@ -40,9 +39,7 @@ class DnsNetNeutralityResultItem extends NetNeutralityResultItem {
     required String openTestUuid,
   }) {
     final id = settingsItem.id;
-    final clientUuid = GetIt.I
-        .get<SharedPreferencesWrapper>()
-        .getString(StorageKeys.clientUuid);
+    final clientUuid = GetIt.I.get<CoreCubit>().state.clientUuid;
     final timeoutSeconds = dnsResult?.timeoutSeconds ?? 0;
     final resultDurationNanos = dnsResult?.resultDurationNanos ?? 0;
     return DnsNetNeutralityResultItem(

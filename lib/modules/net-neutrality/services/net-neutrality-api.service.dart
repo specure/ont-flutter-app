@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/constants/urls.dart';
 import 'package:nt_flutter_standalone/core/models/error-handler.dart';
 import 'package:nt_flutter_standalone/core/services/dio.service.dart';
-import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/modules/history/models/net-neutrality-history.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-history-item.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-history-list-factory.dart';
@@ -40,9 +39,7 @@ class NetNeutralityApiService extends DioService {
   Future<List<NetNeutralityHistoryItem>?> getHistory(String openTestUuid,
       {ErrorHandler? errorHandler}) async {
     try {
-      final uuid = GetIt.I
-          .get<SharedPreferencesWrapper>()
-          .getString(StorageKeys.clientUuid);
+      final uuid = GetIt.I.get<CoreCubit>().state.clientUuid;
       final Response<Map<String, dynamic>> response = await dio.get(
           '${NTUrls.csNNHistoryRoute}?sort=measurementDate,desc&uuid=$uuid&openTestUuid=$openTestUuid');
       return NetNeutralityHistoryListFactory.parseHistoryResponse(
@@ -58,9 +55,7 @@ class NetNeutralityApiService extends DioService {
   Future<NetNeutralityHistory?> getWholeHistory(int page,
       {ErrorHandler? errorHandler}) async {
     try {
-      final uuid = GetIt.I
-          .get<SharedPreferencesWrapper>()
-          .getString(StorageKeys.clientUuid);
+      final uuid = GetIt.I.get<CoreCubit>().state.clientUuid;
       final Response<Map<String, dynamic>> response = await dio.get(
           '${NTUrls.csNNHistoryRoute}?page=$page&size=100&sort=measurementDate,desc&uuid=$uuid');
       final data = NetNeutralityHistoryListFactory.parseWholeHistoryResponse(

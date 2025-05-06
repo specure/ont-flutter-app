@@ -4,6 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
 import 'package:nt_flutter_standalone/core/constants/urls.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
+import 'package:nt_flutter_standalone/core/store/core.state.dart';
 import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/history/services/api/history.api.service.dart';
 import 'package:nt_flutter_standalone/modules/measurement-result/models/measurement-history-result.dart';
@@ -11,6 +13,7 @@ import 'package:nt_flutter_standalone/modules/measurement-result/models/measurem
 
 import '../../di/core-mocks.dart';
 import '../../di/service-locator.dart';
+import '../../settings/unit-tests/settings-cubit_test.mocks.dart';
 
 final String _selectedLocaleTag = 'sr-Latn-rs';
 
@@ -113,4 +116,9 @@ _setUpStubs() {
           .get<SharedPreferencesWrapper>()
           .getString(StorageKeys.selectedLocaleTag))
       .thenReturn(_selectedLocaleTag);
+
+  TestingServiceLocator.swapLazySingleton<CoreCubit>(() => MockCoreCubit());
+  when(GetIt.I.get<CoreCubit>().state).thenReturn(CoreState(
+    clientUuid: "uuid",
+  ));
 }

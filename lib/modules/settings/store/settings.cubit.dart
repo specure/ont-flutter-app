@@ -33,8 +33,7 @@ class SettingsCubit extends Cubit<SettingsState> implements ErrorHandler {
 
   init() async {
     final packageInfo = await PackageInfo.fromPlatform();
-    final clientUuid = (await _preferences.clientUuid) ??
-        GetIt.I.get<CoreCubit>().state.clientUuid;
+    final clientUuid = GetIt.I.get<CoreCubit>().state.clientUuid;
     final persistentClientUuid =
         _preferences.getBool(StorageKeys.persistentClientUuidEnabled) ?? true;
     final analyticsEnabled =

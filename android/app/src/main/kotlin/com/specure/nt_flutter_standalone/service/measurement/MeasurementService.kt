@@ -1,5 +1,6 @@
 package com.specure.nt_flutter_standalone.service.measurement
 
+import android.app.ActivityManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -35,6 +36,7 @@ import kotlinx.coroutines.delay
 import org.json.JSONObject
 import timber.log.Timber
 import java.util.*
+
 
 private const val KEY_MEASUREMENT_TYPE = "measurement_type_flag" // used on the control server to determine type for signal measurement
 private const val CLIENT_UUID_EXTRA = "clientUUID"
@@ -240,6 +242,9 @@ class MeasurementService : CustomLifecycleService() {
     }
 
     private fun showForegroundNotificationForAndroidO() {
+        if (isInBackground()) {
+            return
+        }
         val actionIntent = PendingIntent.getService(this@MeasurementService, 0, stopTestsIntent(this@MeasurementService), PendingIntent.FLAG_IMMUTABLE)
         val action = NotificationCompat.Action.Builder(0, "Cancel measurement", actionIntent).build()
         val contentIntent = PendingIntent.getActivity(this@MeasurementService, 0, Intent(this@MeasurementService, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
@@ -258,6 +263,12 @@ class MeasurementService : CustomLifecycleService() {
                 startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
             }
         }
+    }
+
+    private fun isInBackground(): Boolean {
+        val myProcess = ActivityManager.RunningAppProcessInfo()
+        ActivityManager.getMyMemoryState(myProcess)
+        return myProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
     }
 
     private fun startTest() {

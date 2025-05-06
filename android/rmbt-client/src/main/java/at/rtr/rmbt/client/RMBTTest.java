@@ -296,6 +296,11 @@ public class RMBTTest extends AbstractRMBTTest implements Callable<ThreadTestRes
             out.flush();
 
             line = reader.readLine();
+
+            if (line == null) {
+                throw new Exception("The end of the stream has been reached without reading any characters.");
+            }
+
             connectionLog.add(line);
 
             //Read the HTTP response (terminated with an empty newline)

@@ -1,8 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:nt_flutter_standalone/core/constants/storage-keys.dart';
+import 'package:nt_flutter_standalone/core/store/core.cubit.dart';
 import 'package:nt_flutter_standalone/core/wrappers/date-time.wrapper.dart';
-import 'package:nt_flutter_standalone/core/wrappers/shared-preferences.wrapper.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/constants/net-neutrality-server-constants.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/net-neutrality-result-item.dart';
 import 'package:nt_flutter_standalone/modules/net-neutrality/models/web-net-neutrality-settings-item.dart';
@@ -38,11 +37,10 @@ class WebNetNeutralityResultItem extends NetNeutralityResultItem {
     int? statusCode,
   }) {
     final durationNs =
-        (GetIt.I.get<DateTimeWrapper>().nowInMillis() - requestSentAt) * 1000000;
+        (GetIt.I.get<DateTimeWrapper>().nowInMillis() - requestSentAt) *
+            1000000;
     final id = settingsItem.id;
-    final clientUuid = GetIt.I
-        .get<SharedPreferencesWrapper>()
-        .getString(StorageKeys.clientUuid);
+    final clientUuid = GetIt.I.get<CoreCubit>().state.clientUuid;
     return WebNetNeutralityResultItem(
       clientUuid: clientUuid,
       id: id,
